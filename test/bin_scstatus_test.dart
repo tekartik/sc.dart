@@ -23,7 +23,7 @@ void main() {
     test('version', () async {
       ProcessResult result =
           await runCmd(dartCmd([scstatusDartScript, '--version']));
-      List<String> parts = result.stdout.split(' ');
+      List<String> parts = (result.stdout as String).split(' ');
       expect(parts.first, 'scstatus');
       expect(new Version.parse(parts.last), version);
     });
