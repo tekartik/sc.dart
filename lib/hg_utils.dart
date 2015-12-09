@@ -24,6 +24,7 @@ class HgOutgoingResult {
 }
 
 class HgPath {
+  String toString() => path;
   String _path;
   String get path => _path;
   HgPath(this._path);
@@ -51,7 +52,7 @@ class HgPath {
     return statusResult;
   }
 
-  Future<HgOutgoingResult> outgoing({bool printResultIfChanges}) async {
+  Future<HgOutgoingResult> outgoing() async {
     ProcessCmd cmd = _hgCmd(['outgoing']);
     ProcessResult result = await runCmd(cmd);
     HgOutgoingResult outgoingResult = new HgOutgoingResult(result);

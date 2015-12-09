@@ -7,26 +7,19 @@ import 'package:dev_test/test.dart';
 import 'package:tekartik_pub/script.dart';
 export 'package:dev_test/test.dart';
 
-class _TestUtils {
-  static final String scriptPath =
-      (reflectClass(_TestUtils).owner as LibraryMirror).uri.toFilePath();
-}
-
 // This script resolver
 class TestScript extends Script {}
 
 // Test directory
 String get testDirPath => dirname(getScriptPath(TestScript));
 
-String get testScriptPath => _TestUtils.scriptPath;
-String get dataPath => join(_TestUtils.scriptPath, "data");
 String get outDataPath => getOutTestPath(testDescriptions);
 
 String getOutTestPath([List<String> parts]) {
   if (parts == null) {
     parts = testDescriptions;
   }
-  return join(dirname(_TestUtils.scriptPath), "out", joinAll(parts));
+  return join(testDirPath, "out", joinAll(parts));
 }
 
 String clearOutTestPath([List<String> parts]) {

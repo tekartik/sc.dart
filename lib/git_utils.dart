@@ -20,6 +20,8 @@ class GitStatusResult {
 }
 
 class GitPath {
+  String toString() => path;
+
   String _path;
 
   String get path => _path;
@@ -37,19 +39,8 @@ class GitPath {
     return _gitCmd(['pull']);
   }
 
-  /*
-  Future<ProcessResult> _run(List<String> args, {bool dryRun}) async {
-    if (dryRun == true) {
-      stdout.writeln("git ${args.join(' ')} [$path]");
-      return null;
-    } else {
-      return gitRun(args, workingDirectory: path);
-    }
-  }
-  */
-
   /// printResultIfChanges: show result if different than 'nothing to commit'
-  Future<GitStatusResult> status({bool printResultIfChanges}) async {
+  Future<GitStatusResult> status() async {
     ProcessResult result = await runCmd(_gitCmd(['status']));
     GitStatusResult statusResult = new GitStatusResult(result);
 
@@ -153,46 +144,6 @@ Future<bool> get isGitSupported async {
 
 ProcessCmd gitCmd(List<String> args) => processCmd('git', args);
 
-/*
-Future<ProcessResult> gitRun(List<String> args,
-    {String workingDirectory, bool connectIo: false}) {
-  if (_DEBUG) {
-    print('running git ${args}');
-  }
-  return run('git', args,
-      workingDirectory: workingDirectory, connectStderr: connectIo, connectStdout: connectIo).catchError((e) {
-    // Caught ProcessException: No such file or directory
-
-    if (e is ProcessException) {
-      print("${e.executable} ${e.arguments}");
-      print(e.message);
-      print(e.errorCode);
-
-      if (e.message.contains("No such file or directory") &&
-          (e.errorCode == 2)) {
-        print('GIT ERROR: make sure you have git installed in your path');
-      }
-    }
-    throw e;
-  }).then((ProcessResult result) {
-    if (_DEBUG) {
-      print('result: ${result}');
-    }
-    return result;
-  });
-}
-
-
-@deprecated
-Future gitPull(String path) {
-  return gitRun(['pull'], workingDirectory: path);
-}
-
-@deprecated
-Future gitStatus(String path) {
-  return gitRun(['status'], workingDirectory: path);
-}
-*/
 /// Check if an url is a git repository
 Future<bool> isGitRepository(String uri) async {
   ProcessResult runResult =
