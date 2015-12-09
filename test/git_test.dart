@@ -79,7 +79,8 @@ void main() {
           await runCmd(prj.addCmd(pathspec: "."));
           await runCmd(prj.commitCmd("test"));
           statusResult = await prj.status();
-          expect(statusResult.nothingToCommit, true);
+          expect(statusResult.nothingToCommit, true,
+              reason: processResultToDebugString(statusResult.runResult));
           // not supported for empty repository
           //expect(statusResult.branchIsAhead, true);
         }
@@ -109,7 +110,8 @@ void main() {
           await runCmd(prj.addCmd(pathspec: "."));
           await runCmd(prj.commitCmd("test"));
           statusResult = await prj.status();
-          expect(statusResult.nothingToCommit, true);
+          expect(statusResult.nothingToCommit, true,
+              reason: processResultToDebugString(statusResult.runResult));
           expect(statusResult.branchIsAhead, true);
         }
       });
