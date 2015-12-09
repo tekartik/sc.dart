@@ -1,5 +1,5 @@
 #!/usr/bin/env dart
-library tekartik_io_tools.rscpull;
+library tekartik_sc.bin.scpull;
 
 // Pull recursively
 

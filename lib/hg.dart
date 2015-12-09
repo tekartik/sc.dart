@@ -74,6 +74,13 @@ class HgPath {
     return outgoingResult;
   }
 
+  ProcessCmd revertCmd({String path}) {
+    List<String> args = ['revert'];
+    if (path != null) {
+      args.add(path);
+    }
+    return _hgCmd(args);
+  }
   ProcessCmd pullCmd({bool update: true}) {
     List<String> args = ['pull'];
     if (update == true) {

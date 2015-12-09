@@ -1,5 +1,5 @@
 #!/usr/bin/env dart
-library tekartik_sc.scstatus;
+library tekartik_sc.bin.scstatus;
 
 // Pull recursively
 
@@ -68,9 +68,9 @@ void main(List<String> arguments) {
     if (await FileSystemEntity.isDirectory(dir)) {
       if (await isGitTopLevelPath(dir)) {
         GitPath prj = new GitPath(dir);
-        GitStatusResult statusResult = await (prj.status());
+        GitStatusResult statusResult = await (prj.statusShort());
         if (statusResult.branchIsAhead ||
-            statusResult.nothingToCommit != true) {
+            !statusResult.nothingToCommit) {
           stdout.writeln('--- git');
           stdout.writeln(prj);
           stdout.writeln(statusResult.runResult.stdout);
@@ -103,31 +103,6 @@ void main(List<String> arguments) {
         }
       }
     }
-    /*
-    // this is a directoru
-    String dotGit = ".git";
-    return (FileSystemEntity.isDirectory(dir)).then((bool isDir) {
-      //print("dir $dir: ${isDir}");
-      if (isDir) {
-        String gitFile = join(dir, dotGit);
-        return FileSystemEntity.isDirectory(gitFile).then((bool containsDotGit) {
-          //print("gitFile $gitFile: ${containsDotGit}");
-          if (containsDotGit) {
-            gitPull(dir);
-            print("git folder: ${dir}");
-          } else {
-            List<Future> sub = [];
-
-            return new Directory(dir).list().listen((FileSystemEntity fse) {
-              sub.add(_handleDir(fse.path));
-            }).asFuture().then((_) {
-              Future.wait(sub);
-            });
-          }
-        });
-      }
-    });
-    */
   }
   for (String dir in dirs) {
     print(dir);

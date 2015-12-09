@@ -64,6 +64,35 @@ class GitPath {
     return statusResult;
   }
 
+  Future<GitStatusResult> statusShort() async {
+    ProcessResult result = await runCmd(_gitCmd(['status', '--short']));
+    GitStatusResult statusResult = new GitStatusResult(result);
+
+    if (result.exitCode == 0) {
+      if ((result.stdout as String).isEmpty) {
+        statusResult.nothingToCommit = true;
+      }
+      /*
+      Iterable<String> lines = LineSplitter.split(result.stdout);
+
+      lines.forEach((String line) {
+        // Linux /Win?/Mac?
+        if (line.startsWith('nothing to commit')) {
+          statusResult.nothingToCommit = true;
+        }
+        if (line.startsWith('Your branch is ahead of') ||
+            line.startsWith(
+                '# Your branch is ahead of') // output of drone io
+        ) {
+          statusResult.branchIsAhead = true;
+        }
+      });
+      */
+    }
+
+    return statusResult;
+  }
+
   ProcessCmd addCmd({String pathspec}) {
     List<String> args = ['add', pathspec];
     return _gitCmd(args);
@@ -80,8 +109,10 @@ class GitPath {
 
   ///
   /// branch can be a commit/revision number
-  ProcessCmd checkoutCmd({String commit}) {
-    return _gitCmd(['checkout', commit]);
+  ProcessCmd checkoutCmd({String path, String commit}) {
+    if (path != null) {return _gitCmd(['checkout', path]);} else {
+      return _gitCmd(['checkout', commit]);
+    }
   }
 }
 
