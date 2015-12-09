@@ -35,13 +35,26 @@ class GitPath {
     return cmd;
   }
 
+  ProcessCmd pushCmd() {
+    List<String> args = ['push'];
+    return _gitCmd(args);
+  }
+
   ProcessCmd pullCmd() {
     return _gitCmd(['pull']);
   }
 
+  ProcessCmd statusCmd({bool short}) {
+    List<String> args = ['status'];
+    if (short == true) {
+      args.add('--short');
+    }
+    return _gitCmd(args);
+  }
+
   /// printResultIfChanges: show result if different than 'nothing to commit'
   Future<GitStatusResult> status() async {
-    ProcessResult result = await runCmd(_gitCmd(['status']));
+    ProcessResult result = await runCmd(statusCmd());
     GitStatusResult statusResult = new GitStatusResult(result);
 
     if (result.exitCode == 0) {
@@ -64,34 +77,22 @@ class GitPath {
     return statusResult;
   }
 
+  /*
+  not usable does not mention if ahead
+
   Future<GitStatusResult> statusShort() async {
-    ProcessResult result = await runCmd(_gitCmd(['status', '--short']));
+    ProcessResult result = await runCmd(statusCmd(short :true));
     GitStatusResult statusResult = new GitStatusResult(result);
 
     if (result.exitCode == 0) {
       if ((result.stdout as String).isEmpty) {
         statusResult.nothingToCommit = true;
       }
-      /*
-      Iterable<String> lines = LineSplitter.split(result.stdout);
-
-      lines.forEach((String line) {
-        // Linux /Win?/Mac?
-        if (line.startsWith('nothing to commit')) {
-          statusResult.nothingToCommit = true;
-        }
-        if (line.startsWith('Your branch is ahead of') ||
-            line.startsWith(
-                '# Your branch is ahead of') // output of drone io
-        ) {
-          statusResult.branchIsAhead = true;
-        }
-      });
-      */
     }
 
     return statusResult;
   }
+     */
 
   ProcessCmd addCmd({String pathspec}) {
     List<String> args = ['add', pathspec];
@@ -110,7 +111,9 @@ class GitPath {
   ///
   /// branch can be a commit/revision number
   ProcessCmd checkoutCmd({String path, String commit}) {
-    if (path != null) {return _gitCmd(['checkout', path]);} else {
+    if (path != null) {
+      return _gitCmd(['checkout', path]);
+    } else {
       return _gitCmd(['checkout', commit]);
     }
   }

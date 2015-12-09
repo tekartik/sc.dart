@@ -74,13 +74,22 @@ class HgPath {
     return outgoingResult;
   }
 
-  ProcessCmd revertCmd({String path}) {
+  ProcessCmd revertCmd({String path, bool noBackup}) {
     List<String> args = ['revert'];
     if (path != null) {
       args.add(path);
     }
+    if (noBackup == true) {
+      args.add('--no-backup');
+    }
     return _hgCmd(args);
   }
+
+  ProcessCmd pushCmd() {
+    List<String> args = ['push'];
+    return _hgCmd(args);
+  }
+
   ProcessCmd pullCmd({bool update: true}) {
     List<String> args = ['pull'];
     if (update == true) {

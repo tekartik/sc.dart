@@ -37,11 +37,10 @@ void main(List<String> arguments) {
 
   bool help = _argsResult[_HELP];
   if (help) {
-    stdout.writeln(
-        'Revert files in the given directories');
+    stdout.writeln('Revert files in the given directories');
     stdout.writeln();
-    stdout.writeln(
-        'Usage: ${currentScriptName} <folder_paths...> [<arguments>]');
+    stdout
+        .writeln('Usage: ${currentScriptName} <folder_paths...> [<arguments>]');
     stdout.writeln();
     stdout.writeln("Global options:");
     stdout.writeln(parser.usage);
@@ -58,7 +57,8 @@ void main(List<String> arguments) {
   // get dirs in parameters, default to current
   List<String> dirOrFiles = _argsResult.rest;
   if (dirOrFiles.isEmpty) {
-    stderr.writeln("you must specify a directory. Example: ${currentScriptName} .");
+    stderr.writeln(
+        "you must specify a directory. Example: ${currentScriptName} .");
     exit(1);
   }
 
@@ -95,7 +95,7 @@ void main(List<String> arguments) {
         */
       } else if (await isHgTopLevelPath(scTopPath)) {
         HgPath prj = new HgPath(scTopPath);
-        ProcessCmd cmd = prj.revertCmd(path: rel);
+        ProcessCmd cmd = prj.revertCmd(path: rel, noBackup: true);
 
         stdout.writeln(cmd);
         if (!dryRun) {
@@ -105,9 +105,6 @@ void main(List<String> arguments) {
         }
       }
     }
-
-
-
   }
   for (String dirOrFile in dirOrFiles) {
     var _handle = _handleDir(dirOrFile);

@@ -1,18 +1,20 @@
 #!/usr/bin/env dart
-library tekartik_sc.bin.scstatus;
+library tekartik_sc.bin.scpp;
 
 // Pull recursively
 
 import 'dart:io';
 import 'dart:async';
 import 'package:args/args.dart';
+import 'package:path/path.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
-import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:process_run/cmd_run.dart';
-import 'package:path/path.dart';
+import 'package:tekartik_sc/src/bin_version.dart';
 
 const String _HELP = 'help';
+//const String _LOG = 'log';
+const String _DRY_RUN = 'dry-run';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -20,7 +22,8 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 /// Recursively update (pull) git folders
 ///
 ///
-void main(List<String> arguments) {
+main(List<String> arguments) async {
+  //Logger log;
   //setupQuickLogging();
 
   ArgParser parser = new ArgParser(allowTrailingOptions: true);
@@ -28,13 +31,17 @@ void main(List<String> arguments) {
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
+  parser.addFlag(_DRY_RUN,
+      abbr: 'n',
+      help: 'Do not run test, simple show packages to be tested',
+      negatable: false);
 
   ArgResults _argsResult = parser.parse(arguments);
 
   bool help = _argsResult[_HELP];
   if (help) {
     stdout.writeln(
-        'Display source control status recursively (default from current directory)');
+        'Push & Pull(update) from source control recursively (default from current directory)');
     stdout.writeln();
     stdout.writeln(
         'Usage: ${currentScriptName} [<folder_paths...>] [<arguments>]');
@@ -43,17 +50,19 @@ void main(List<String> arguments) {
     stdout.writeln(parser.usage);
     return;
   }
+  bool dryRun = _argsResult[_DRY_RUN];
 
   if (_argsResult['version']) {
     stdout.write('${currentScriptName} ${version}');
     return;
   }
+
   /*
   String logLevel = _argsResult[_LOG];
   if (logLevel != null) {
     setupQuickLogging(parseLogLevel(logLevel));
   }
-  log = new Logger("rscstatus");
+  log = new Logger("rscpull");
   log.fine('Log level ${Logger.root.level}');
   */
 
@@ -65,40 +74,32 @@ void main(List<String> arguments) {
 
   List<Future> futures = [];
 
+  bool _isHgSupported = await isHgSupported;
+  bool _isGitSupported = await isGitSupported;
+
   Future _handleDir(String dir) async {
-    if (await FileSystemEntity.isDirectory(dir)) {
-      if (await isGitTopLevelPath(dir)) {
+    Future<ProcessResult> _execute(ProcessCmd cmd) async {
+      if (dryRun == true) {
+        stdout.writeln(cmd);
+        return null;
+      } else {
+        return await runCmd(cmd);
+      }
+    }
+    // Ignore folder starting with .
+    // don't event go below
+    if (!basename(dir).startsWith('.') &&
+        (await FileSystemEntity.isDirectory(dir))) {
+      if (_isGitSupported && await isGitTopLevelPath(dir)) {
         GitPath prj = new GitPath(dir);
-        GitStatusResult statusResult = await (prj.status());
-        if (statusResult.branchIsAhead || !statusResult.nothingToCommit) {
-          stdout.writeln('--- git');
-          stdout.writeln(prj);
-          if (statusResult.branchIsAhead) {
-            stdout.writeln('Branch is ahread');
-          }
-          //stdout.writeln(statusResult.runResult.stdout);
-          // rerun in short version mode
-          await runCmd(prj.statusCmd(short: true)
-            ..connectStdout = true
-            ..connectStderr = true);
-        }
-      } else if (await isHgTopLevelPath(dir)) {
+        //ProcessResult result =
+        await _execute(prj.pushCmd());
+        await _execute(prj.pullCmd());
+      } else if (_isHgSupported && await isHgTopLevelPath(dir)) {
         HgPath prj = new HgPath(dir);
-        HgStatusResult statusResult =
-            await (prj.status(printResultIfChanges: true));
-        if (statusResult.nothingToCommit) {
-          HgOutgoingResult outgoingResult = await (prj.outgoing());
-          if (outgoingResult.branchIsAhead) {
-            stdout.writeln('--- hg');
-            stdout.writeln(prj);
-            stdout.writeln('Branch is ahread');
-            stdout.writeln(statusResult.runResult.stdout);
-          }
-        } else {
-          stdout.writeln('--- hg');
-          stdout.writeln(prj);
-          stdout.writeln(statusResult.runResult.stdout);
-        }
+        //ProcessResult result =
+        await _execute(prj.pushCmd());
+        await _execute(prj.pullCmd());
       } else {
         try {
           List<Future> sub = [];
@@ -106,9 +107,7 @@ void main(List<String> arguments) {
             sub.add(_handleDir(fse.path));
           }).asFuture();
           await Future.wait(sub);
-        } catch (_, __) {
-          // log.fine(e.toString(), e, st);
-        }
+        } catch (_, __) {}
       }
     }
   }

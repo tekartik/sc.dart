@@ -83,7 +83,7 @@ main(List<String> arguments) async {
         stdout.writeln(cmd);
         return null;
       } else {
-        return runCmd(cmd);
+        return await runCmd(cmd);
       }
     }
     // Ignore folder starting with .
