@@ -9,6 +9,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'dart:io';
 import 'io_test_common.dart';
+import 'dart:convert';
 
 String get _pubPackageRoot => getPubPackageRootSync(testDirPath);
 
@@ -23,7 +24,7 @@ void main() {
     test('version', () async {
       ProcessResult result =
           await runCmd(dartCmd([scstatusDartScript, '--version']));
-      List<String> parts = (result.stdout as String).split(' ');
+      List<String> parts = LineSplitter.split(result.stdout).first.split(' ');
       expect(parts.first, 'scstatus');
       expect(new Version.parse(parts.last), version);
     });

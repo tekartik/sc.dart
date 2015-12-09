@@ -1,5 +1,5 @@
 name: tekartik_sc
-version: 0.0.1
+version: 0.1.0
 dependencies:
   process_run: any
 dev_dependencies:
@@ -8,11 +8,12 @@ dev_dependencies:
   tekartik_pub:
     git: git://github.com/tekartik/tekartik_pub.dart
 dependency_overrides:
-  process_run:
-    git: git://github.com/tekartik/process_run.dart
+#  process_run:
+#    git: git://github.com/tekartik/process_run.dart
 #    path: /media/ssd/devx/git/github.com/tekartik/process_run.dart
 executables:
   scpull:
   scstatus:
   screvert:
   scpp:
+  scclone:

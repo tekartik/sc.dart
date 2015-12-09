@@ -22,6 +22,10 @@ Revert local change
 
     screvert
 
+Clone either mercurial/git repository building path like  `<sc>/domain.com/path` (example: git/github/tekartik/tekartik_sc.dart)
+
+    scsclone
+
 ## Activation
 
 ### From git repository

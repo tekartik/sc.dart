@@ -13,19 +13,19 @@ import 'dart:convert';
 
 String get _pubPackageRoot => getPubPackageRootSync(testDirPath);
 
-String get screvertDartScript {
+String get scpullDartScript {
   PubPackage pkg = new PubPackage(_pubPackageRoot);
-  return join(pkg.path, 'bin', 'screvert.dart');
+  return join(pkg.path, 'bin', 'scclone.dart');
 }
 
 void main() {
   //useVMConfiguration();
-  group('scpull', () {
+  group('scclone', () {
     test('version', () async {
       ProcessResult result =
-          await runCmd(dartCmd([screvertDartScript, '--version']));
+          await runCmd(dartCmd([scpullDartScript, '--version']));
       List<String> parts = LineSplitter.split(result.stdout).first.split(' ');
-      expect(parts.first, 'screvert');
+      expect(parts.first, 'scclone');
       expect(new Version.parse(parts.last), version);
     });
   });
