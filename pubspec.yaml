@@ -1,0 +1,13 @@
+name: tekartik_sc
+version: 0.0.1
+dependencies:
+  process_run: any
+dev_dependencies:
+  test: any
+  dev_test: any
+  tekartik_pub:
+    git: git://github.com/tekartik/tekartik_pub.dart
+dependency_overrides:
+  process_run:
+    git: git://github.com/tekartik/process_run.dart
+#    path: /media/ssd/devx/git/github.com/tekartik/process_run.dart
