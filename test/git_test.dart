@@ -1,7 +1,7 @@
 @TestOn("vm")
-library git_utils_tests;
+library tekartik_sc.test.git_test;
 
-import 'package:tekartik_sc/git_utils.dart';
+import 'package:tekartik_sc/git.dart';
 import 'package:process_run/cmd_run.dart';
 import 'dart:io';
 import 'io_test_common.dart';

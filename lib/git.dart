@@ -1,4 +1,4 @@
-library tekartik_io_tools.git_utils;
+library tekartik_sc.git;
 
 import 'dart:async';
 import 'dart:io';

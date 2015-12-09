@@ -7,8 +7,8 @@ import 'dart:io';
 import 'dart:async';
 import 'package:args/args.dart';
 import 'package:path/path.dart';
-import 'package:tekartik_sc/git_utils.dart';
-import 'package:tekartik_sc/hg_utils.dart';
+import 'package:tekartik_sc/git.dart';
+import 'package:tekartik_sc/hg.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 
@@ -28,7 +28,8 @@ main(List<String> arguments) async {
 
   ArgParser parser = new ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag("version", help: 'Display the script version', negatable: false);
+  parser.addFlag("version",
+      help: 'Display the script version', negatable: false);
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
   parser.addFlag(_DRY_RUN,
       abbr: 'n',
@@ -77,8 +78,7 @@ main(List<String> arguments) async {
   bool _isGitSupported = await isGitSupported;
 
   Future _handleDir(String dir) async {
-
-    Future<ProcessResult>_execute(ProcessCmd cmd) async {
+    Future<ProcessResult> _execute(ProcessCmd cmd) async {
       if (dryRun == true) {
         stdout.writeln(cmd);
         return null;
@@ -92,11 +92,12 @@ main(List<String> arguments) async {
         (await FileSystemEntity.isDirectory(dir))) {
       if (_isGitSupported && await isGitTopLevelPath(dir)) {
         GitPath prj = new GitPath(dir);
-        ProcessResult result = await _execute(prj.pullCmd());
-
+        //ProcessResult result =
+        await _execute(prj.pullCmd());
       } else if (_isHgSupported && await isHgTopLevelPath(dir)) {
         HgPath prj = new HgPath(dir);
-        ProcessResult result = await _execute(prj.pullCmd());
+        //ProcessResult result =
+        await _execute(prj.pullCmd());
       } else {
         try {
           List<Future> sub = [];
@@ -104,8 +105,7 @@ main(List<String> arguments) async {
             sub.add(_handleDir(fse.path));
           }).asFuture();
           await Future.wait(sub);
-        } catch (_, __) {
-        }
+        } catch (_, __) {}
       }
     }
   }

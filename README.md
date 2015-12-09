@@ -2,6 +2,15 @@
 
 Tekartik source control helpers (git &amp; hg) for dart
 
+## Usage
+
+Recursively pull
+
+    scpull
+
+Recursively get status
+
+    scstatus
 
 ## Activation
 

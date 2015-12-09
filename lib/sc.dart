@@ -1,11 +1,11 @@
-library tekartik_sc.sc_utils;
+library tekartik_sc.sc;
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart';
-import 'hg_utils.dart';
-import 'git_utils.dart';
+import 'hg.dart';
+import 'git.dart';
 
 String git = "git";
 String hg = "hg";

@@ -20,7 +20,6 @@ String get scstatusDartScript {
 void main() {
   //useVMConfiguration();
   group('scstatus', () {
-
     test('version', () async {
       ProcessResult result =
           await runCmd(dartCmd([scstatusDartScript, '--version']));
@@ -28,6 +27,5 @@ void main() {
       expect(parts.first, 'scstatus');
       expect(new Version.parse(parts.last), version);
     });
-
   });
 }

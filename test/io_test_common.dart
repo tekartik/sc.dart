@@ -1,6 +1,5 @@
 library tekartik_io_tools.io_common;
 
-import 'dart:mirrors';
 import 'package:path/path.dart';
 import 'dart:io';
 import 'package:dev_test/test.dart';

@@ -1,4 +1,4 @@
-library tekartik_io_tools.hg_utils;
+library tekartik_sc.hg;
 
 import 'dart:async';
 import 'dart:io';

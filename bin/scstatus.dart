@@ -6,8 +6,8 @@ library tekartik_sc.scstatus;
 import 'dart:io';
 import 'dart:async';
 import 'package:args/args.dart';
-import 'package:tekartik_sc/git_utils.dart';
-import 'package:tekartik_sc/hg_utils.dart';
+import 'package:tekartik_sc/git.dart';
+import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:path/path.dart';
 
@@ -24,7 +24,8 @@ void main(List<String> arguments) {
 
   ArgParser parser = new ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag("version", help: 'Display the script version', negatable: false);
+  parser.addFlag("version",
+      help: 'Display the script version', negatable: false);
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
 
   ArgResults _argsResult = parser.parse(arguments);
@@ -68,7 +69,8 @@ void main(List<String> arguments) {
       if (await isGitTopLevelPath(dir)) {
         GitPath prj = new GitPath(dir);
         GitStatusResult statusResult = await (prj.status());
-        if (statusResult.branchIsAhead || statusResult.nothingToCommit != true) {
+        if (statusResult.branchIsAhead ||
+            statusResult.nothingToCommit != true) {
           stdout.writeln('--- git');
           stdout.writeln(prj);
           stdout.writeln(statusResult.runResult.stdout);
@@ -91,7 +93,7 @@ void main(List<String> arguments) {
         }
       } else {
         try {
-          List <Future> sub = [];
+          List<Future> sub = [];
           await new Directory(dir).list().listen((FileSystemEntity fse) {
             sub.add(_handleDir(fse.path));
           }).asFuture();

@@ -20,7 +20,6 @@ String get scpullDartScript {
 void main() {
   //useVMConfiguration();
   group('scpull', () {
-
     test('version', () async {
       ProcessResult result =
           await runCmd(dartCmd([scpullDartScript, '--version']));
@@ -28,6 +27,5 @@ void main() {
       expect(parts.first, 'scpull');
       expect(new Version.parse(parts.last), version);
     });
-
   });
 }
