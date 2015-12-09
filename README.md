@@ -2,6 +2,8 @@
 
 Tekartik source control helpers (git &amp; hg) for dart
 
+[![Build Status](https://travis-ci.org/tekartik/tekartik_sc.dart.svg?branch=master)](https://travis-ci.org/tekartik/tekartik_sc.dart)
+
 ## Usage
 
 Recursively pull
@@ -11,6 +13,14 @@ Recursively pull
 Recursively get status
 
     scstatus
+
+Push & pull
+
+    scpp
+
+Revert local change
+
+    screvert
 
 ## Activation
 

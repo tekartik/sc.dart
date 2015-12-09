@@ -78,8 +78,8 @@ void main() {
 
           await runCmd(prj.addCmd(pathspec: "."));
           ProcessResult commitResult = await runCmd(prj.commitCmd("test")
-            ..connectStdout = true
-            ..connectStderr = true);
+            ..connectStdout = false
+            ..connectStderr = false);
           // Needed to travis
           if (commitResult.exitCode == 0) {
             statusResult = await prj.status();
@@ -114,8 +114,8 @@ void main() {
 
           await runCmd(prj.addCmd(pathspec: "."));
           ProcessResult commitResult = await runCmd(prj.commitCmd("test")
-            ..connectStdout = true
-            ..connectStderr = true);
+            ..connectStdout = false
+            ..connectStderr = false);
           // Needed to travis
           if (commitResult.exitCode == 0) {
             statusResult = await prj.status();
