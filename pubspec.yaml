@@ -2,6 +2,8 @@ name: tekartik_sc
 version: 0.1.0
 dependencies:
   process_run: any
+  args: any
+  path: any
 dev_dependencies:
   test: any
   dev_test: any
