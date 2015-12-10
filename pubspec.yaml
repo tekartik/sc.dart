@@ -4,6 +4,7 @@ dependencies:
   process_run: any
   args: any
   path: any
+  pub_semver: any
 dev_dependencies:
   test: any
   dev_test: any
