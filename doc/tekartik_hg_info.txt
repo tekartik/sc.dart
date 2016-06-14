@@ -1,0 +1,75 @@
+Hg example
+-----------
+
+alex@alex-kylin-devx:/opt/devx$ scclone https://bitbucket.org/alextk/public_hg_test
+> hg clone https://bitbucket.org/alextk/public_hg_test /media/ssd/devx/bitbucket.org/alextk/public_hg_test
+no changes found
+updating to branch default
+0 files updated, 0 files merged, 0 files removed, 0 files unresolved
+alex@alex-kylin-devx:/opt/devx$ pushd /media/ssd/devx/bitbucket.org/alextk/public_hg_test
+/media/ssd/devx/bitbucket.org/alextk/public_hg_test /opt/devx ~
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg status
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ echo $?
+0
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ gedit one_file.txt
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg commit -m "one file"
+nothing changed
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg push
+pushing to https://bitbucket.org/alextk/public_hg_test
+no changes found
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg status
+? one_file.txt
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg add .
+adding one_file.txt
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg push
+pushing to https://bitbucket.org/alextk/public_hg_test
+no changes found
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg commit -m "one file"
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg push
+pushing to https://bitbucket.org/alextk/public_hg_test
+searching for changes
+remote: adding changesets
+remote: adding manifests
+remote: adding file changes
+remote: added 1 changesets with 1 changes to 1 files
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg push
+pushing to https://bitbucket.org/alextk/public_hg_test
+searching for changes
+no changes found
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ hg pull
+pulling from https://bitbucket.org/alextk/public_hg_test
+searching for changes
+no changes found
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ scpp -l finest
+/media/ssd/devx/bitbucket.org/alextk/public_hg_test
+> hg push
+=> 1
+out: pushing to https://bitbucket.org/alextk/public_hg_test
+searching for changes
+no changes found
+
+> hg pull -u
+=> 0
+out: pulling from https://bitbucket.org/alextk/public_hg_test
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+
+alex@alex-kylin-devx:/media/ssd/devx/bitbucket.org/alextk/public_hg_test$ scpp -l finest
+/media/ssd/devx/bitbucket.org/alextk/public_hg_test
+> hg push
+=> 1
+out: pushing to https://bitbucket.org/alextk/public_hg_test
+searching for changes
+no changes found
+
+> hg pull -u
+=> 0
+out: pulling from https://bitbucket.org/alextk/public_hg_test
+searching for changes
+no changes found
+

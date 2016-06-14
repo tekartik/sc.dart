@@ -9,10 +9,14 @@ import 'package:args/args.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
+import 'package:tekartik_sc/src/std_buf.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:path/path.dart';
+import 'package:tekartik_core/log_utils.dart';
+import 'package:logging/logging.dart';
 
 const String _HELP = 'help';
+const String _LOG = 'log';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -27,7 +31,7 @@ void main(List<String> arguments) {
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
-  //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
+  parser.addOption(_LOG, abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
 
   ArgResults _argsResult = parser.parse(arguments);
 
@@ -43,6 +47,8 @@ void main(List<String> arguments) {
     stdout.writeln(parser.usage);
     return;
   }
+
+  Level level = parseLogLevel(_argsResult[_LOG]);
 
   if (_argsResult['version']) {
     stdout.write('${currentScriptName} ${version}');
@@ -69,36 +75,55 @@ void main(List<String> arguments) {
     if (await FileSystemEntity.isDirectory(dir)) {
       if (await isGitTopLevelPath(dir)) {
         GitPath prj = new GitPath(dir);
+
         GitStatusResult statusResult = await (prj.status());
+
+        StdBuf buf = new StdBuf();
+        if (level <= Level.FINEST) {
+          buf.outAppend('--- git ${prj}');
+          buf.outAppend('> ${statusResult.cmd}');
+          buf.appendResult(statusResult.runResult);
+        }
         if (statusResult.branchIsAhead || !statusResult.nothingToCommit) {
-          stdout.writeln('--- git');
-          stdout.writeln(prj);
+          buf.outAppend('--- git ${prj}');
           if (statusResult.branchIsAhead) {
-            stdout.writeln('Branch is ahread');
+            buf.outAppend('Branch is ahread');
           }
           //stdout.writeln(statusResult.runResult.stdout);
           // rerun in short version mode
-          await runCmd(prj.statusCmd(short: true)
-            ..connectStdout = true
-            ..connectStderr = true);
+          ProcessCmd cmd = prj.statusCmd(short: true);
+          if (level <= Level.FINEST) {
+            buf.outAppend('> ${cmd}');
+          }
+          ProcessResult result = await runCmd(cmd);
+          buf.appendResult(result);
         }
+        buf.print();
       } else if (await isHgTopLevelPath(dir)) {
         HgPath prj = new HgPath(dir);
-        HgStatusResult statusResult =
-            await (prj.status(printResultIfChanges: true));
+
+        StdBuf buf = new StdBuf();
+        HgStatusResult statusResult = await (prj.status());
+        if (level <= Level.FINEST) {
+          buf.outAppend('--- hg ${prj}');
+          buf.outAppend('> ${statusResult.cmd}');
+          buf.appendResult(statusResult.runResult);
+        }
         if (statusResult.nothingToCommit) {
           HgOutgoingResult outgoingResult = await (prj.outgoing());
+          if (level <= Level.FINEST) {
+            buf.outAppend('> ${outgoingResult.cmd}');
+          }
           if (outgoingResult.branchIsAhead) {
-            stdout.writeln('--- hg');
-            stdout.writeln(prj);
-            stdout.writeln('Branch is ahread');
-            stdout.writeln(statusResult.runResult.stdout);
+            buf.outAppend('--- hg ${prj}');
+            buf.outAppend('Branch is ahead');
+            buf.appendResult(outgoingResult.runResult);
           }
         } else {
-          stdout.writeln('--- hg');
-          stdout.writeln(prj);
-          stdout.writeln(statusResult.runResult.stdout);
+          buf.outAppend('--- hg ${prj}');
+          buf.appendResult(statusResult.runResult);
         }
+        buf.print();
       } else {
         try {
           List<Future> sub = [];

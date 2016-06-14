@@ -11,9 +11,11 @@ import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
+import 'package:tekartik_sc/src/std_buf.dart';
+import 'package:tekartik_core/log_utils.dart';
 
 const String _HELP = 'help';
-//const String _LOG = 'log';
+const String _LOG = 'log';
 const String _DRY_RUN = 'dry-run';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
@@ -30,7 +32,7 @@ main(List<String> arguments) async {
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
-  //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
+  parser.addOption(_LOG, abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
   parser.addFlag(_DRY_RUN,
       abbr: 'n',
       help: 'Do not run test, simple show packages to be tested',
@@ -57,6 +59,7 @@ main(List<String> arguments) async {
     return;
   }
 
+  Level level = parseLogLevel(_argsResult[_LOG]);
   /*
   String logLevel = _argsResult[_LOG];
   if (logLevel != null) {
@@ -78,12 +81,16 @@ main(List<String> arguments) async {
   bool _isGitSupported = await isGitSupported;
 
   Future _handleDir(String dir) async {
-    Future<ProcessResult> _execute(ProcessCmd cmd) async {
+    Future<ProcessResult> _execute(StdBuf buf, ProcessCmd cmd) async {
       if (dryRun == true) {
         stdout.writeln(cmd);
         return null;
       } else {
-        return await runCmd(cmd);
+        ProcessResult result = await runCmd(cmd);
+        if (level <= Level.FINEST) {
+          buf.appendCmdResult(cmd, result);
+        }
+        return result;
       }
     }
     // Ignore folder starting with .
@@ -91,15 +98,42 @@ main(List<String> arguments) async {
     if (!basename(dir).startsWith('.') &&
         (await FileSystemEntity.isDirectory(dir))) {
       if (_isGitSupported && await isGitTopLevelPath(dir)) {
+        StdBuf buf = new StdBuf();
         GitPath prj = new GitPath(dir);
-        //ProcessResult result =
-        await _execute(prj.pushCmd());
-        await _execute(prj.pullCmd());
+
+        ProcessCmd cmd = prj.pushCmd();
+        ProcessResult result = await _execute(buf, cmd);
+        if (result.exitCode != 0 || !result.stderr.toString().contains('up-to-date')) {
+          buf.outAppend('> ${cmd}');
+          buf.appendResult(result);
+        }
+        cmd = prj.pullCmd();
+        result = await _execute(buf, cmd);
+        if (result.exitCode != 0 || !result.stdout.toString().contains('up-to-date')) {
+          buf.outAppend('> ${cmd}');
+          buf.appendResult(result);
+        }
+
+        buf.print("--- git ${prj}");
       } else if (_isHgSupported && await isHgTopLevelPath(dir)) {
+        StdBuf buf = new StdBuf();
         HgPath prj = new HgPath(dir);
         //ProcessResult result =
-        await _execute(prj.pushCmd());
-        await _execute(prj.pullCmd());
+        ProcessCmd cmd = prj.pushCmd();
+        ProcessResult result = await _execute(buf, cmd);
+        // exitCode seems to be always 1 on linux...
+        // result.exitCode != 0 ||
+        if (!result.stdout.toString().contains('no changes found')) {
+          buf.outAppend('> ${cmd}');
+          buf.appendResult(result);
+        }
+        cmd = prj.pullCmd();
+        result = await _execute(buf, cmd);
+        if (result.exitCode != 0 || !result.stdout.toString().contains('no changes found')) {
+          buf.outAppend('> ${cmd}');
+          buf.appendResult(result);
+        }
+        buf.print("--- hg ${prj}");
       } else {
         try {
           List<Future> sub = [];

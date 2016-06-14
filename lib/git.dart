@@ -11,9 +11,10 @@ import 'package:path/path.dart';
 bool _DEBUG = false;
 
 class GitStatusResult {
+  final ProcessCmd cmd;
   final ProcessResult runResult;
 
-  GitStatusResult(this.runResult);
+  GitStatusResult(this.cmd, this.runResult);
 
   bool nothingToCommit = false;
   bool branchIsAhead = false;
@@ -54,8 +55,9 @@ class GitPath {
 
   /// printResultIfChanges: show result if different than 'nothing to commit'
   Future<GitStatusResult> status() async {
-    ProcessResult result = await runCmd(statusCmd());
-    GitStatusResult statusResult = new GitStatusResult(result);
+    ProcessCmd cmd = statusCmd();
+    ProcessResult result = await runCmd(cmd);
+    GitStatusResult statusResult = new GitStatusResult(cmd, result);
 
     if (result.exitCode == 0) {
       Iterable<String> lines = LineSplitter.split(result.stdout);

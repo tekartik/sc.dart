@@ -93,7 +93,9 @@ main(List<String> arguments) async {
           if (dryRun) {
             print("git clone ${prj.src} ${prj.path}");
           } else {
-            await runCmd(prj.cloneCmd()
+            ProcessCmd cmd = prj.cloneCmd();
+            stdout.writeln('> $cmd');
+            await runCmd(cmd
               ..connectStderr = true
               ..connectStdout = true);
           }
@@ -122,7 +124,9 @@ main(List<String> arguments) async {
         if (dryRun) {
           print("hg clone ${prj.src} ${prj.path}");
         } else {
-          await runCmd(prj.cloneCmd()
+          ProcessCmd cmd = prj.cloneCmd();
+          stdout.writeln('> $cmd');
+          await runCmd(cmd
             ..connectStderr = true
             ..connectStdout = true);
         }

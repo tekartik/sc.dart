@@ -11,15 +11,17 @@ import 'package:path/path.dart';
 bool _DEBUG = false;
 
 class HgStatusResult {
+  final ProcessCmd cmd;
   final ProcessResult runResult;
-  HgStatusResult(this.runResult);
+  HgStatusResult(this.cmd, this.runResult);
   bool nothingToCommit = false;
   //bool branchIsAhead = false;
 }
 
 class HgOutgoingResult {
+  final ProcessCmd cmd;
   final ProcessResult runResult;
-  HgOutgoingResult(this.runResult);
+  HgOutgoingResult(this.cmd, this.runResult);
   bool branchIsAhead = false;
 }
 
@@ -34,19 +36,17 @@ class HgPath {
     return hgCmd(args)..workingDirectory = path;
   }
 
-  Future<HgStatusResult> status({bool printResultIfChanges}) async {
-    ProcessResult result = await runCmd(_hgCmd(['status']));
+  Future<HgStatusResult> status() async {
+    ProcessCmd cmd = _hgCmd(['status']);
+    ProcessResult result = await runCmd(cmd);
 
-    HgStatusResult statusResult = new HgStatusResult(result);
+    HgStatusResult statusResult = new HgStatusResult(cmd, result);
 
     //bool showResult = true;
     if (result.exitCode == 0) {
       if (result.stdout.isEmpty) {
         statusResult.nothingToCommit = true;
       }
-    }
-    if (!statusResult.nothingToCommit && (printResultIfChanges == true)) {
-      // _displayResult(result);
     }
 
     return statusResult;
@@ -55,7 +55,7 @@ class HgPath {
   Future<HgOutgoingResult> outgoing() async {
     ProcessCmd cmd = _hgCmd(['outgoing']);
     ProcessResult result = await runCmd(cmd);
-    HgOutgoingResult outgoingResult = new HgOutgoingResult(result);
+    HgOutgoingResult outgoingResult = new HgOutgoingResult(cmd, result);
     switch (result.exitCode) {
       case 0:
       case 1:
