@@ -31,7 +31,8 @@ void main(List<String> arguments) {
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
-  parser.addOption(_LOG, abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
+  parser.addOption(_LOG,
+      abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
 
   ArgResults _argsResult = parser.parse(arguments);
 

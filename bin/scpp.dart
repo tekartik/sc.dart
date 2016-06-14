@@ -32,7 +32,8 @@ main(List<String> arguments) async {
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
-  parser.addOption(_LOG, abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
+  parser.addOption(_LOG,
+      abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
   parser.addFlag(_DRY_RUN,
       abbr: 'n',
       help: 'Do not run test, simple show packages to be tested',
@@ -103,13 +104,15 @@ main(List<String> arguments) async {
 
         ProcessCmd cmd = prj.pushCmd();
         ProcessResult result = await _execute(buf, cmd);
-        if (result.exitCode != 0 || !result.stderr.toString().contains('up-to-date')) {
+        if (result.exitCode != 0 ||
+            !result.stderr.toString().contains('up-to-date')) {
           buf.outAppend('> ${cmd}');
           buf.appendResult(result);
         }
         cmd = prj.pullCmd();
         result = await _execute(buf, cmd);
-        if (result.exitCode != 0 || !result.stdout.toString().contains('up-to-date')) {
+        if (result.exitCode != 0 ||
+            !result.stdout.toString().contains('up-to-date')) {
           buf.outAppend('> ${cmd}');
           buf.appendResult(result);
         }
@@ -129,7 +132,8 @@ main(List<String> arguments) async {
         }
         cmd = prj.pullCmd();
         result = await _execute(buf, cmd);
-        if (result.exitCode != 0 || !result.stdout.toString().contains('no changes found')) {
+        if (result.exitCode != 0 ||
+            !result.stdout.toString().contains('no changes found')) {
           buf.outAppend('> ${cmd}');
           buf.appendResult(result);
         }

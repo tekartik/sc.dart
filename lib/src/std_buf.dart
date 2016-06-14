@@ -11,12 +11,14 @@ class StdBuf {
     }
     out.write(object);
   }
+
   void errAppend(Object object) {
     if (err.length > 0) {
       err.writeln();
     }
     err.write(object);
   }
+
   void appendResult(ProcessResult result) {
     if (result.stdout.toString().length > 0) {
       outAppend('${result.stdout}');
@@ -39,7 +41,8 @@ class StdBuf {
   }
 
   void print([String header]) {
-    if (header != null && (out.toString().length > 0 || err.toString().length > 0)) {
+    if (header != null &&
+        (out.toString().length > 0 || err.toString().length > 0)) {
       stdout.writeln(header);
     }
     if (out.toString().length > 0) {
@@ -49,5 +52,4 @@ class StdBuf {
       stderr.writeln(err);
     }
   }
-
 }
