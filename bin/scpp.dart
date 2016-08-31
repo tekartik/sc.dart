@@ -12,7 +12,7 @@ import 'package:tekartik_sc/hg.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/std_buf.dart';
-import 'package:tekartik_core/log_utils.dart';
+import 'package:tekartik_common_utils/log_utils.dart';
 
 const String _HELP = 'help';
 const String _LOG = 'log';

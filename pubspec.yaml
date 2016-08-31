@@ -1,5 +1,5 @@
 name: tekartik_sc
-version: 0.2.0
+version: 0.2.1
 dependencies:
   process_run: any
   args: any
@@ -10,8 +10,8 @@ dev_dependencies:
   dev_test: any
   tekartik_pub:
     git: git://github.com/tekartik/tekartik_pub.dart
-  tekartik_core:
-    git: git://github.com/alextekartik/tekartik_core.dart
+  tekartik_common_utils:
+    git: git://github.com/tekartik/tekartik_common_utils.dart
 dependency_overrides:
 #  process_run:
 #    git: git://github.com/tekartik/process_run.dart
