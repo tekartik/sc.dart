@@ -5,13 +5,14 @@ dependencies:
   args: any
   path: any
   pub_semver: any
+  tekartik_common_utils:
+    git: git://github.com/tekartik/tekartik_common_utils.dart
+
 dev_dependencies:
   test: any
   dev_test: any
   tekartik_pub:
     git: git://github.com/tekartik/tekartik_pub.dart
-  tekartik_common_utils:
-    git: git://github.com/tekartik/tekartik_common_utils.dart
 dependency_overrides:
 #  process_run:
 #    git: git://github.com/tekartik/process_run.dart
