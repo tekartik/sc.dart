@@ -5,6 +5,7 @@ dependencies:
   args: any
   path: any
   pub_semver: any
+  logging: any
   tekartik_common_utils:
     git: git://github.com/tekartik/tekartik_common_utils.dart
 
