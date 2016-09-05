@@ -4,7 +4,6 @@ library tekartik_io_tools.scclone;
 // Pull recursively
 
 import 'dart:io';
-import 'dart:async';
 import 'package:args/args.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/git.dart';
@@ -12,6 +11,8 @@ import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/src/scpath.dart';
 import 'package:path/path.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
+import 'package:tekartik_common_utils/common_utils_import.dart';
+
 
 const String _HELP = 'help';
 const String _DRY_RUN = 'dry-run';
@@ -116,6 +117,7 @@ main(List<String> arguments) async {
       if (topDirName != "hg") {
         hgParts.insert(0, "hg");
       }
+
       String path = absolute(joinAll(hgParts));
       if (await isHgTopLevelPath(path)) {
         stdout.writeln("hg: ${path} already exists");

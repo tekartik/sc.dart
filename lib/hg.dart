@@ -1,9 +1,8 @@
 library tekartik_sc.hg;
 
-import 'dart:async';
+import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'dart:io';
 
-import 'dart:convert';
 import 'package:process_run/cmd_run.dart';
 import 'src/scpath.dart';
 import 'package:path/path.dart';
@@ -122,18 +121,23 @@ class HgPath {
 class HgProject extends HgPath {
   String src;
   HgProject(this.src, {String path, String rootFolder}) : super._() {
-    var parts = scUriToPathParts(src);
+    // Handle null
+    if (path == null) {
+      var parts = scUriToPathParts(src);
 
-    _path = joinAll(parts);
+      _path = joinAll(parts);
 
-    if (_path == null) {
-      throw new Exception(
-          'null path only allowed for https://github.com/xxxuser/xxxproject src');
-    }
-    if (rootFolder != null) {
-      _path = absolute(join(rootFolder, path));
+      if (_path == null) {
+        throw new Exception(
+            'null path only allowed for https://github.com/xxxuser/xxxproject src');
+      }
+      if (rootFolder != null) {
+        _path = absolute(join(rootFolder, path));
+      } else {
+        _path = absolute(_path);
+      }
     } else {
-      _path = absolute(_path);
+      _path = path;
     }
   }
 

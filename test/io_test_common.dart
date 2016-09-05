@@ -26,5 +26,8 @@ String clearOutTestPath([List<String> parts]) {
   try {
     new Directory(outPath).deleteSync(recursive: true);
   } catch (e) {}
+  try {
+    new Directory(outPath).createSync(recursive: true);
+  } catch (e) {}
   return outPath;
 }
