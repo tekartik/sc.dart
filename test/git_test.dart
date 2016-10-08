@@ -1,11 +1,13 @@
 @TestOn("vm")
 library tekartik_sc.test.git_test;
 
-import 'package:tekartik_sc/git.dart';
-import 'package:process_run/cmd_run.dart';
 import 'dart:io';
-import 'io_test_common.dart';
+
 import 'package:path/path.dart';
+import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_sc/git.dart';
+
+import 'io_test_common.dart';
 
 void main() {
   //useVMConfiguration();
@@ -63,8 +65,8 @@ void main() {
           expect(await (isGitTopLevelPath(outPath)), isFalse);
           var prj = new GitProject(
               'https://bitbucket.org/alextk/public_git_test',
-              rootFolder: outPath);
-          await runCmd(prj.cloneCmd());
+              path: outPath);
+          await runCmd(prj.cloneCmd(depth: 1));
           expect(await (isGitTopLevelPath(outPath)), isTrue);
           GitStatusResult statusResult = await prj.status();
           expect(statusResult.nothingToCommit, true);
@@ -99,7 +101,7 @@ void main() {
           expect(await (isGitTopLevelPath(outPath)), isFalse);
           var prj = new GitProject(
               'https://github.com/alextekartik/data_test.git',
-              rootFolder: outPath);
+              path: outPath);
           await runCmd(prj.cloneCmd());
           expect(await (isGitTopLevelPath(outPath)), isTrue);
           GitStatusResult statusResult = await prj.status();

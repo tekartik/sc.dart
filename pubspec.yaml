@@ -1,5 +1,7 @@
 name: tekartik_sc
-version: 0.2.2
+version: 0.2.3
+author: Alexandre Roux Tekartik <alex@tekartik.com>
+homepage: https://github.com/tekartik/tekartik_sc.dart
 dependencies:
   process_run: any
   args: any

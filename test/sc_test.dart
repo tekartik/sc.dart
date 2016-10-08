@@ -1,11 +1,12 @@
 @TestOn("vm")
 library tekartik_sc.test.sc_test;
 
-import 'package:tekartik_sc/hg.dart';
-import 'package:tekartik_sc/git.dart';
-import 'package:tekartik_sc/sc.dart';
-import 'package:process_run/cmd_run.dart';
 import 'package:path/path.dart';
+import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_sc/git.dart';
+import 'package:tekartik_sc/hg.dart';
+import 'package:tekartik_sc/sc.dart';
+
 import 'io_test_common.dart';
 
 void main() => defineTests();
@@ -19,7 +20,7 @@ void defineTests() {
         String outPath = clearOutTestPath();
 
         var prj = new GitProject('https://bitbucket.org/alextk/public_git_test',
-            rootFolder: outPath);
+            path: outPath);
         await runCmd(prj.cloneCmd());
 
         expect(await isScTopLevelPath(outPath), isTrue);

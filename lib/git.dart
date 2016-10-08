@@ -1,12 +1,13 @@
 library tekartik_sc.git;
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:process_run/cmd_run.dart';
-import 'src/scpath.dart';
 import 'package:path/path.dart';
+import 'package:process_run/cmd_run.dart';
+
+import 'src/scpath.dart';
 
 bool _DEBUG = false;
 
@@ -124,7 +125,9 @@ class GitPath {
 class GitProject extends GitPath {
   String src;
 
-  GitProject(this.src, {String path, String rootFolder}) : super._() {
+  GitProject(this.src, {String path,
+  @deprecated // use path
+  String rootFolder}) : super._() {
     // Handle null
     if (path == null) {
       var parts = scUriToPathParts(src);
@@ -135,7 +138,9 @@ class GitProject extends GitPath {
         throw new Exception(
             'null path only allowed for https://github.com/xxxuser/xxxproject src');
       }
+      // ignore: deprecated_member_use
       if (rootFolder != null) {
+        // ignore: deprecated_member_use
         _path = absolute(join(rootFolder, path));
       } else {
         _path = absolute(_path);
@@ -146,10 +151,14 @@ class GitProject extends GitPath {
   }
 
   // no using _gitCmd as not using workingDirectory
-  ProcessCmd cloneCmd({bool progress}) {
+  // only get latest revision if [depth] = 1
+  ProcessCmd cloneCmd({bool progress, int depth}) {
     List<String> args = ['clone'];
     if (progress == true) {
       args.add('--progress');
+    }
+    if (depth != null) {
+      args.addAll(['--depth', depth.toString()]);
     }
     args.addAll([src, path]);
     return gitCmd(args);
