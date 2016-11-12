@@ -79,9 +79,7 @@ void main() {
           expect(statusResult.branchIsAhead, false);
 
           await runCmd(prj.addCmd(pathspec: "."));
-          ProcessResult commitResult = await runCmd(prj.commitCmd("test")
-            ..connectStdout = false
-            ..connectStderr = false);
+          ProcessResult commitResult = await runCmd(prj.commitCmd("test"));
           // Needed to travis
           if (commitResult.exitCode == 0) {
             statusResult = await prj.status();
@@ -115,9 +113,7 @@ void main() {
           expect(statusResult.branchIsAhead, false);
 
           await runCmd(prj.addCmd(pathspec: "."));
-          ProcessResult commitResult = await runCmd(prj.commitCmd("test")
-            ..connectStdout = false
-            ..connectStderr = false);
+          ProcessResult commitResult = await runCmd(prj.commitCmd("test"));
           // Needed to travis
           if (commitResult.exitCode == 0) {
             statusResult = await prj.status();

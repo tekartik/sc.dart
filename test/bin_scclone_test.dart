@@ -1,16 +1,18 @@
 @TestOn("vm")
 library tekartik_sc.test.bin_scpull_test;
 
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
-import 'package:dev_test/test.dart';
-import 'package:tekartik_pub/pub.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:tekartik_sc/src/bin_version.dart';
-import 'dart:io';
+import 'package:tekartik_pub/io.dart';
 import 'package:tekartik_sc/hg.dart' as hg;
+import 'package:tekartik_sc/src/bin_version.dart';
+
 import 'io_test_common.dart';
-import 'dart:convert';
 
 String get _pubPackageRoot => getPubPackageRootSync(testDirPath);
 

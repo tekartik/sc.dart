@@ -1,11 +1,12 @@
 library tekartik_sc.hg;
 
-import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'dart:io';
 
-import 'package:process_run/cmd_run.dart';
-import 'src/scpath.dart';
 import 'package:path/path.dart';
+import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_common_utils/common_utils_import.dart';
+
+import 'src/scpath.dart';
 
 bool _DEBUG = false;
 
@@ -182,9 +183,7 @@ ProcessCmd hgCmd(List<String> args) {
 ProcessCmd hgVersionCmd() => hgCmd(['--version']);
 
 Future<bool> isHgRepository(String uri) async {
-  ProcessResult runResult = await runCmd(hgCmd(['identify', uri])
-    ..connectStdout = false
-    ..connectStderr = false);
+  ProcessResult runResult = await runCmd(hgCmd(['identify', uri]));
   // 0 is returned if found (or empty), out contains the last revision number such as 947e3404e4b7
   // 255 if an error occured
   return (runResult.exitCode == 0);

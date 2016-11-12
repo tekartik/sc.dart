@@ -3,31 +3,44 @@ library tekartik_sc.bin.scpull;
 
 // Pull recursively
 
-import 'dart:io';
-import 'dart:async';
 import 'package:args/args.dart';
 import 'package:path/path.dart';
+import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_io_utils/io_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
-import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 
 const String _HELP = 'help';
 //const String _LOG = 'log';
 const String _DRY_RUN = 'dry-run';
+const String verboseFlag = "verbose";
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
+
+class App {
+  int projectCount = 0;
+
+  void outSummary() {
+    stdout.writeln('[$projectCount] project(s) updated');
+  }
+}
+
+App app;
 
 ///
 /// Recursively update (pull) git folders
 ///
 ///
 main(List<String> arguments) async {
+  app = new App();
   //Logger log;
   //setupQuickLogging();
 
   ArgParser parser = new ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
+  parser.addFlag(
+      verboseFlag, abbr: 'v', help: 'Verbose output', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
@@ -51,6 +64,7 @@ main(List<String> arguments) async {
     return;
   }
   bool dryRun = _argsResult[_DRY_RUN];
+  bool verbose = _argsResult[verboseFlag];
 
   if (_argsResult['version']) {
     stdout.write('${currentScriptName} ${version}');
@@ -83,7 +97,21 @@ main(List<String> arguments) async {
         stdout.writeln(cmd);
         return null;
       } else {
-        return await runCmd(cmd);
+        //int waitCount = 0;
+        if (verbose) {
+          stdout.writeln('[${cmd.workingDirectory}]');
+        }
+        ProcessResult result;
+        _waiter() async {
+          await sleep(15000);
+          if (result == null) {
+            stderr.writeln('[${cmd.workingDirectory}]...');
+            _waiter();
+          }
+        }
+        _waiter();
+        result = await runCmd(cmd, verbose: verbose);
+        return result;
       }
     }
     // Ignore folder starting with .
@@ -116,4 +144,8 @@ main(List<String> arguments) async {
       futures.add(_handle);
     }
   }
+
+  await futures;
+
+  app.outSummary();
 }

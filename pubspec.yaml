@@ -10,6 +10,8 @@ dependencies:
   logging: any
   tekartik_common_utils:
     git: git://github.com/tekartik/tekartik_common_utils.dart
+  tekartik_io_utils:
+    git: git://github.com/tekartik/tekartik_io_utils.dart
 
 dev_dependencies:
   test: any

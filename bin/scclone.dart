@@ -4,14 +4,15 @@ library tekartik_io_tools.scclone;
 // Pull recursively
 
 import 'dart:io';
+
 import 'package:args/args.dart';
+import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
-import 'package:tekartik_sc/src/scpath.dart';
-import 'package:path/path.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
-import 'package:tekartik_common_utils/common_utils_import.dart';
+import 'package:tekartik_sc/src/scpath.dart';
 
 
 const String _HELP = 'help';
@@ -96,9 +97,7 @@ main(List<String> arguments) async {
           } else {
             ProcessCmd cmd = prj.cloneCmd();
             stdout.writeln('> $cmd');
-            await runCmd(cmd
-              ..connectStderr = true
-              ..connectStdout = true);
+            await runCmd(cmd, verbose: true);
           }
         }
       }
@@ -127,10 +126,7 @@ main(List<String> arguments) async {
           print("hg clone ${prj.src} ${prj.path}");
         } else {
           ProcessCmd cmd = prj.cloneCmd();
-          stdout.writeln('> $cmd');
-          await runCmd(cmd
-            ..connectStderr = true
-            ..connectStdout = true);
+          await runCmd(cmd, verbose: true);
         }
       }
     }

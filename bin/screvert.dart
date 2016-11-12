@@ -2,15 +2,16 @@
 library tekartik_sc.bin.screvert;
 
 // revert directories
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+
 import 'package:args/args.dart';
+import 'package:path/path.dart';
+import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
-import 'package:process_run/cmd_run.dart';
-import 'package:path/path.dart';
 
 const String _HELP = 'help';
 
@@ -80,9 +81,7 @@ void main(List<String> arguments) {
 
         stdout.writeln(cmd);
         if (!dryRun) {
-          await runCmd(cmd
-            ..connectStderr = true
-            ..connectStdout = true);
+          await runCmd(cmd, verbose: true);
         }
         /*
         GitStatusResult statusResult = await (prj.status());
@@ -99,9 +98,7 @@ void main(List<String> arguments) {
 
         stdout.writeln(cmd);
         if (!dryRun) {
-          await runCmd(cmd
-            ..connectStderr = true
-            ..connectStdout = true);
+          await runCmd(cmd, verbose: true);
         }
       }
     }
