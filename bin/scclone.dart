@@ -14,9 +14,9 @@ import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
 
-
 const String _HELP = 'help';
 const String _DRY_RUN = 'dry-run';
+const String verboseFlag = "verbose";
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -34,9 +34,12 @@ main(List<String> arguments) async {
       abbr: 'd',
       help: 'Do not clone, simple show the folders created',
       negatable: false);
+  parser.addFlag(verboseFlag,
+      abbr: 'v', help: 'Verbose output', negatable: false);
   ArgResults _argsResult = parser.parse(arguments);
 
   bool help = _argsResult[_HELP];
+  bool verbose = _argsResult[verboseFlag];
 
   _printUsage() {
     stdout.writeln(
@@ -80,7 +83,9 @@ main(List<String> arguments) async {
     bool done = false;
     _tryGit(uri, parts) async {
       // try git first
-      if ((!done) && await isGitSupported && await isGitRepository(uri)) {
+      if ((!done) &&
+          await checkGitSupported(verbose: verbose) &&
+          await isGitRepository(uri, verbose: verbose)) {
         done = true;
         // Check if remote is a git repository
         List<String> gitParts = new List.from(parts);
@@ -110,7 +115,9 @@ main(List<String> arguments) async {
     }
     await _tryGit(uri, parts);
 
-    if ((!done) && await isHgSupported && await isHgRepository(uri)) {
+    if ((!done) &&
+        await checkHgSupported(verbose: verbose) &&
+        await isHgRepository(uri, verbose: verbose)) {
       // try hg then
       List<String> hgParts = new List.from(parts);
       if (topDirName != "hg") {

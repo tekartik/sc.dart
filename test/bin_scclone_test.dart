@@ -35,14 +35,14 @@ void main() {
       if (await hg.isHgSupported) {
         // check hg location
         String outPath = clearOutTestPath(testDescriptions);
-        ProcessResult result =
-        await runCmd(dartCmd([sccloneDartScript, 'https://bitbucket.org/alextk/public_hg_test'])..workingDirectory = outPath);
+        ProcessResult result = await runCmd(dartCmd(
+            [sccloneDartScript, 'https://bitbucket.org/alextk/public_hg_test'])
+          ..workingDirectory = outPath);
         expect(result.exitCode, 0);
-        File file = new File(join(outPath, 'hg', 'bitbucket.org', 'alextk', 'public_hg_test', 'one_file.txt'));
+        File file = new File(join(outPath, 'hg', 'bitbucket.org', 'alextk',
+            'public_hg_test', 'one_file.txt'));
         expect(await file.exists(), isTrue);
-
       }
-
     });
   });
 }

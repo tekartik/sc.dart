@@ -125,9 +125,12 @@ class GitPath {
 class GitProject extends GitPath {
   String src;
 
-  GitProject(this.src, {String path,
-  @deprecated // use path
-  String rootFolder}) : super._() {
+  GitProject(
+      this.src,
+      {String path,
+      @deprecated // use path
+          String rootFolder})
+      : super._() {
     // Handle null
     if (path == null) {
       var parts = scUriToPathParts(src);
@@ -187,12 +190,22 @@ Future<bool> get isGitSupported async {
   }
 }
 
+Future<bool> checkGitSupported({bool verbose}) async {
+  try {
+    await runCmd(gitVersionCmd(), verbose: verbose);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 ProcessCmd gitCmd(List<String> args) => processCmd('git', args);
 
 /// Check if an url is a git repository
-Future<bool> isGitRepository(String uri) async {
-  ProcessResult runResult =
-      await runCmd(gitCmd(['ls-remote', '--exit-code', '-h', uri]));
+Future<bool> isGitRepository(String uri, {bool verbose}) async {
+  ProcessResult runResult = await runCmd(
+      gitCmd(['ls-remote', '--exit-code', '-h', uri]),
+      verbose: verbose);
   // 2 is returned if not found
   // 128 if an error occured
   return (runResult.exitCode == 0) || (runResult.exitCode == 2);

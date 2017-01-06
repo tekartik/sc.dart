@@ -168,6 +168,15 @@ Future<bool> get isHgSupported async {
   }
 }
 
+Future<bool> checkHgSupported({bool verbose}) async {
+  try {
+    await runCmd(hgVersionCmd(), verbose: verbose);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 /*
 @deprecated
 Future<ProcessResult> hgRun(List<String> args,
@@ -182,8 +191,9 @@ ProcessCmd hgCmd(List<String> args) {
 
 ProcessCmd hgVersionCmd() => hgCmd(['--version']);
 
-Future<bool> isHgRepository(String uri) async {
-  ProcessResult runResult = await runCmd(hgCmd(['identify', uri]));
+Future<bool> isHgRepository(String uri, {bool verbose}) async {
+  ProcessResult runResult =
+      await runCmd(hgCmd(['identify', uri]), verbose: verbose);
   // 0 is returned if found (or empty), out contains the last revision number such as 947e3404e4b7
   // 255 if an error occured
   return (runResult.exitCode == 0);

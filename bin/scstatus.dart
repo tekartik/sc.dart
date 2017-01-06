@@ -138,6 +138,7 @@ void main(List<String> arguments) {
       }
     }
   }
+
   for (String dir in dirs) {
     print(dir);
     var _handle = _handleDir(dir);

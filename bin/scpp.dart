@@ -94,6 +94,7 @@ main(List<String> arguments) async {
         return result;
       }
     }
+
     // Ignore folder starting with .
     // don't event go below
     if (!basename(dir).startsWith('.') &&
@@ -149,6 +150,7 @@ main(List<String> arguments) async {
       }
     }
   }
+
   for (String dir in dirs) {
     print(dir);
     var _handle = _handleDir(dir);

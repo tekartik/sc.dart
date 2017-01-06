@@ -39,8 +39,8 @@ main(List<String> arguments) async {
 
   ArgParser parser = new ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag(
-      verboseFlag, abbr: 'v', help: 'Verbose output', negatable: false);
+  parser.addFlag(verboseFlag,
+      abbr: 'v', help: 'Verbose output', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
@@ -109,11 +109,13 @@ main(List<String> arguments) async {
             _waiter();
           }
         }
+
         _waiter();
         result = await runCmd(cmd, verbose: verbose);
         return result;
       }
     }
+
     // Ignore folder starting with .
     // don't event go below
     if (!basename(dir).startsWith('.') &&
@@ -137,6 +139,7 @@ main(List<String> arguments) async {
       }
     }
   }
+
   for (String dir in dirs) {
     print(dir);
     var _handle = _handleDir(dir);
