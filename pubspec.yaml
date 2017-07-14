@@ -1,7 +1,7 @@
 name: tekartik_sc
-version: 0.2.4
+version: 0.3.0
 author: Alexandre Roux Tekartik <alex@tekartik.com>
-homepage: https://github.com/tekartik/tekartik_sc.dart
+homepage: https://github.com/tekartik/sc.dart
 dependencies:
   process_run: any
   args: any
@@ -9,15 +9,15 @@ dependencies:
   pub_semver: any
   logging: any
   tekartik_common_utils:
-    git: git://github.com/tekartik/tekartik_common_utils.dart
+    git: git://github.com/tekartik/common_utils.dart
   tekartik_io_utils:
-    git: git://github.com/tekartik/tekartik_io_utils.dart
+    git: git://github.com/tekartik/io_utils.dart
 
 dev_dependencies:
   test: any
   dev_test: any
   tekartik_pub:
-    git: git://github.com/tekartik/tekartik_pub.dart
+    git: git://github.com/tekartik/pub.dart
 dependency_overrides:
 #  process_run:
 #    git: git://github.com/tekartik/process_run.dart
