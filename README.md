@@ -30,7 +30,7 @@ Clone either mercurial/git repository building path like  `<sc>/domain.com/path`
 
 ### From git repository
 
-    pub global activate -s git git://github.com/tekartik/tekartik_sc.dart
+    pub global activate -s git git://github.com/tekartik/sc.dart
 
 ### From local path
 

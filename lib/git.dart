@@ -28,13 +28,17 @@ class GitPath {
 
   String get path => _path;
 
-  GitPath(this._path);
+  GitPath([String path]);
 
   GitPath._();
 
   ProcessCmd _gitCmd(List<String> args) {
     ProcessCmd cmd = gitCmd(args)..workingDirectory = path;
     return cmd;
+  }
+
+  ProcessCmd cmd(List<String> args) {
+    return _gitCmd(args);
   }
 
   ProcessCmd pushCmd() {
