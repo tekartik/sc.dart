@@ -84,7 +84,7 @@ main(List<String> arguments) async {
     _tryGit(uri, parts) async {
       // try git first
       if ((!done) &&
-          await checkGitSupported(verbose: verbose) &&
+          await checkGitSupported(once: true, verbose: verbose) &&
           await isGitRepository(uri, verbose: verbose)) {
         done = true;
         // Check if remote is a git repository
@@ -94,7 +94,7 @@ main(List<String> arguments) async {
         }
         String path = absolute(joinAll(gitParts));
         if (await isGitTopLevelPath(path)) {
-          stdout.writeln("git: ${path} already exists");
+          stderr.writeln("git: ${path} already exists");
         } else {
           GitProject prj = new GitProject(uri, path: path);
           if (dryRun) {
@@ -113,11 +113,16 @@ main(List<String> arguments) async {
       String newUri = uri.substring(0, uri.length - 4);
       await _tryGit(newUri, scUriToPathParts(newUri));
     }
-    await _tryGit(uri, parts);
+
+    if (!done) {
+      await _tryGit(uri, parts);
+    }
 
     if ((!done) &&
         await checkHgSupported(verbose: verbose) &&
         await isHgRepository(uri, verbose: verbose)) {
+      done = true;
+
       // try hg then
       List<String> hgParts = new List.from(parts);
       if (topDirName != "hg") {
@@ -136,6 +141,11 @@ main(List<String> arguments) async {
           await runCmd(cmd, verbose: true);
         }
       }
+    }
+
+    if (!done) {
+      stderr.writeln(
+          "Could not find sc control for $uri. Try running with verbose mode on (-v) for more information");
     }
   }
 

@@ -184,29 +184,38 @@ class GitProject extends GitPath {
 /// Version command
 ProcessCmd gitVersionCmd() => gitCmd(['--version']);
 
-/// check if git is supported
-Future<bool> get isGitSupported async {
-  try {
-    await runCmd(gitVersionCmd());
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
+bool _isGitSupported;
 
-Future<bool> checkGitSupported({bool verbose}) async {
+/// check if git is supported, only once
+Future<bool> get isGitSupported async => await checkGitSupported(once: true);
+
+// [once] if true check only once and check the result for later calls with once: true
+Future<bool> checkGitSupported({bool once, bool verbose}) async {
+  if (once == true && _isGitSupported != null) {
+    return _isGitSupported;
+  }
   try {
     await runCmd(gitVersionCmd(), verbose: verbose);
+    _isGitSupported = true;
     return true;
   } catch (e) {
+    _isGitSupported = false;
     return false;
   }
 }
 
 ProcessCmd gitCmd(List<String> args) => processCmd('git', args);
 
+// always true
+bool canBeGitRepository(String uri) {
+  return true;
+}
+
 /// Check if an url is a git repository
 Future<bool> isGitRepository(String uri, {bool verbose}) async {
+  if (!canBeGitRepository(uri)) {
+    return false;
+  }
   ProcessResult runResult = await runCmd(
       gitCmd(['ls-remote', '--exit-code', '-h', uri]),
       verbose: verbose);

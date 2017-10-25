@@ -191,7 +191,18 @@ ProcessCmd hgCmd(List<String> args) {
 
 ProcessCmd hgVersionCmd() => hgCmd(['--version']);
 
+bool canBeHgRepository(String uri) {
+  // this is only for git
+  if (uri.startsWith("git@")) {
+    return false;
+  }
+  return true;
+}
+
 Future<bool> isHgRepository(String uri, {bool verbose}) async {
+  if (!canBeHgRepository(uri)) {
+    return false;
+  }
   ProcessResult runResult =
       await runCmd(hgCmd(['identify', uri]), verbose: verbose);
   // 0 is returned if found (or empty), out contains the last revision number such as 947e3404e4b7
