@@ -44,12 +44,18 @@ void main(List<String> arguments) {
     stdout.writeln(
         'Usage: ${currentScriptName} [<folder_paths...>] [<arguments>]');
     stdout.writeln();
+    stdout.writeln("--log finer will display all path");
+    stdout.writeln("--log finest will display all path and command executed");
+    stdout.writeln();
     stdout.writeln("Global options:");
     stdout.writeln(parser.usage);
     return;
   }
 
+
   Level level = parseLogLevel(_argsResult[_LOG]);
+
+  bool commandVerbose = level <= Level.FINEST;
 
   if (_argsResult['version']) {
     stdout.write('${currentScriptName} ${version}');
@@ -80,15 +86,20 @@ void main(List<String> arguments) {
         GitStatusResult statusResult = await (prj.status());
 
         StdBuf buf = new StdBuf();
-        if (level <= Level.FINEST) {
+        if (level <= Level.FINER) {
           buf.outAppend('--- git ${prj}');
+        }
+        if (level <= Level.FINEST) {
           buf.outAppend('> ${statusResult.cmd}');
           buf.appendResult(statusResult.runResult);
         }
         if (statusResult.branchIsAhead || !statusResult.nothingToCommit) {
-          buf.outAppend('--- git ${prj}');
+          // already done
+          if (level > Level.FINER) {
+            buf.outAppend('--- git ${prj}');
+          }
           if (statusResult.branchIsAhead) {
-            buf.outAppend('Branch is ahread');
+            buf.outAppend('Branch is ahead');
           }
           //stdout.writeln(statusResult.runResult.stdout);
           // rerun in short version mode
@@ -96,7 +107,7 @@ void main(List<String> arguments) {
           if (level <= Level.FINEST) {
             buf.outAppend('> ${cmd}');
           }
-          ProcessResult result = await runCmd(cmd);
+          ProcessResult result = await runCmd(cmd, commandVerbose: commandVerbose);
           buf.appendResult(result);
         }
         buf.print();

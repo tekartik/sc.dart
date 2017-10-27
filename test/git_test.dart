@@ -20,6 +20,13 @@ void main() {
       }
     });
 
+    test('path', () {
+      var giPath = new GitPath();
+      expect(giPath.path, isNull);
+      giPath = new GitPath('.');
+      expect(giPath.path, '.');
+    });
+
     test('isGitSupported', () async {
       expect(await isGitSupported, _isGitSupported);
     });

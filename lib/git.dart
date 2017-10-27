@@ -28,7 +28,9 @@ class GitPath {
 
   String get path => _path;
 
-  GitPath([String path]);
+  GitPath([String path]) {
+    this._path = path;
+  }
 
   GitPath._();
 
