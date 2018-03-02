@@ -41,7 +41,7 @@ main(List<String> arguments) async {
 
   ArgResults _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_HELP];
+  bool help = _argsResult[_HELP] as bool;
   if (help) {
     stdout.writeln(
         'Push & Pull(update) from source control recursively (default from current directory)');
@@ -53,14 +53,14 @@ main(List<String> arguments) async {
     stdout.writeln(parser.usage);
     return;
   }
-  bool dryRun = _argsResult[_DRY_RUN];
+  bool dryRun = _argsResult[_DRY_RUN] as bool;
 
-  if (_argsResult['version']) {
+  if (_argsResult['version'] as bool) {
     stdout.write('${currentScriptName} ${version}');
     return;
   }
 
-  Level level = parseLogLevel(_argsResult[_LOG]);
+  Level level = parseLogLevel(_argsResult[_LOG] as String);
   /*
   String logLevel = _argsResult[_LOG];
   if (logLevel != null) {

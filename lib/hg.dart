@@ -44,7 +44,7 @@ class HgPath {
 
     //bool showResult = true;
     if (result.exitCode == 0) {
-      if (result.stdout.isEmpty) {
+      if (result.stdout.isEmpty as bool) {
         statusResult.nothingToCommit = true;
       }
     }
@@ -60,7 +60,7 @@ class HgPath {
       case 0:
       case 1:
         {
-          Iterable<String> lines = LineSplitter.split(result.stdout);
+          Iterable<String> lines = LineSplitter.split(result.stdout as String);
           //print(lines.last);
           if (lines.last.startsWith('no changes found') ||
               lines.last.startsWith('aucun changement')) {

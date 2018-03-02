@@ -38,8 +38,8 @@ main(List<String> arguments) async {
       abbr: 'v', help: 'Verbose output', negatable: false);
   ArgResults _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_HELP];
-  bool verbose = _argsResult[verboseFlag];
+  bool help = _argsResult[_HELP] as bool;
+  bool verbose = _argsResult[verboseFlag] as bool;
 
   _printUsage() {
     stdout.writeln(
@@ -62,12 +62,12 @@ main(List<String> arguments) async {
     return;
   }
 
-  if (_argsResult['version']) {
+  if (_argsResult['version'] as bool) {
     stdout.writeln('${currentScriptName} ${version}');
     return;
   }
 
-  bool dryRun = _argsResult[_DRY_RUN];
+  bool dryRun = _argsResult[_DRY_RUN] as bool;
 
   // get uris in parameters, default to current
   List<String> uris = _argsResult.rest;
@@ -81,7 +81,7 @@ main(List<String> arguments) async {
     String topDirName = basename(Directory.current.path);
 
     bool done = false;
-    _tryGit(uri, parts) async {
+    _tryGit(String uri, List<String> parts) async {
       // try git first
       if ((!done) &&
           await checkGitSupported(once: true, verbose: verbose) &&

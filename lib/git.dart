@@ -67,7 +67,7 @@ class GitPath {
     GitStatusResult statusResult = new GitStatusResult(cmd, result);
 
     if (result.exitCode == 0) {
-      Iterable<String> lines = LineSplitter.split(result.stdout);
+      Iterable<String> lines = LineSplitter.split(result.stdout.toString());
 
       lines.forEach((String line) {
         // Linux /Win?/Mac?

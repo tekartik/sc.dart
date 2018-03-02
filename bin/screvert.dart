@@ -36,7 +36,7 @@ void main(List<String> arguments) {
 
   ArgResults _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_HELP];
+  bool help = _argsResult[_HELP] as bool;
   if (help) {
     stdout.writeln('Revert files in the given directories');
     stdout.writeln();
@@ -48,12 +48,12 @@ void main(List<String> arguments) {
     return;
   }
 
-  if (_argsResult['version']) {
+  if (_argsResult['version'] as bool) {
     stdout.write('${currentScriptName} ${version}');
     return;
   }
 
-  bool dryRun = _argsResult["dry-run"];
+  bool dryRun = _argsResult["dry-run"] as bool;
 
   // get dirs in parameters, default to current
   List<String> dirOrFiles = _argsResult.rest;

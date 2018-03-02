@@ -36,7 +36,7 @@ void main(List<String> arguments) {
 
   ArgResults _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_HELP];
+  bool help = _argsResult[_HELP] as bool;
   if (help) {
     stdout.writeln(
         'Display source control status recursively (default from current directory)');
@@ -52,12 +52,11 @@ void main(List<String> arguments) {
     return;
   }
 
-
-  Level level = parseLogLevel(_argsResult[_LOG]);
+  Level level = parseLogLevel(_argsResult[_LOG] as String);
 
   bool commandVerbose = level <= Level.FINEST;
 
-  if (_argsResult['version']) {
+  if (_argsResult['version'] as bool) {
     stdout.write('${currentScriptName} ${version}');
     return;
   }
@@ -107,7 +106,8 @@ void main(List<String> arguments) {
           if (level <= Level.FINEST) {
             buf.outAppend('> ${cmd}');
           }
-          ProcessResult result = await runCmd(cmd, commandVerbose: commandVerbose);
+          ProcessResult result =
+              await runCmd(cmd, commandVerbose: commandVerbose);
           buf.appendResult(result);
         }
         buf.print();

@@ -51,7 +51,7 @@ main(List<String> arguments) async {
 
   ArgResults _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_HELP];
+  bool help = _argsResult[_HELP] as bool;
   if (help) {
     stdout.writeln(
         'Pull(update) from source control recursively (default from current directory)');
@@ -63,10 +63,10 @@ main(List<String> arguments) async {
     stdout.writeln(parser.usage);
     return;
   }
-  bool dryRun = _argsResult[_DRY_RUN];
-  bool verbose = _argsResult[verboseFlag];
+  bool dryRun = _argsResult[_DRY_RUN] as bool;
+  bool verbose = _argsResult[verboseFlag] as bool;
 
-  if (_argsResult['version']) {
+  if (_argsResult['version'] as bool) {
     stdout.write('${currentScriptName} ${version}');
     return;
   }
