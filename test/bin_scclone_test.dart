@@ -14,7 +14,7 @@ import 'package:tekartik_sc/src/bin_version.dart';
 
 import 'io_test_common.dart';
 
-String get _pubPackageRoot => getPubPackageRootSync(testDirPath);
+String get _pubPackageRoot => normalize(absolute('.'));
 
 String get sccloneDartScript {
   PubPackage pkg = new PubPackage(_pubPackageRoot);

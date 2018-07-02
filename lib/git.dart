@@ -9,7 +9,7 @@ import 'package:process_run/cmd_run.dart';
 
 import 'src/scpath.dart';
 
-bool _DEBUG = false;
+//bool _DEBUG = false;
 
 class GitStatusResult {
   final ProcessCmd cmd;

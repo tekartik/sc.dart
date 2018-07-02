@@ -17,6 +17,7 @@ import 'package:tekartik_sc/src/scpath.dart';
 const String _HELP = 'help';
 const String _DRY_RUN = 'dry-run';
 const String verboseFlag = "verbose";
+const String depthParam = 'depth';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -36,6 +37,7 @@ main(List<String> arguments) async {
       negatable: false);
   parser.addFlag(verboseFlag,
       abbr: 'v', help: 'Verbose output', negatable: false);
+  parser.addOption(depthParam, help: "depth (git --depth 1)");
   ArgResults _argsResult = parser.parse(arguments);
 
   bool help = _argsResult[_HELP] as bool;
@@ -68,6 +70,7 @@ main(List<String> arguments) async {
   }
 
   bool dryRun = _argsResult[_DRY_RUN] as bool;
+  int depth = parseInt(_argsResult[depthParam]);
 
   // get uris in parameters, default to current
   List<String> uris = _argsResult.rest;
@@ -100,7 +103,7 @@ main(List<String> arguments) async {
           if (dryRun) {
             print("git clone ${prj.src} ${prj.path}");
           } else {
-            ProcessCmd cmd = prj.cloneCmd();
+            ProcessCmd cmd = prj.cloneCmd(depth: depth);
             stdout.writeln('> $cmd');
             await runCmd(cmd, verbose: true);
           }
