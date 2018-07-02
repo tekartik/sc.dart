@@ -9,16 +9,18 @@ dependencies:
   path: '>=1.4.2'
   pub_semver: '>=0.5.4'
   logging: '>=0.11.3'
-  tekartik_common_utils:
-    git: git://github.com/tekartik/common_utils.dart
   tekartik_io_utils:
-    git: git://github.com/tekartik/io_utils.dart
+    git:
+      url: git://github.com/tekartik/io_utils.dart
+      ref: dart1
 
 dev_dependencies:
   test: any
   dev_test: '>=0.9.3'
   tekartik_pub:
-    git: git://github.com/tekartik/pub.dart
+    git:
+      url: git://github.com/tekartik/pub.dart
+      ref: dart1
 dependency_overrides:
 #  process_run:
 #    git: git://github.com/tekartik/process_run.dart
