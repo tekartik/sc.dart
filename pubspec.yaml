@@ -1,24 +1,33 @@
 name: tekartik_sc
-version: 0.4.0
+version: 0.6.0
 author: Alexandre Roux Tekartik <alex@tekartik.com>
 homepage: https://github.com/tekartik/sc.dart
+environment:
+  sdk: '>=2.0.0-dev.58 <3.0.0'
+
 dependencies:
-  process_run: '>=0.5.4'
+  process_run: '>=0.6.0'
   # args: '>=1.0.1' grinder incompatible
   args: '>=0.13.7'
   path: '>=1.4.2'
   pub_semver: '>=0.5.4'
   logging: '>=0.11.3'
-  tekartik_common_utils:
-    git: git://github.com/tekartik/common_utils.dart
   tekartik_io_utils:
-    git: git://github.com/tekartik/io_utils.dart
-
+    git:
+      url: git://github.com/tekartik/io_utils.dart
+      ref: dart2
+    version: '>=0.3.0'
 dev_dependencies:
   test: any
-  dev_test: '>=0.9.3'
+  dev_test: '>=0.12.0'
   tekartik_pub:
-    git: git://github.com/tekartik/pub.dart
+    git:
+      url: git://github.com/tekartik/pub.dart
+      ref: dart2
+    version: '>=0.9.0'
+  build_runner: '>=0.9.1'
+  build_test: '>=0.10.2'
+
 dependency_overrides:
 #  process_run:
 #    git: git://github.com/tekartik/process_run.dart

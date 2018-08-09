@@ -8,7 +8,7 @@ import 'package:tekartik_common_utils/common_utils_import.dart';
 
 import 'src/scpath.dart';
 
-bool _DEBUG = false;
+//bool _DEBUG = false;
 
 class HgStatusResult {
   final ProcessCmd cmd;

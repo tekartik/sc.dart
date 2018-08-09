@@ -13,7 +13,7 @@ import 'package:tekartik_sc/src/bin_version.dart';
 
 import 'io_test_common.dart';
 
-String get _pubPackageRoot => getPubPackageRootSync(testDirPath);
+String get _pubPackageRoot => '.';
 
 String get scpullDartScript {
   PubPackage pkg = new PubPackage(_pubPackageRoot);
