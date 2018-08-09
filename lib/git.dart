@@ -61,9 +61,12 @@ class GitPath {
   }
 
   /// printResultIfChanges: show result if different than 'nothing to commit'
-  Future<GitStatusResult> status() async {
+  Future<GitStatusResult> status({bool verbose}) async {
     ProcessCmd cmd = statusCmd();
-    ProcessResult result = await runCmd(cmd);
+    if (verbose == true) {
+      print('working dir: ${cmd.workingDirectory}');
+    }
+    ProcessResult result = await runCmd(cmd, verbose: verbose);
     GitStatusResult statusResult = new GitStatusResult(cmd, result);
 
     if (result.exitCode == 0) {

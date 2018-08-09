@@ -66,7 +66,7 @@ void main() {
     });
 
     group('bitbucket.org', () {
-      test('GitProject', () async {
+      test('bbGitProject', () async {
         if (_isGitSupported) {
           String outPath = clearOutTestPath(testDescriptions);
           expect(await (isGitTopLevelPath(outPath)), isFalse);
@@ -80,7 +80,7 @@ void main() {
           expect(statusResult.branchIsAhead, false);
 
           File tempFile = new File(join(prj.path, "temp_file.txt"));
-          await tempFile.writeAsString("echo");
+          await tempFile.writeAsString("echo", flush: true);
           statusResult = await prj.status();
           expect(statusResult.nothingToCommit, false);
           expect(statusResult.branchIsAhead, false);
@@ -114,7 +114,7 @@ void main() {
           expect(statusResult.branchIsAhead, false);
 
           File tempFile = new File(join(prj.path, "temp_file.txt"));
-          await tempFile.writeAsString("echo");
+          await tempFile.writeAsString("echo", flush: true);
           statusResult = await prj.status();
           expect(statusResult.nothingToCommit, false);
           expect(statusResult.branchIsAhead, false);
