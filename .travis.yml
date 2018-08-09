@@ -1,7 +1,7 @@
 language: dart
 dart:
-  - 1.24.3
-#  - dev
+  - stable
+  - dev
 sudo: false
 before_install:
   - export DISPLAY=:99.0
