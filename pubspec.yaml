@@ -1,5 +1,5 @@
 name: tekartik_sc
-version: 0.6.0
+version: 0.7.0
 author: Alexandre Roux Tekartik <alex@tekartik.com>
 homepage: https://github.com/tekartik/sc.dart
 environment:
@@ -32,9 +32,3 @@ dependency_overrides:
 #  process_run:
 #    git: git://github.com/tekartik/process_run.dart
 #    path: ../process_run.dart
-executables:
-  scpull:
-  scstatus:
-  screvert:
-  scpp:
-  scclone:

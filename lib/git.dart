@@ -9,6 +9,22 @@ import 'package:process_run/cmd_run.dart';
 
 import 'src/scpath.dart';
 
+class _GitCommand {
+  _GitCommand({this.runInShell});
+  bool runInShell;
+  String binaryPath;
+
+  ProcessCmd processCmd(List<String> args) {
+    return ProcessCmd(binaryPath ?? 'git', args,
+        runInShell: runInShell ?? false);
+  }
+}
+
+// default git command
+_GitCommand _gitCommand;
+
+_GitCommand _defaultGitCommand = new _GitCommand();
+
 //bool _DEBUG = false;
 
 class GitStatusResult {
@@ -199,17 +215,35 @@ Future<bool> checkGitSupported({bool once, bool verbose}) async {
   if (once == true && _isGitSupported != null) {
     return _isGitSupported;
   }
-  try {
-    await runCmd(gitVersionCmd(), verbose: verbose);
-    _isGitSupported = true;
-    return true;
-  } catch (e) {
-    _isGitSupported = false;
-    return false;
+
+  Future<bool> tryGitCommand(_GitCommand gitCommand, bool verbose) async {
+    try {
+      await runCmd(gitCommand.processCmd(['--version']), verbose: verbose);
+      _isGitSupported = true;
+      _gitCommand = gitCommand;
+      return true;
+    } catch (e, st) {
+      if (verbose == true) {
+        stderr.writeln(e);
+        stderr.writeln(st);
+      }
+      _isGitSupported = false;
+      return false;
+    }
   }
+
+  if (_gitCommand != null) {
+    return tryGitCommand(_gitCommand, verbose);
+  } else {
+    if (!await tryGitCommand(_defaultGitCommand, false)) {
+      return tryGitCommand(_GitCommand(runInShell: true), verbose);
+    }
+  }
+  return true;
 }
 
-ProcessCmd gitCmd(List<String> args) => processCmd('git', args);
+ProcessCmd gitCmd(List<String> args) =>
+    (_gitCommand ?? _defaultGitCommand).processCmd(args);
 
 // always true
 bool canBeGitRepository(String uri) {

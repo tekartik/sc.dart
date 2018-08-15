@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+* Executable removed (to sc_scripts)
+
 ## 0.4.0
 
 * strong mode support
