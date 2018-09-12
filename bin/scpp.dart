@@ -112,8 +112,11 @@ main(List<String> arguments) async {
         }
         cmd = prj.pullCmd();
         result = await _execute(buf, cmd);
+        var pullOutput = result.stdout.toString();
+        // Ubuntu 18.04: Already up to date.
         if (result.exitCode != 0 ||
-            !result.stdout.toString().contains('up-to-date')) {
+            !(pullOutput.contains('up-to-date') ||
+                pullOutput.contains('up to date'))) {
           buf.outAppend('> ${cmd}');
           buf.appendResult(result);
         }
