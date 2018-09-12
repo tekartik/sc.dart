@@ -6,6 +6,17 @@ Tekartik source control helpers (git &amp; hg) for dart
 
 ## Usage
 
+pubspec.yaml:
+
+```yaml
+dependencies
+  tekartik_sc:
+    git:
+      url: git://github.com/tekartik/sc.dart
+      ref: dart2
+    version: '>=0.7.0'
+```
+
 Recursively pull
 
     scpull
