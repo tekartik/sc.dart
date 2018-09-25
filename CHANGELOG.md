@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3
+
+* Add branch support for scclone
+
 ## 0.7.2
 
 * Windows support

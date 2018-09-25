@@ -17,6 +17,7 @@ import 'package:tekartik_sc/src/scpath.dart';
 const String _HELP = 'help';
 const String _DRY_RUN = 'dry-run';
 const String verboseFlag = "verbose";
+const String branchOption = "branch";
 const String depthParam = 'depth';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
@@ -38,10 +39,12 @@ main(List<String> arguments) async {
   parser.addFlag(verboseFlag,
       abbr: 'v', help: 'Verbose output', negatable: false);
   parser.addOption(depthParam, help: "depth (git --depth 1)");
+  parser.addOption(branchOption, abbr: 'b', help: 'branch (git clone -b <branch>)');
   ArgResults _argsResult = parser.parse(arguments);
 
   bool help = _argsResult[_HELP] as bool;
   bool verbose = _argsResult[verboseFlag] as bool;
+  var branch = _argsResult[branchOption] as String;
 
   _printUsage() {
     stdout.writeln(

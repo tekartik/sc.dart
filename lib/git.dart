@@ -180,13 +180,16 @@ class GitProject extends GitPath {
 
   // no using _gitCmd as not using workingDirectory
   // only get latest revision if [depth] = 1
-  ProcessCmd cloneCmd({bool progress, int depth}) {
+  ProcessCmd cloneCmd({bool progress, int depth, String branch}) {
     List<String> args = ['clone'];
     if (progress == true) {
       args.add('--progress');
     }
     if (depth != null) {
       args.addAll(['--depth', depth.toString()]);
+    }
+    if (branch != null) {
+      args.addAll(['--branch', branch]);
     }
     args.addAll([src, path]);
     return gitCmd(args);
