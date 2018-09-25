@@ -17,10 +17,10 @@ String getOutTestPath([List<String> parts]) {
 String clearOutTestPath([List<String> parts]) {
   String outPath = getOutTestPath(parts);
   try {
-    new Directory(outPath).deleteSync(recursive: true);
+    Directory(outPath).deleteSync(recursive: true);
   } catch (e) {}
   try {
-    new Directory(outPath).createSync(recursive: true);
+    Directory(outPath).createSync(recursive: true);
   } catch (e) {}
   return outPath;
 }

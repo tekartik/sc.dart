@@ -58,7 +58,7 @@ void defineTests() {
     test('HgProject', () async {
       if (_isHgSupported) {
         String outPath = clearOutTestPath(testDescriptions);
-        var prj = new HgProject('https://bitbucket.org/alextk/hg_data_test',
+        var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
             rootFolder: outPath);
         expect(await (isHgTopLevelPath(outPath)), isFalse);
         await runCmd(prj.cloneCmd());
@@ -68,7 +68,7 @@ void defineTests() {
         HgOutgoingResult outgoingResult = await prj.outgoing();
         expect(outgoingResult.branchIsAhead, false);
 
-        File tempFile = new File(join(prj.path, "temp_file.txt"));
+        File tempFile = File(join(prj.path, "temp_file.txt"));
         await tempFile.writeAsString("echo");
         statusResult = await prj.status();
         expect(statusResult.nothingToCommit, false);

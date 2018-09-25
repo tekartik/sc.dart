@@ -27,7 +27,7 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 void main(List<String> arguments) {
   //setupQuickLogging();
 
-  ArgParser parser = new ArgParser(allowTrailingOptions: true);
+  ArgParser parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
@@ -81,11 +81,11 @@ void main(List<String> arguments) {
     if (await FileSystemEntity.isDirectory(dir)) {
       if (await isGitTopLevelPath(dir)) {
         if (await isGitSupported) {
-          GitPath prj = new GitPath(dir);
+          GitPath prj = GitPath(dir);
 
           GitStatusResult statusResult = await (prj.status());
 
-          StdBuf buf = new StdBuf();
+          StdBuf buf = StdBuf();
           if (level <= Level.FINER) {
             buf.outAppend('--- git ${prj}');
           }
@@ -114,9 +114,9 @@ void main(List<String> arguments) {
           buf.print();
         }
       } else if (await isHgTopLevelPath(dir)) {
-        HgPath prj = new HgPath(dir);
+        HgPath prj = HgPath(dir);
 
-        StdBuf buf = new StdBuf();
+        StdBuf buf = StdBuf();
         HgStatusResult statusResult = await (prj.status());
         if (level <= Level.FINEST) {
           buf.outAppend('--- hg ${prj}');
@@ -141,7 +141,7 @@ void main(List<String> arguments) {
       } else {
         try {
           List<Future> sub = [];
-          await new Directory(dir).list().listen((FileSystemEntity fse) {
+          await Directory(dir).list().listen((FileSystemEntity fse) {
             sub.add(_handleDir(fse.path));
           }).asFuture();
           await Future.wait(sub);

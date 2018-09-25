@@ -24,7 +24,7 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 void main(List<String> arguments) {
   //setupQuickLogging();
 
-  ArgParser parser = new ArgParser(allowTrailingOptions: true);
+  ArgParser parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
@@ -77,7 +77,7 @@ void main(List<String> arguments) {
       String rel = relative(dirOrFile, from: scTopPath);
       if (await isGitTopLevelPath(scTopPath)) {
         if (await isGitSupported) {
-          GitPath prj = new GitPath(scTopPath);
+          GitPath prj = GitPath(scTopPath);
           ProcessCmd cmd = prj.checkoutCmd(path: rel);
 
           stdout.writeln(cmd);
@@ -94,7 +94,7 @@ void main(List<String> arguments) {
         }
         */
         } else if (await isHgTopLevelPath(scTopPath)) {
-          HgPath prj = new HgPath(scTopPath);
+          HgPath prj = HgPath(scTopPath);
           ProcessCmd cmd = prj.revertCmd(path: rel, noBackup: true);
 
           stdout.writeln(cmd);

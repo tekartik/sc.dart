@@ -21,9 +21,9 @@ void main() {
     });
 
     test('path', () {
-      var giPath = new GitPath();
+      var giPath = GitPath();
       expect(giPath.path, isNull);
-      giPath = new GitPath('.');
+      giPath = GitPath('.');
       expect(giPath.path, '.');
     });
 
@@ -70,8 +70,7 @@ void main() {
         if (_isGitSupported) {
           String outPath = clearOutTestPath(testDescriptions);
           expect(await (isGitTopLevelPath(outPath)), isFalse);
-          var prj = new GitProject(
-              'https://bitbucket.org/alextk/public_git_test',
+          var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
               path: outPath);
           await runCmd(prj.cloneCmd(depth: 1));
           expect(await (isGitTopLevelPath(outPath)), isTrue);
@@ -79,7 +78,7 @@ void main() {
           expect(statusResult.nothingToCommit, true);
           expect(statusResult.branchIsAhead, false);
 
-          File tempFile = new File(join(prj.path, "temp_file.txt"));
+          File tempFile = File(join(prj.path, "temp_file.txt"));
           await tempFile.writeAsString("echo", flush: true);
           statusResult = await prj.status();
           expect(statusResult.nothingToCommit, false);
@@ -104,8 +103,7 @@ void main() {
         if (_isGitSupported) {
           String outPath = clearOutTestPath(testDescriptions);
           expect(await (isGitTopLevelPath(outPath)), isFalse);
-          var prj = new GitProject(
-              'https://github.com/alextekartik/data_test.git',
+          var prj = GitProject('https://github.com/alextekartik/data_test.git',
               path: outPath);
           await runCmd(prj.cloneCmd());
           expect(await (isGitTopLevelPath(outPath)), isTrue);
@@ -113,7 +111,7 @@ void main() {
           expect(statusResult.nothingToCommit, true);
           expect(statusResult.branchIsAhead, false);
 
-          File tempFile = new File(join(prj.path, "temp_file.txt"));
+          File tempFile = File(join(prj.path, "temp_file.txt"));
           await tempFile.writeAsString("echo", flush: true);
           statusResult = await prj.status();
           expect(statusResult.nothingToCommit, false);

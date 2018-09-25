@@ -28,7 +28,7 @@ main(List<String> arguments) async {
   //Logger log;
   //setupQuickLogging();
 
-  ArgParser parser = new ArgParser(allowTrailingOptions: true);
+  ArgParser parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
@@ -100,8 +100,8 @@ main(List<String> arguments) async {
     if (!basename(dir).startsWith('.') &&
         (await FileSystemEntity.isDirectory(dir))) {
       if (_isGitSupported && await isGitTopLevelPath(dir)) {
-        StdBuf buf = new StdBuf();
-        GitPath prj = new GitPath(dir);
+        StdBuf buf = StdBuf();
+        GitPath prj = GitPath(dir);
 
         ProcessCmd cmd = prj.pushCmd();
         ProcessResult result = await _execute(buf, cmd);
@@ -122,8 +122,8 @@ main(List<String> arguments) async {
 
         buf.print("--- git ${prj}");
       } else if (_isHgSupported && await isHgTopLevelPath(dir)) {
-        StdBuf buf = new StdBuf();
-        HgPath prj = new HgPath(dir);
+        StdBuf buf = StdBuf();
+        HgPath prj = HgPath(dir);
         //ProcessResult result =
         ProcessCmd cmd = prj.pushCmd();
         ProcessResult result = await _execute(buf, cmd);
@@ -144,7 +144,7 @@ main(List<String> arguments) async {
       } else {
         try {
           List<Future> sub = [];
-          await new Directory(dir).list().listen((FileSystemEntity fse) {
+          await Directory(dir).list().listen((FileSystemEntity fse) {
             sub.add(_handleDir(fse.path));
           }).asFuture();
           await Future.wait(sub);

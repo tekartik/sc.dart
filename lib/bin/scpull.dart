@@ -33,11 +33,11 @@ App app;
 ///
 ///
 main(List<String> arguments) async {
-  app = new App();
+  app = App();
   //Logger log;
   //setupQuickLogging();
 
-  ArgParser parser = new ArgParser(allowTrailingOptions: true);
+  ArgParser parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag(verboseFlag,
       abbr: 'v', help: 'Verbose output', negatable: false);
@@ -121,17 +121,17 @@ main(List<String> arguments) async {
     if (!basename(dir).startsWith('.') &&
         (await FileSystemEntity.isDirectory(dir))) {
       if (_isGitSupported && await isGitTopLevelPath(dir)) {
-        GitPath prj = new GitPath(dir);
+        GitPath prj = GitPath(dir);
         //ProcessResult result =
         await _execute(prj.pullCmd());
       } else if (_isHgSupported && await isHgTopLevelPath(dir)) {
-        HgPath prj = new HgPath(dir);
+        HgPath prj = HgPath(dir);
         //ProcessResult result =
         await _execute(prj.pullCmd());
       } else {
         try {
           List<Future> sub = [];
-          await new Directory(dir).list().listen((FileSystemEntity fse) {
+          await Directory(dir).list().listen((FileSystemEntity fse) {
             sub.add(_handleDir(fse.path));
           }).asFuture();
           await Future.wait(sub);

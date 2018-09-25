@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:process_run/cmd_run.dart';
 
 class StdBuf {
-  StringBuffer out = new StringBuffer();
-  StringBuffer err = new StringBuffer();
+  StringBuffer out = StringBuffer();
+  StringBuffer err = StringBuffer();
 
   void outAppend(Object object) {
     if (out.length > 0) {

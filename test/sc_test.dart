@@ -19,7 +19,7 @@ void defineTests() {
       if (_isGitSupported) {
         String outPath = clearOutTestPath();
 
-        var prj = new GitProject('https://bitbucket.org/alextk/public_git_test',
+        var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
             path: outPath);
         await runCmd(prj.cloneCmd());
 
@@ -38,7 +38,7 @@ void defineTests() {
       if (_isHgSupported) {
         String outPath = clearOutTestPath();
 
-        var prj = new HgProject('https://bitbucket.org/alextk/hg_data_test',
+        var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
             rootFolder: outPath);
         await runCmd(prj.cloneCmd());
 
