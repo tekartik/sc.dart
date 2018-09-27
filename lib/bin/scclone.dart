@@ -17,6 +17,7 @@ import 'package:tekartik_sc/src/scpath.dart';
 const String _HELP = 'help';
 const String _DRY_RUN = 'dry-run';
 const String verboseFlag = "verbose";
+const String branchOption = "branch";
 const String depthParam = 'depth';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
@@ -27,7 +28,7 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 main(List<String> arguments) async {
   //setupQuickLogging();
 
-  ArgParser parser = new ArgParser(allowTrailingOptions: true);
+  ArgParser parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
@@ -38,10 +39,13 @@ main(List<String> arguments) async {
   parser.addFlag(verboseFlag,
       abbr: 'v', help: 'Verbose output', negatable: false);
   parser.addOption(depthParam, help: "depth (git --depth 1)");
+  parser.addOption(branchOption,
+      abbr: 'b', help: 'branch (git clone -b <branch>)');
   ArgResults _argsResult = parser.parse(arguments);
 
   bool help = _argsResult[_HELP] as bool;
   bool verbose = _argsResult[verboseFlag] as bool;
+  var branch = _argsResult[branchOption] as String;
 
   _printUsage() {
     stdout.writeln(
@@ -94,7 +98,7 @@ main(List<String> arguments) async {
           await isGitRepository(uri, verbose: verbose)) {
         done = true;
         // Check if remote is a git repository
-        List<String> gitParts = new List.from(parts);
+        List<String> gitParts = List.from(parts);
         if (topDirName != "git") {
           gitParts.insert(0, "git");
         }
@@ -102,11 +106,11 @@ main(List<String> arguments) async {
         if (await isGitTopLevelPath(path)) {
           stderr.writeln("git: ${path} already exists");
         } else {
-          GitProject prj = new GitProject(uri, path: path);
+          GitProject prj = GitProject(uri, path: path);
           if (dryRun) {
             print("git clone ${prj.src} ${prj.path}");
           } else {
-            ProcessCmd cmd = prj.cloneCmd(depth: depth);
+            ProcessCmd cmd = prj.cloneCmd(depth: depth, branch: branch);
             stdout.writeln('> $cmd');
             await runCmd(cmd, verbose: true);
           }
@@ -130,7 +134,7 @@ main(List<String> arguments) async {
       done = true;
 
       // try hg then
-      List<String> hgParts = new List.from(parts);
+      List<String> hgParts = List.from(parts);
       if (topDirName != "hg") {
         hgParts.insert(0, "hg");
       }
@@ -139,7 +143,7 @@ main(List<String> arguments) async {
       if (await isHgTopLevelPath(path)) {
         stdout.writeln("hg: ${path} already exists");
       } else {
-        HgProject prj = new HgProject(uri, path: path);
+        HgProject prj = HgProject(uri, path: path);
         if (dryRun) {
           print("hg clone ${prj.src} ${prj.path}");
         } else {

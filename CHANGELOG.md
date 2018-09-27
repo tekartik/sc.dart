@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.3
+
+* Add branch support for scclone
+
+## 0.7.2
+
+* Windows support
+
 ## 0.7.0
 
 * Executable removed (to sc_scripts)

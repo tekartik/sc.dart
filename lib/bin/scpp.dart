@@ -10,13 +10,16 @@ import 'package:path/path.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
+import 'package:tekartik_sc/src/scpath.dart';
 import 'package:tekartik_sc/src/std_buf.dart';
 import 'package:tekartik_common_utils/log_utils.dart';
 
 const String _HELP = 'help';
 const String _LOG = 'log';
 const String _DRY_RUN = 'dry-run';
+const String verboseFlag = 'verbose';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -28,10 +31,12 @@ main(List<String> arguments) async {
   //Logger log;
   //setupQuickLogging();
 
-  ArgParser parser = new ArgParser(allowTrailingOptions: true);
+  ArgParser parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
+  parser.addFlag(verboseFlag,
+      abbr: 'v', help: 'Verbose output', negatable: false);
   parser.addOption(_LOG,
       abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
   parser.addFlag(_DRY_RUN,
@@ -60,7 +65,11 @@ main(List<String> arguments) async {
     return;
   }
 
+  bool verbose = _argsResult[verboseFlag];
   Level level = parseLogLevel(_argsResult[_LOG] as String);
+  if (verbose) {
+    level = Level.FINEST;
+  }
   /*
   String logLevel = _argsResult[_LOG];
   if (logLevel != null) {
@@ -78,9 +87,6 @@ main(List<String> arguments) async {
 
   List<Future> futures = [];
 
-  bool _isHgSupported = await isHgSupported;
-  bool _isGitSupported = await isGitSupported;
-
   Future _handleDir(String dir) async {
     Future<ProcessResult> _execute(StdBuf buf, ProcessCmd cmd) async {
       if (dryRun == true) {
@@ -95,69 +101,58 @@ main(List<String> arguments) async {
       }
     }
 
-    // Ignore folder starting with .
-    // don't event go below
-    if (!basename(dir).startsWith('.') &&
-        (await FileSystemEntity.isDirectory(dir))) {
-      if (_isGitSupported && await isGitTopLevelPath(dir)) {
-        StdBuf buf = new StdBuf();
-        GitPath prj = new GitPath(dir);
+    if (await isGitPathAndSupported(dir)) {
+      StdBuf buf = StdBuf();
+      GitPath prj = GitPath(dir);
 
-        ProcessCmd cmd = prj.pushCmd();
-        ProcessResult result = await _execute(buf, cmd);
-        if (result.exitCode != 0 ||
-            !result.stderr.toString().contains('up-to-date')) {
-          buf.outAppend('> ${cmd}');
-          buf.appendResult(result);
-        }
-        cmd = prj.pullCmd();
-        result = await _execute(buf, cmd);
-        var pullOutput = result.stdout.toString();
-        if (result.exitCode != 0 ||
-            !(pullOutput.contains('up-to-date') ||
-                pullOutput.contains('up to date'))) {
-          buf.outAppend('> ${cmd}');
-          buf.appendResult(result);
-        }
-
-        buf.print("--- git ${prj}");
-      } else if (_isHgSupported && await isHgTopLevelPath(dir)) {
-        StdBuf buf = new StdBuf();
-        HgPath prj = new HgPath(dir);
-        //ProcessResult result =
-        ProcessCmd cmd = prj.pushCmd();
-        ProcessResult result = await _execute(buf, cmd);
-        // exitCode seems to be always 1 on linux...
-        // result.exitCode != 0 ||
-        if (!result.stdout.toString().contains('no changes found')) {
-          buf.outAppend('> ${cmd}');
-          buf.appendResult(result);
-        }
-        cmd = prj.pullCmd();
-        result = await _execute(buf, cmd);
-        if (result.exitCode != 0 ||
-            !result.stdout.toString().contains('no changes found')) {
-          buf.outAppend('> ${cmd}');
-          buf.appendResult(result);
-        }
-        buf.print("--- hg ${prj}");
-      } else {
-        try {
-          List<Future> sub = [];
-          await new Directory(dir).list().listen((FileSystemEntity fse) {
-            sub.add(_handleDir(fse.path));
-          }).asFuture();
-          await Future.wait(sub);
-        } catch (_, __) {}
+      ProcessCmd cmd = prj.pushCmd();
+      ProcessResult result = await _execute(buf, cmd);
+      if (result.exitCode != 0 ||
+          !result.stderr.toString().contains('up-to-date')) {
+        buf.outAppend('> ${cmd}');
+        buf.appendResult(result);
       }
+      cmd = prj.pullCmd();
+      result = await _execute(buf, cmd);
+      var pullOutput = result.stdout.toString();
+      if (result.exitCode != 0 ||
+          !(pullOutput.contains('up-to-date') ||
+              pullOutput.contains('up to date'))) {
+        buf.outAppend('> ${cmd}');
+        buf.appendResult(result);
+      }
+
+      buf.print("--- git ${prj}");
+    } else if (await isHgPathAndSupported(dir)) {
+      StdBuf buf = StdBuf();
+      HgPath prj = HgPath(dir);
+      //ProcessResult result =
+      ProcessCmd cmd = prj.pushCmd();
+      ProcessResult result = await _execute(buf, cmd);
+      // exitCode seems to be always 1 on linux...
+      // result.exitCode != 0 ||
+      if (!result.stdout.toString().contains('no changes found')) {
+        buf.outAppend('> ${cmd}');
+        buf.appendResult(result);
+      }
+      cmd = prj.pullCmd();
+      result = await _execute(buf, cmd);
+      if (result.exitCode != 0 ||
+          !result.stdout.toString().contains('no changes found')) {
+        buf.outAppend('> ${cmd}');
+        buf.appendResult(result);
+      }
+      buf.print("--- hg ${prj}");
     }
   }
 
   for (String dir in dirs) {
     print(dir);
-    var _handle = _handleDir(dir);
+    var _handle = handleScPath(dir, _handleDir, recursive: true);
     if (_handle is Future) {
       futures.add(_handle);
     }
   }
+
+  await Future.wait(futures);
 }

@@ -40,7 +40,7 @@ class HgPath {
     ProcessCmd cmd = _hgCmd(['status']);
     ProcessResult result = await runCmd(cmd);
 
-    HgStatusResult statusResult = new HgStatusResult(cmd, result);
+    HgStatusResult statusResult = HgStatusResult(cmd, result);
 
     //bool showResult = true;
     if (result.exitCode == 0) {
@@ -55,7 +55,7 @@ class HgPath {
   Future<HgOutgoingResult> outgoing() async {
     ProcessCmd cmd = _hgCmd(['outgoing']);
     ProcessResult result = await runCmd(cmd);
-    HgOutgoingResult outgoingResult = new HgOutgoingResult(cmd, result);
+    HgOutgoingResult outgoingResult = HgOutgoingResult(cmd, result);
     switch (result.exitCode) {
       case 0:
       case 1:
@@ -90,7 +90,7 @@ class HgPath {
     return _hgCmd(args);
   }
 
-  ProcessCmd pullCmd({bool update: true}) {
+  ProcessCmd pullCmd({bool update = true}) {
     List<String> args = ['pull'];
     if (update == true) {
       args.add('-u');
@@ -129,7 +129,7 @@ class HgProject extends HgPath {
       _path = joinAll(parts);
 
       if (_path == null) {
-        throw new Exception(
+        throw Exception(
             'null path only allowed for https://github.com/xxxuser/xxxproject src');
       }
       if (rootFolder != null) {
@@ -151,7 +151,7 @@ class HgProject extends HgPath {
 
   Future pullOrClone() {
     // TODO: check the origin branch
-    if (new File(join(path, '.hg', 'hgrc')).existsSync()) {
+    if (File(join(path, '.hg', 'hgrc')).existsSync()) {
       return runCmd(pullCmd());
     } else {
       return runCmd(cloneCmd());
@@ -159,13 +159,12 @@ class HgProject extends HgPath {
   }
 }
 
+bool _isHgSupported;
 Future<bool> get isHgSupported async {
-  try {
-    await runCmd(hgVersionCmd());
-    return true;
-  } catch (e) {
-    return false;
+  if (_isHgSupported == null) {
+    _isHgSupported = await checkHgSupported();
   }
+  return _isHgSupported;
 }
 
 Future<bool> checkHgSupported({bool verbose}) async {
@@ -186,7 +185,7 @@ Future<ProcessResult> hgRun(List<String> args,
 ProcessCmd hgCmd(List<String> args) {
   // Force hg language to english
   Map<String, String> environment = {"LANGUAGE": "en_US.UTF8"};
-  return processCmd("hg", args)..environment = environment;
+  return ProcessCmd("hg", args)..environment = environment;
 }
 
 ProcessCmd hgVersionCmd() => hgCmd(['--version']);

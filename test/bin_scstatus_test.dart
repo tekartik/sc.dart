@@ -16,7 +16,7 @@ import 'io_test_common.dart';
 String get _pubPackageRoot => '.';
 
 String get scstatusDartScript {
-  PubPackage pkg = new PubPackage(_pubPackageRoot);
+  PubPackage pkg = PubPackage(_pubPackageRoot);
   return join(pkg.path, 'bin', 'scstatus.dart');
 }
 
@@ -29,7 +29,7 @@ void main() {
       List<String> parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'scstatus');
-      expect(new Version.parse(parts.last), version);
+      expect(Version.parse(parts.last), version);
     });
   });
 }

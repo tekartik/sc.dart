@@ -17,7 +17,7 @@ import 'io_test_common.dart';
 String get _pubPackageRoot => normalize(absolute('.'));
 
 String get sccloneDartScript {
-  PubPackage pkg = new PubPackage(_pubPackageRoot);
+  PubPackage pkg = PubPackage(_pubPackageRoot);
   return join(pkg.path, 'bin', 'scclone.dart');
 }
 
@@ -30,7 +30,7 @@ void main() {
       List<String> parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'scclone');
-      expect(new Version.parse(parts.last), version);
+      expect(Version.parse(parts.last), version);
     });
     test('scclone_hg', () async {
       if (await hg.isHgSupported) {
@@ -40,7 +40,7 @@ void main() {
             [sccloneDartScript, 'https://bitbucket.org/alextk/public_hg_test'])
           ..workingDirectory = outPath);
         expect(result.exitCode, 0);
-        File file = new File(join(outPath, 'hg', 'bitbucket.org', 'alextk',
+        File file = File(join(outPath, 'hg', 'bitbucket.org', 'alextk',
             'public_hg_test', 'one_file.txt'));
         expect(await file.exists(), isTrue);
       }

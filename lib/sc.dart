@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'hg.dart';
 import 'git.dart';
+export 'src/scpath.dart' show handleScPath;
 
 String git = "git";
 String hg = "hg";
@@ -34,6 +35,7 @@ Future<String> getScName(String path) async {
 /// checking recursively the parent for any hg or git directory
 ///
 Future<String> findScTopLevelPath(String path) async {
+  path = normalize(absolute(path));
   String parent;
   while (true) {
     if (await FileSystemEntity.isDirectory(path)) {

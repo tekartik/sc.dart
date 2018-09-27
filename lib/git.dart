@@ -23,7 +23,7 @@ class _GitCommand {
 // default git command
 _GitCommand _gitCommand;
 
-_GitCommand _defaultGitCommand = new _GitCommand();
+_GitCommand _defaultGitCommand = _GitCommand();
 
 //bool _DEBUG = false;
 
@@ -83,7 +83,7 @@ class GitPath {
       print('working dir: ${cmd.workingDirectory}');
     }
     ProcessResult result = await runCmd(cmd, verbose: verbose);
-    GitStatusResult statusResult = new GitStatusResult(cmd, result);
+    GitStatusResult statusResult = GitStatusResult(cmd, result);
 
     if (result.exitCode == 0) {
       Iterable<String> lines = LineSplitter.split(result.stdout.toString());
@@ -163,7 +163,7 @@ class GitProject extends GitPath {
       _path = joinAll(parts);
 
       if (_path == null) {
-        throw new Exception(
+        throw Exception(
             'null path only allowed for https://github.com/xxxuser/xxxproject src');
       }
       // ignore: deprecated_member_use
@@ -180,7 +180,7 @@ class GitProject extends GitPath {
 
   // no using _gitCmd as not using workingDirectory
   // only get latest revision if [depth] = 1
-  ProcessCmd cloneCmd({bool progress, int depth}) {
+  ProcessCmd cloneCmd({bool progress, int depth, String branch}) {
     List<String> args = ['clone'];
     if (progress == true) {
       args.add('--progress');
@@ -188,13 +188,16 @@ class GitProject extends GitPath {
     if (depth != null) {
       args.addAll(['--depth', depth.toString()]);
     }
+    if (branch != null) {
+      args.addAll(['--branch', branch]);
+    }
     args.addAll([src, path]);
     return gitCmd(args);
   }
 
   Future pullOrClone() {
     // TODO: check the origin branch
-    if (new File(join(path, '.git', 'config')).existsSync()) {
+    if (File(join(path, '.git', 'config')).existsSync()) {
       return runCmd(pullCmd());
     } else {
       return runCmd(cloneCmd());

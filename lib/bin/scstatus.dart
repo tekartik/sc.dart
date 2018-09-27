@@ -8,7 +8,9 @@ import 'dart:async';
 import 'package:args/args.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
+import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
+import 'package:tekartik_sc/src/scpath.dart';
 import 'package:tekartik_sc/src/std_buf.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:path/path.dart';
@@ -24,10 +26,10 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 /// Recursively update (pull) git folders
 ///
 ///
-void main(List<String> arguments) {
+Future main(List<String> arguments) async {
   //setupQuickLogging();
 
-  ArgParser parser = new ArgParser(allowTrailingOptions: true);
+  ArgParser parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
@@ -78,85 +80,73 @@ void main(List<String> arguments) {
   List<Future> futures = [];
 
   Future _handleDir(String dir) async {
-    if (await FileSystemEntity.isDirectory(dir)) {
-      if (await isGitTopLevelPath(dir)) {
-        if (await isGitSupported) {
-          GitPath prj = new GitPath(dir);
+    if (await isGitPathAndSupported(dir)) {
+      GitPath prj = GitPath(dir);
 
-          GitStatusResult statusResult = await (prj.status());
+      GitStatusResult statusResult = await (prj.status());
 
-          StdBuf buf = new StdBuf();
-          if (level <= Level.FINER) {
-            buf.outAppend('--- git ${prj}');
-          }
-          if (level <= Level.FINEST) {
-            buf.outAppend('> ${statusResult.cmd}');
-            buf.appendResult(statusResult.runResult);
-          }
-          if (statusResult.branchIsAhead || !statusResult.nothingToCommit) {
-            // already done
-            if (level > Level.FINER) {
-              buf.outAppend('--- git ${prj}');
-            }
-            if (statusResult.branchIsAhead) {
-              buf.outAppend('Branch is ahead');
-            }
-            //stdout.writeln(statusResult.runResult.stdout);
-            // rerun in short version mode
-            ProcessCmd cmd = prj.statusCmd(short: true);
-            if (level <= Level.FINEST) {
-              buf.outAppend('> ${cmd}');
-            }
-            ProcessResult result =
-                await runCmd(cmd, commandVerbose: commandVerbose);
-            buf.appendResult(result);
-          }
-          buf.print();
-        }
-      } else if (await isHgTopLevelPath(dir)) {
-        HgPath prj = new HgPath(dir);
-
-        StdBuf buf = new StdBuf();
-        HgStatusResult statusResult = await (prj.status());
-        if (level <= Level.FINEST) {
-          buf.outAppend('--- hg ${prj}');
-          buf.outAppend('> ${statusResult.cmd}');
-          buf.appendResult(statusResult.runResult);
-        }
-        if (statusResult.nothingToCommit) {
-          HgOutgoingResult outgoingResult = await (prj.outgoing());
-          if (level <= Level.FINEST) {
-            buf.outAppend('> ${outgoingResult.cmd}');
-          }
-          if (outgoingResult.branchIsAhead) {
-            buf.outAppend('--- hg ${prj}');
-            buf.outAppend('Branch is ahead');
-            buf.appendResult(outgoingResult.runResult);
-          }
-        } else {
-          buf.outAppend('--- hg ${prj}');
-          buf.appendResult(statusResult.runResult);
-        }
-        buf.print();
-      } else {
-        try {
-          List<Future> sub = [];
-          await new Directory(dir).list().listen((FileSystemEntity fse) {
-            sub.add(_handleDir(fse.path));
-          }).asFuture();
-          await Future.wait(sub);
-        } catch (_, __) {
-          // log.fine(e.toString(), e, st);
-        }
+      StdBuf buf = StdBuf();
+      if (level <= Level.FINER) {
+        buf.outAppend('--- git ${prj}');
       }
+      if (level <= Level.FINEST) {
+        buf.outAppend('> ${statusResult.cmd}');
+        buf.appendResult(statusResult.runResult);
+      }
+      if (statusResult.branchIsAhead || !statusResult.nothingToCommit) {
+        // already done
+        if (level > Level.FINER) {
+          buf.outAppend('--- git ${prj}');
+        }
+        if (statusResult.branchIsAhead) {
+          buf.outAppend('Branch is ahead');
+        }
+        //stdout.writeln(statusResult.runResult.stdout);
+        // rerun in short version mode
+        ProcessCmd cmd = prj.statusCmd(short: true);
+        if (level <= Level.FINEST) {
+          buf.outAppend('> ${cmd}');
+        }
+        ProcessResult result =
+            await runCmd(cmd, commandVerbose: commandVerbose);
+        buf.appendResult(result);
+      }
+      buf.print();
+    } else if (await isHgPathAndSupported(dir)) {
+      HgPath prj = HgPath(dir);
+
+      StdBuf buf = StdBuf();
+      HgStatusResult statusResult = await (prj.status());
+      if (level <= Level.FINEST) {
+        buf.outAppend('--- hg ${prj}');
+        buf.outAppend('> ${statusResult.cmd}');
+        buf.appendResult(statusResult.runResult);
+      }
+      if (statusResult.nothingToCommit) {
+        HgOutgoingResult outgoingResult = await (prj.outgoing());
+        if (level <= Level.FINEST) {
+          buf.outAppend('> ${outgoingResult.cmd}');
+        }
+        if (outgoingResult.branchIsAhead) {
+          buf.outAppend('--- hg ${prj}');
+          buf.outAppend('Branch is ahead');
+          buf.appendResult(outgoingResult.runResult);
+        }
+      } else {
+        buf.outAppend('--- hg ${prj}');
+        buf.appendResult(statusResult.runResult);
+      }
+      buf.print();
     }
   }
 
   for (String dir in dirs) {
     print(dir);
-    var _handle = _handleDir(dir);
+    var _handle = handleScPath(dir, _handleDir, recursive: true);
     if (_handle is Future) {
       futures.add(_handle);
     }
   }
+
+  await Future.wait(futures);
 }

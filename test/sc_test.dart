@@ -1,6 +1,9 @@
 @TestOn("vm")
 library tekartik_sc.test.sc_test;
 
+import 'dart:async';
+import 'dart:io';
+
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/git.dart';
@@ -17,9 +20,9 @@ void defineTests() {
       bool _isGitSupported = await isGitSupported;
 
       if (_isGitSupported) {
-        String outPath = clearOutTestPath();
+        String outPath = normalize(absolute(clearOutTestPath()));
 
-        var prj = new GitProject('https://bitbucket.org/alextk/public_git_test',
+        var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
             path: outPath);
         await runCmd(prj.cloneCmd());
 
@@ -36,9 +39,9 @@ void defineTests() {
       bool _isHgSupported = await isHgSupported;
 
       if (_isHgSupported) {
-        String outPath = clearOutTestPath();
+        String outPath = normalize(absolute(clearOutTestPath()));
 
-        var prj = new HgProject('https://bitbucket.org/alextk/hg_data_test',
+        var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
             rootFolder: outPath);
         await runCmd(prj.cloneCmd());
 
@@ -48,6 +51,36 @@ void defineTests() {
         String sub = join(outPath, "sub");
         expect(await findScTopLevelPath(sub), outPath);
         expect(await getScName(sub), isNull);
+      }
+    });
+
+    test('handleScPath', () async {
+      // find top path
+      List<String> dirs = [];
+      Future handle(String dir) async {
+        dirs.add(dir);
+      }
+
+      await handleScPath(null, handle, recursive: true);
+      expect(dirs.length, 1);
+
+      try {
+        var dir = dirname(Directory.current.path);
+        dirs.clear();
+        await handleScPath(dir, handle);
+        expect(dirs.length, 0);
+
+        await handleScPath(dir, handle, recursive: true);
+        expect(dirs.length, greaterThan(1));
+        expect(dirs, contains(Directory.current.path));
+
+        dirs.clear();
+        await handleScPath('..', handle, recursive: true);
+        expect(dirs.length, greaterThan(1));
+        expect(dirs, contains(Directory.current.path));
+      } catch (e) {
+        print('This could fail on travis if we cannot reach the parent folder');
+        print(e);
       }
     });
   });

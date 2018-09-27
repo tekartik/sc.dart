@@ -1,6 +1,12 @@
 library tekartik_io_tools.src.scpath;
 
+import 'dart:async';
+import 'dart:io';
+
 import 'package:path/path.dart';
+import 'package:tekartik_sc/git.dart';
+import 'package:tekartik_sc/hg.dart';
+import 'package:tekartik_sc/sc.dart';
 
 ///
 /// Convert a uri to a convenient path part
@@ -39,4 +45,45 @@ List<String> scUriToPathParts(String uri) {
     parts.removeAt(tildeIndex);
   }
   return parts;
+}
+
+Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
+    {bool recursive}) async {
+  recursive ??= false;
+  dir ??= Directory.current.path;
+  dir = normalize(absolute(dir));
+  var topDir = await findScTopLevelPath(dir);
+
+  // We are in a git, don't recurse)
+  if (topDir != null) {
+    await handleScDir(topDir);
+  } else {
+    if (recursive) {
+      try {
+        List<Future> sub = [];
+        await Directory(dir).list().listen((FileSystemEntity fse) {
+          sub.add(() async {
+            var path = fse.path;
+            // Ignore folder starting with .
+            // don't event go below
+            if (!basename(path).startsWith('.') &&
+                (await FileSystemEntity.isDirectory(dir))) {
+              await handleScPath(fse.path, handleScDir, recursive: recursive);
+            }
+          }());
+        }).asFuture();
+        await Future.wait(sub);
+      } catch (_, __) {}
+    } else {
+      stderr.writeln('$dir does not belong to source control');
+    }
+  }
+}
+
+Future<bool> isGitPathAndSupported(String path) async {
+  return await isGitSupported && await isGitTopLevelPath(path);
+}
+
+Future<bool> isHgPathAndSupported(String path) async {
+  return await isHgSupported && await isHgTopLevelPath(path);
 }
