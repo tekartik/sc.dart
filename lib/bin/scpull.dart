@@ -9,7 +9,9 @@ import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_io_utils/io_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
+import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
+import 'package:tekartik_sc/src/scpath.dart';
 
 const String _HELP = 'help';
 //const String _LOG = 'log';
@@ -88,9 +90,6 @@ main(List<String> arguments) async {
 
   List<Future> futures = [];
 
-  bool _isHgSupported = await isHgSupported;
-  bool _isGitSupported = await isGitSupported;
-
   Future _handleDir(String dir) async {
     Future<ProcessResult> _execute(ProcessCmd cmd) async {
       if (dryRun == true) {
@@ -118,31 +117,20 @@ main(List<String> arguments) async {
 
     // Ignore folder starting with .
     // don't event go below
-    if (!basename(dir).startsWith('.') &&
-        (await FileSystemEntity.isDirectory(dir))) {
-      if (_isGitSupported && await isGitTopLevelPath(dir)) {
-        GitPath prj = GitPath(dir);
-        //ProcessResult result =
-        await _execute(prj.pullCmd());
-      } else if (_isHgSupported && await isHgTopLevelPath(dir)) {
-        HgPath prj = HgPath(dir);
-        //ProcessResult result =
-        await _execute(prj.pullCmd());
-      } else {
-        try {
-          List<Future> sub = [];
-          await Directory(dir).list().listen((FileSystemEntity fse) {
-            sub.add(_handleDir(fse.path));
-          }).asFuture();
-          await Future.wait(sub);
-        } catch (_, __) {}
-      }
+    if (await isGitPathAndSupported(dir)) {
+      GitPath prj = GitPath(dir);
+      //ProcessResult result =
+      await _execute(prj.pullCmd());
+    } else if (await isHgPathAndSupported(dir)) {
+      HgPath prj = HgPath(dir);
+      //ProcessResult result =
+      await _execute(prj.pullCmd());
     }
   }
 
   for (String dir in dirs) {
     print(dir);
-    var _handle = _handleDir(dir);
+    var _handle = handleScPath(dir, _handleDir, recursive: true);
     if (_handle is Future) {
       futures.add(_handle);
     }

@@ -159,13 +159,12 @@ class HgProject extends HgPath {
   }
 }
 
+bool _isHgSupported;
 Future<bool> get isHgSupported async {
-  try {
-    await runCmd(hgVersionCmd());
-    return true;
-  } catch (e) {
-    return false;
+  if (_isHgSupported == null) {
+    _isHgSupported = await checkHgSupported();
   }
+  return _isHgSupported;
 }
 
 Future<bool> checkHgSupported({bool verbose}) async {

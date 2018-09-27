@@ -1,6 +1,9 @@
 @TestOn("vm")
 library tekartik_sc.test.sc_test;
 
+import 'dart:async';
+import 'dart:io';
+
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/git.dart';
@@ -17,7 +20,7 @@ void defineTests() {
       bool _isGitSupported = await isGitSupported;
 
       if (_isGitSupported) {
-        String outPath = clearOutTestPath();
+        String outPath = absolute(normalize(clearOutTestPath()));
 
         var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
             path: outPath);
@@ -49,6 +52,25 @@ void defineTests() {
         expect(await findScTopLevelPath(sub), outPath);
         expect(await getScName(sub), isNull);
       }
+    });
+
+    test('handleScPath', () async {
+      // find top path
+      List<String> dirs = [];
+      Future handle(String dir) async {
+        dirs.add(dir);
+      }
+
+      await handleScPath(null, handle, recursive: true);
+      expect(dirs.length, 1);
+
+      var dir = dirname(Directory.current.path);
+      dirs.clear();
+      await handleScPath(dir, handle);
+      expect(dirs.length, 0);
+      await handleScPath(dir, handle, recursive: true);
+      expect(dirs.length, greaterThan(1));
+      expect(dirs, contains(Directory.current.path));
     });
   });
 }
