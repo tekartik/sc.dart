@@ -35,7 +35,7 @@ Future<String> getScName(String path) async {
 /// checking recursively the parent for any hg or git directory
 ///
 Future<String> findScTopLevelPath(String path) async {
-  path = absolute(normalize(path));
+  path = normalize(absolute(path));
   String parent;
   while (true) {
     if (await FileSystemEntity.isDirectory(path)) {

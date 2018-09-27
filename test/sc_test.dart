@@ -20,7 +20,7 @@ void defineTests() {
       bool _isGitSupported = await isGitSupported;
 
       if (_isGitSupported) {
-        String outPath = absolute(normalize(clearOutTestPath()));
+        String outPath = normalize(absolute(clearOutTestPath()));
 
         var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
             path: outPath);
@@ -39,7 +39,7 @@ void defineTests() {
       bool _isHgSupported = await isHgSupported;
 
       if (_isHgSupported) {
-        String outPath = clearOutTestPath();
+        String outPath = normalize(absolute(clearOutTestPath()));
 
         var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
             rootFolder: outPath);
@@ -68,7 +68,13 @@ void defineTests() {
       dirs.clear();
       await handleScPath(dir, handle);
       expect(dirs.length, 0);
+
       await handleScPath(dir, handle, recursive: true);
+      expect(dirs.length, greaterThan(1));
+      expect(dirs, contains(Directory.current.path));
+
+      dirs.clear();
+      await handleScPath('..', handle, recursive: true);
       expect(dirs.length, greaterThan(1));
       expect(dirs, contains(Directory.current.path));
     });

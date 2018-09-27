@@ -51,7 +51,7 @@ Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
     {bool recursive}) async {
   recursive ??= false;
   dir ??= Directory.current.path;
-  dir = absolute(normalize(dir));
+  dir = normalize(absolute(dir));
   var topDir = await findScTopLevelPath(dir);
 
   // We are in a git, don't recurse)
