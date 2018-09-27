@@ -2,4 +2,4 @@ library pubtest.src.pubtest_version;
 
 import 'package:pub_semver/pub_semver.dart';
 
-Version version = Version(0, 7, 2);
+Version version = Version(0, 8, 0);
