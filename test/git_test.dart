@@ -129,5 +129,5 @@ void main() {
         }
       });
     });
-  });
+  }, timeout: Timeout(Duration(minutes: 2)));
 }
