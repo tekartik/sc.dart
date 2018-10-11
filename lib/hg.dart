@@ -160,6 +160,18 @@ class HgProject extends HgPath {
 }
 
 bool _isHgSupported;
+
+bool get isHgSupportedSync => _isHgSupported ??= checkHgSupportedSync();
+
+bool checkHgSupportedSync({bool verbose}) {
+  try {
+    var result = Process.runSync('hg', ['--version']);
+    return result.exitCode == 0;
+  } catch (_) {
+    return false;
+  }
+}
+
 Future<bool> get isHgSupported async {
   if (_isHgSupported == null) {
     _isHgSupported = await checkHgSupported();

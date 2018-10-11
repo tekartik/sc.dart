@@ -13,14 +13,17 @@ import 'io_test_common.dart';
 Future main() async {
   //useVMConfiguration();
   bool _isGitSupported = isGitSupportedSync;
-  if (_isGitSupported) {
-    group('git', () {
-      setUp(() async {
-        if (_isGitSupported == null) {
-          _isGitSupported = await isGitSupported;
-        }
+  group('Git', () {
+    group('supported', () {
+      test('check', () async {
+        expect(checkGitSupportedSync(), _isGitSupported);
+        expect(await checkGitSupported(), _isGitSupported);
       });
+      test('missing', () {},
+          skip: _isGitSupported ? false : 'Git (Mercurial) not supported');
+    });
 
+    if (_isGitSupported) {
       test('path', () {
         var giPath = GitPath();
         expect(giPath.path, isNull);
@@ -133,9 +136,6 @@ Future main() async {
           }
         });
       });
-    }, timeout: Timeout(Duration(minutes: 2)));
-  } else {
-    stderr.writeln('Git not found');
-    test('git', () {}, skip: true);
-  }
+    }
+  }, timeout: Timeout(Duration(minutes: 2)));
 }
