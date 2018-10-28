@@ -211,14 +211,22 @@ ProcessCmd gitVersionCmd() => gitCmd(['--version']);
 bool _isGitSupported;
 
 /// check if git is supported, only once
-Future<bool> get isGitSupported async => await checkGitSupported(once: true);
+Future<bool> get isGitSupported async =>
+    _isGitSupported ??= await checkGitSupported();
+
+bool get isGitSupportedSync => _isGitSupported ??= checkGitSupportedSync();
+
+bool checkGitSupportedSync({bool verbose}) {
+  try {
+    var result = Process.runSync('git', ['--version']);
+    return result.exitCode == 0;
+  } catch (_) {
+    return false;
+  }
+}
 
 // [once] if true check only once and check the result for later calls with once: true
-Future<bool> checkGitSupported({bool once, bool verbose}) async {
-  if (once == true && _isGitSupported != null) {
-    return _isGitSupported;
-  }
-
+Future<bool> checkGitSupported({bool verbose}) async {
   Future<bool> tryGitCommand(_GitCommand gitCommand, bool verbose) async {
     try {
       await runCmd(gitCommand.processCmd(['--version']), verbose: verbose);

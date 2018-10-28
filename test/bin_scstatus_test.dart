@@ -25,7 +25,7 @@ void main() {
   group('scstatus', () {
     test('version', () async {
       ProcessResult result =
-          await runCmd(dartCmd([scstatusDartScript, '--version']));
+          await runCmd(DartCmd([scstatusDartScript, '--version']));
       List<String> parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'scstatus');

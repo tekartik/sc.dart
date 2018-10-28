@@ -26,7 +26,7 @@ void main() {
   group('scclone', () {
     test('version', () async {
       ProcessResult result =
-          await runCmd(dartCmd([sccloneDartScript, '--version']));
+          await runCmd(DartCmd([sccloneDartScript, '--version']));
       List<String> parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'scclone');
@@ -36,7 +36,7 @@ void main() {
       if (await hg.isHgSupported) {
         // check hg location
         String outPath = clearOutTestPath(testDescriptions);
-        ProcessResult result = await runCmd(dartCmd(
+        ProcessResult result = await runCmd(DartCmd(
             [sccloneDartScript, 'https://bitbucket.org/alextk/public_hg_test'])
           ..workingDirectory = outPath);
         expect(result.exitCode, 0);

@@ -20,6 +20,7 @@ const String _HELP = 'help';
 const String _LOG = 'log';
 const String _DRY_RUN = 'dry-run';
 const String verboseFlag = 'verbose';
+const String timeoutOption = 'timeout';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -39,14 +40,16 @@ main(List<String> arguments) async {
       abbr: 'v', help: 'Verbose output', negatable: false);
   parser.addOption(_LOG,
       abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
+  parser.addOption(timeoutOption,
+      abbr: 't', help: 'Timeout for each operation in milliseconds');
   parser.addFlag(_DRY_RUN,
       abbr: 'n',
       help: 'Do not run test, simple show packages to be tested',
       negatable: false);
 
-  ArgResults _argsResult = parser.parse(arguments);
+  ArgResults argResults = parser.parse(arguments);
 
-  bool help = _argsResult[_HELP] as bool;
+  bool help = argResults[_HELP] as bool;
   if (help) {
     stdout.writeln(
         'Push & Pull(update) from source control recursively (default from current directory)');
@@ -58,15 +61,16 @@ main(List<String> arguments) async {
     stdout.writeln(parser.usage);
     return;
   }
-  bool dryRun = _argsResult[_DRY_RUN] as bool;
+  bool dryRun = argResults[_DRY_RUN] as bool;
+  var timeout = int.tryParse((argResults[timeoutOption] as String) ?? '');
 
-  if (_argsResult['version'] as bool) {
+  if (argResults['version'] as bool) {
     stdout.write('${currentScriptName} ${version}');
     return;
   }
 
-  bool verbose = _argsResult[verboseFlag];
-  Level level = parseLogLevel(_argsResult[_LOG] as String);
+  bool verbose = argResults[verboseFlag];
+  Level level = parseLogLevel(argResults[_LOG] as String);
   if (verbose) {
     level = Level.FINEST;
   }
@@ -80,7 +84,7 @@ main(List<String> arguments) async {
   */
 
   // get dirs in parameters, default to current
-  List<String> dirs = _argsResult.rest;
+  List<String> dirs = argResults.rest;
   if (dirs.isEmpty) {
     dirs = [Directory.current.path];
   }
@@ -146,9 +150,21 @@ main(List<String> arguments) async {
     }
   }
 
+  Future _handleDirWithTimeout(String dir) async {
+    if (timeout != null) {
+      await _handleDir(dir)
+          .timeout(Duration(milliseconds: timeout))
+          .catchError((e) {
+        stderr.writeln("$e for $dir");
+      });
+    } else {
+      await _handleDir(dir);
+    }
+  }
+
   for (String dir in dirs) {
     print(dir);
-    var _handle = handleScPath(dir, _handleDir, recursive: true);
+    var _handle = handleScPath(dir, _handleDirWithTimeout, recursive: true);
     if (_handle is Future) {
       futures.add(_handle);
     }

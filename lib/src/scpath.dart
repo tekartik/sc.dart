@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart';
+import 'package:pool/pool.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/sc.dart';
@@ -47,6 +48,9 @@ List<String> scUriToPathParts(String uri) {
   return parts;
 }
 
+// Needed for MacOS...
+final pool = Pool(10);
+
 Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
     {bool recursive}) async {
   recursive ??= false;
@@ -56,7 +60,7 @@ Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
 
   // We are in a git, don't recurse)
   if (topDir != null) {
-    await handleScDir(topDir);
+    await pool.withResource(() => handleScDir(topDir));
   } else {
     if (recursive) {
       try {
