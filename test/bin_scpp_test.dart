@@ -25,7 +25,7 @@ void main() {
   group('scpp', () {
     test('version', () async {
       ProcessResult result =
-          await runCmd(dartCmd([scpullDartScript, '--version']));
+          await runCmd(DartCmd([scpullDartScript, '--version']));
       List<String> parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'scpp');

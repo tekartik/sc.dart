@@ -21,7 +21,7 @@ void main() {
   group('sccheckgit', () {
     test('run', () async {
       if (await isGitSupported) {
-        await runCmd(dartCmd([sccheckgitDartScript]));
+        await runCmd(DartCmd([sccheckgitDartScript]));
       }
     });
   });

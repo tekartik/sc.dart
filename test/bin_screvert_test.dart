@@ -25,7 +25,7 @@ void main() {
   group('scpull', () {
     test('version', () async {
       ProcessResult result =
-          await runCmd(dartCmd([screvertDartScript, '--version']));
+          await runCmd(DartCmd([screvertDartScript, '--version']));
       List<String> parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'screvert');

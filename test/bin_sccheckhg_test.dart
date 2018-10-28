@@ -21,7 +21,7 @@ void main() {
   group('sccheckhg', () {
     test('run', () async {
       if (await isHgSupported) {
-        await runCmd(dartCmd([sccheckhgDartScript]));
+        await runCmd(DartCmd([sccheckhgDartScript]));
       }
     });
   });
