@@ -11,28 +11,54 @@ void main() => defineTests();
 
 void defineTests() {
   //useVMConfiguration();
-  bool _isHgSupported = isHgSupportedSync;
   group('hg', () {
-    group('supported', () {
-      test('check', () async {
-        expect(checkHgSupportedSync(), _isHgSupported);
-        expect(await checkHgSupported(), _isHgSupported);
-      });
-      test('missing', () {},
-          skip: _isHgSupported ? false : 'Hg (Mercurial) not supported');
+    bool _isHgSupported;
+
+    setUp(() async {
+      if (_isHgSupported == null) {
+        _isHgSupported = await isHgSupported;
+      }
     });
 
-    if (_isHgSupported) {
-      test('isHgSupported', () async {
-        expect(await isHgSupported, _isHgSupported);
-      });
-      test('version', () async {
+    test('isHgSupported', () async {
+      expect(await isHgSupported, _isHgSupported);
+    });
+    test('version', () async {
+      if (_isHgSupported) {
         ProcessResult result = await runCmd(hgVersionCmd());
         // git version 1.9.1
         expect(result.stdout.startsWith("Mercurial Distributed SCM"), isTrue);
-      });
+        // print for travis debugging
+        print('\$ ${hgVersionCmd()}');
+        print(result.stdout);
+      } else {
+        print('hg not supported');
+        if (checkHgSupportDisabled) {
+          print('hg disabled by env TEKARTIK_HG_SUPPORT');
+        }
+      }
+    });
 
-      test('isHgRepository', () async {
+    // to debug travis issues
+    test('verbose', () async {
+      if (_isHgSupported) {
+        expect(
+            await isHgRepository('https://bitbucket.org/alextk/public_hg_test',
+                verbose: true),
+            isTrue);
+      }
+    });
+
+    /*
+    test('isHgTopLevelPath', () async {
+      print(Platform.script);
+      //await new Completer().future;
+      expect(await isHgTopLevelPath(scriptDirPath), isFalse);
+      expect(await isHgTopLevelPath(dirname(scriptDirPath)), isTrue, reason: dirname(scriptDirPath));
+    });
+    */
+    test('isHgRepository', () async {
+      if (_isHgSupported) {
         expect(
             await isHgRepository('https://bitbucket.org/alextk/public_hg_test'),
             isTrue);
@@ -44,9 +70,11 @@ void defineTests() {
             await isHgRepository(
                 'https://bitbucket.org/alextk/public_git_test'),
             isFalse);
-      });
+      }
+    });
 
-      test('HgProject', () async {
+    test('HgProject', () async {
+      if (_isHgSupported) {
         String outPath = clearOutTestPath(testDescriptions);
         var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
             rootFolder: outPath);
@@ -71,7 +99,7 @@ void defineTests() {
         expect(statusResult.nothingToCommit, true);
         outgoingResult = await prj.outgoing();
         expect(outgoingResult.branchIsAhead, true);
-      });
-    }
+      }
+    });
   });
 }
