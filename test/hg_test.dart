@@ -36,6 +36,16 @@ void defineTests() {
       }
     });
 
+    // to debug travis issues
+    test('verbose', () async {
+      if (_isHgSupported) {
+        expect(
+            await isHgRepository('https://bitbucket.org/alextk/public_hg_test',
+                verbose: true),
+            isTrue);
+      }
+    });
+
     /*
     test('isHgTopLevelPath', () async {
       print(Platform.script);
