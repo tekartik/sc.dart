@@ -164,10 +164,10 @@ bool _isHgSupported;
 bool get isHgSupportedSync => _isHgSupported ??= checkHgSupportedSync();
 
 // can be disable by env variable
-bool get _isHgSupportDisabled =>
+bool get checkHgSupportDisabled =>
     parseBool(Platform.environment['TEKARTIK_HG_SUPPORT']) == false;
 bool checkHgSupportedSync({bool verbose}) {
-  if (_isHgSupportDisabled) {
+  if (checkHgSupportDisabled) {
     if (verbose) {
       print('hg disabled by env TEKARTIK_HG_SUPPORT');
     }
@@ -189,7 +189,7 @@ Future<bool> get isHgSupported async {
 }
 
 Future<bool> checkHgSupported({bool verbose}) async {
-  if (_isHgSupportDisabled) {
+  if (checkHgSupportDisabled) {
     if (verbose == true) {
       print('hg disabled by env TEKARTIK_HG_SUPPORT');
     }

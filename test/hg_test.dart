@@ -33,6 +33,9 @@ void defineTests() {
         print(result.stdout);
       } else {
         print('hg not supported');
+        if (checkHgSupportDisabled) {
+          print('hg disabled by env TEKARTIK_HG_SUPPORT');
+        }
       }
     });
 
