@@ -3,6 +3,9 @@ dart:
   - stable
   - dev
 sudo: false
+env:
+  global:
+    - TEKARTIK_HG_SUPPORT=false
 before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start

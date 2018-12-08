@@ -163,7 +163,16 @@ bool _isHgSupported;
 
 bool get isHgSupportedSync => _isHgSupported ??= checkHgSupportedSync();
 
+// can be disable by env variable
+bool get _isHgSupportDisabled =>
+    parseBool(Platform.environment['TEKARTIK_HG_SUPPORT']) == false;
 bool checkHgSupportedSync({bool verbose}) {
+  if (_isHgSupportDisabled) {
+    if (verbose) {
+      print('hg disabled by env TEKARTIK_HG_SUPPORT');
+    }
+    return false;
+  }
   try {
     var result = Process.runSync('hg', ['--version']);
     return result.exitCode == 0;
@@ -180,6 +189,12 @@ Future<bool> get isHgSupported async {
 }
 
 Future<bool> checkHgSupported({bool verbose}) async {
+  if (_isHgSupportDisabled) {
+    if (verbose == true) {
+      print('hg disabled by env TEKARTIK_HG_SUPPORT');
+    }
+    return false;
+  }
   try {
     await runCmd(hgVersionCmd(), verbose: verbose);
     return true;
