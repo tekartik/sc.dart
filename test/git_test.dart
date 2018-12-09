@@ -136,6 +136,38 @@ Future main() async {
           }
         });
       });
+
+      group('gitlab.com', () {
+        test('GitProject', () async {
+          if (_isGitSupported) {
+            String outPath = clearOutTestPath(testDescriptions);
+            expect(await (isGitTopLevelPath(outPath)), isFalse);
+            var prj = GitProject('https://gitlab.com/tkexp/branch_exp.git',
+                path: outPath);
+            await runCmd(prj.cloneCmd());
+            expect(await (isGitTopLevelPath(outPath)), isTrue);
+            GitStatusResult statusResult = await prj.status();
+            expect(statusResult.nothingToCommit, true);
+            expect(statusResult.branchIsAhead, false);
+
+            File tempFile = File(join(prj.path, "temp_file.txt"));
+            await tempFile.writeAsString("echo", flush: true);
+            statusResult = await prj.status();
+            expect(statusResult.nothingToCommit, false);
+            expect(statusResult.branchIsAhead, false);
+
+            await runCmd(prj.addCmd(pathspec: "."));
+            ProcessResult commitResult = await runCmd(prj.commitCmd("test"));
+            // Needed to travis
+            if (commitResult.exitCode == 0) {
+              statusResult = await prj.status();
+              expect(statusResult.nothingToCommit, true,
+                  reason: processResultToDebugString(statusResult.runResult));
+              expect(statusResult.branchIsAhead, true);
+            }
+          }
+        });
+      });
     }
   }, timeout: Timeout(Duration(minutes: 2)));
 }

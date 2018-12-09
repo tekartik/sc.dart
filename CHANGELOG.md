@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.4
+
+* fix `scpp` don't push if not ahead (git)
+
 ## 0.7.3
 
 * Add branch support for scclone

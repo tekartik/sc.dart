@@ -3,18 +3,19 @@ library tekartik_sc.bin.scpp;
 
 // Pull recursively
 
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:path/path.dart';
+import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_common_utils/log_utils.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
-import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
 import 'package:tekartik_sc/src/std_buf.dart';
-import 'package:tekartik_common_utils/log_utils.dart';
 
 const String _HELP = 'help';
 const String _LOG = 'log';
@@ -109,21 +110,35 @@ main(List<String> arguments) async {
       StdBuf buf = StdBuf();
       GitPath prj = GitPath(dir);
 
-      ProcessCmd cmd = prj.pushCmd();
-      ProcessResult result = await _execute(buf, cmd);
-      if (result.exitCode != 0 ||
-          !result.stderr.toString().contains('up-to-date')) {
-        buf.outAppend('> ${cmd}');
-        buf.appendResult(result);
+      var statusResult = await prj.status();
+      // Only push if branch is ahead
+      if (statusResult.branchIsAhead) {
+        ProcessCmd cmd = prj.pushCmd();
+        ProcessResult result = await _execute(buf, cmd);
+        // dry-run returns null
+        if (result != null) {
+          if (result.exitCode != 0 ||
+              !result.stderr.toString().contains('up-to-date')) {
+            buf.outAppend('> ${cmd}');
+            buf.appendResult(result);
+          }
+        }
+      } else {
+        if (level <= Level.FINEST) {
+          buf.outAppend("no push, branch is not ahead");
+        }
       }
-      cmd = prj.pullCmd();
-      result = await _execute(buf, cmd);
-      var pullOutput = result.stdout.toString();
-      if (result.exitCode != 0 ||
-          !(pullOutput.contains('up-to-date') ||
-              pullOutput.contains('up to date'))) {
-        buf.outAppend('> ${cmd}');
-        buf.appendResult(result);
+      var cmd = prj.pullCmd();
+      var result = await _execute(buf, cmd);
+      // dry-run returns null
+      if (result != null) {
+        var pullOutput = result.stdout.toString();
+        if (result.exitCode != 0 ||
+            !(pullOutput.contains('up-to-date') ||
+                pullOutput.contains('up to date'))) {
+          buf.outAppend('> ${cmd}');
+          buf.appendResult(result);
+        }
       }
 
       buf.print("--- git ${prj}");

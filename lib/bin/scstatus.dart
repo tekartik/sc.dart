@@ -19,7 +19,7 @@ import 'package:logging/logging.dart';
 
 const String _HELP = 'help';
 const String _LOG = 'log';
-
+const String verboseFlag = 'verbose';
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
 ///
@@ -33,6 +33,7 @@ Future main(List<String> arguments) async {
   parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
+  parser.addFlag(verboseFlag, abbr: 'v', help: 'Verbose', negatable: false);
   parser.addOption(_LOG,
       abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
 
@@ -55,6 +56,9 @@ Future main(List<String> arguments) async {
   }
 
   Level level = parseLogLevel(_argsResult[_LOG] as String);
+  if (_argsResult[verboseFlag] as bool) {
+    level = Level.FINEST;
+  }
 
   bool commandVerbose = level <= Level.FINEST;
 
