@@ -39,6 +39,7 @@ void main() {
         return result.exitCode == 0;
       }
 
+      // skip with $env:TRAVIS = "true"
       test('push no change', () async {
         String outPath = clearOutTestPath(testDescriptions);
         expect(await (isGitTopLevelPath(outPath)), isFalse);
@@ -54,7 +55,7 @@ void main() {
           stdout.writeln(
               'Cannot test scpp - write access require to git@gitlab.com:tkexp/branch_exp.git');
         }
-      }, timeout: Timeout(Duration(minutes: 2)));
+      }, timeout: Timeout(Duration(minutes: 2)), skip: runningInTravis);
     }
   });
 }
