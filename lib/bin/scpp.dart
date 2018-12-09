@@ -115,10 +115,13 @@ main(List<String> arguments) async {
       if (statusResult.branchIsAhead) {
         ProcessCmd cmd = prj.pushCmd();
         ProcessResult result = await _execute(buf, cmd);
-        if (result.exitCode != 0 ||
-            !result.stderr.toString().contains('up-to-date')) {
-          buf.outAppend('> ${cmd}');
-          buf.appendResult(result);
+        // dry-run returns null
+        if (result != null) {
+          if (result.exitCode != 0 ||
+              !result.stderr.toString().contains('up-to-date')) {
+            buf.outAppend('> ${cmd}');
+            buf.appendResult(result);
+          }
         }
       } else {
         if (level <= Level.FINEST) {
@@ -127,12 +130,15 @@ main(List<String> arguments) async {
       }
       var cmd = prj.pullCmd();
       var result = await _execute(buf, cmd);
-      var pullOutput = result.stdout.toString();
-      if (result.exitCode != 0 ||
-          !(pullOutput.contains('up-to-date') ||
-              pullOutput.contains('up to date'))) {
-        buf.outAppend('> ${cmd}');
-        buf.appendResult(result);
+      // dry-run returns null
+      if (result != null) {
+        var pullOutput = result.stdout.toString();
+        if (result.exitCode != 0 ||
+            !(pullOutput.contains('up-to-date') ||
+                pullOutput.contains('up to date'))) {
+          buf.outAppend('> ${cmd}');
+          buf.appendResult(result);
+        }
       }
 
       buf.print("--- git ${prj}");
