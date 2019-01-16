@@ -3,23 +3,25 @@ library tekartik_sc.bin.scstatus;
 
 // Pull recursively
 
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+
 import 'package:args/args.dart';
+import 'package:logging/logging.dart';
+import 'package:path/path.dart';
+import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_common_utils/log_utils.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
 import 'package:tekartik_sc/src/std_buf.dart';
-import 'package:process_run/cmd_run.dart';
-import 'package:path/path.dart';
-import 'package:tekartik_common_utils/log_utils.dart';
-import 'package:logging/logging.dart';
 
 const String _HELP = 'help';
 const String _LOG = 'log';
 const String verboseFlag = 'verbose';
+
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
 ///

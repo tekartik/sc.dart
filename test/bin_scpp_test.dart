@@ -1,9 +1,10 @@
 @TestOn("vm")
 library tekartik_sc.test.bin_scpull_test;
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:async';
+
 import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';

@@ -1,11 +1,13 @@
 @TestOn("vm")
 library tekartik_sc.test.hg_test;
 
-import 'package:tekartik_sc/hg.dart';
-import 'package:process_run/cmd_run.dart';
 import 'dart:io';
-import 'io_test_common.dart';
+
 import 'package:path/path.dart';
+import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_sc/hg.dart';
+
+import 'io_test_common.dart';
 
 void main() => defineTests();
 

@@ -34,7 +34,7 @@ App app;
 /// Recursively update (pull) git folders
 ///
 ///
-main(List<String> arguments) async {
+Future main(List<String> arguments) async {
   app = App();
   //Logger log;
   //setupQuickLogging();
@@ -101,7 +101,7 @@ main(List<String> arguments) async {
           stdout.writeln('[${cmd.workingDirectory}]');
         }
         ProcessResult result;
-        _waiter() async {
+        Future _waiter() async {
           await sleep(15000);
           if (result == null) {
             stderr.writeln('[${cmd.workingDirectory}]...');
@@ -136,7 +136,7 @@ main(List<String> arguments) async {
     }
   }
 
-  await futures;
+  await Future.wait(futures);
 
   app.outSummary();
 }

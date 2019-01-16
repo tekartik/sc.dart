@@ -1,10 +1,12 @@
 #!/usr/bin/env dart
 library tekartik_sc_scripts.sccheckgit;
 
+import 'dart:async';
+
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/git.dart';
 
-main() async {
+Future main() async {
   print('Git supported: ${await checkGitSupported(verbose: true)}');
   print('${await runCmd(ProcessCmd('which', ['git']), verbose: true)}');
   print('${await runCmd(ProcessCmd('git', [

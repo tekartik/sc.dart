@@ -4,8 +4,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart';
-import 'hg.dart';
+
 import 'git.dart';
+import 'hg.dart';
+
 export 'src/scpath.dart' show handleScPath;
 
 String git = "git";
@@ -38,7 +40,7 @@ Future<String> findScTopLevelPath(String path) async {
   path = normalize(absolute(path));
   String parent;
   while (true) {
-    if (await FileSystemEntity.isDirectory(path)) {
+    if (FileSystemEntity.isDirectorySync(path)) {
       if (await isScTopLevelPath(path)) {
         return path;
       }

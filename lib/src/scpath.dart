@@ -71,7 +71,7 @@ Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
             // Ignore folder starting with .
             // don't event go below
             if (!basename(path).startsWith('.') &&
-                (await FileSystemEntity.isDirectory(dir))) {
+                (FileSystemEntity.isDirectorySync(dir))) {
               await handleScPath(fse.path, handleScDir, recursive: recursive);
             }
           }());

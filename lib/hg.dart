@@ -26,6 +26,7 @@ class HgOutgoingResult {
 }
 
 class HgPath {
+  @override
   String toString() => path;
   String _path;
   String get path => _path;
@@ -236,8 +237,12 @@ Future<bool> isHgRepository(String uri, {bool verbose}) async {
   return (runResult.exitCode == 0);
 }
 
-Future<bool> isHgTopLevelPath(String path) async {
+bool isHgTopLevelPathSync(String path) {
   String dotHg = ".hg";
   String hgFile = join(path, dotHg);
-  return await FileSystemEntity.isDirectory(hgFile);
+  return FileSystemEntity.isDirectorySync(hgFile);
+}
+
+Future<bool> isHgTopLevelPath(String path) async {
+  return isHgTopLevelPathSync(path);
 }
