@@ -38,6 +38,7 @@ class GitStatusResult {
 }
 
 class GitPath {
+  @override
   String toString() => path;
 
   String _path;
@@ -275,7 +276,11 @@ Future<bool> isGitRepository(String uri, {bool verbose}) async {
 }
 
 Future<bool> isGitTopLevelPath(String path) async {
+  return isGitTopLevelPathSync(path);
+}
+
+bool isGitTopLevelPathSync(String path) {
   String dotGit = ".git";
   String gitFile = join(path, dotGit);
-  return await FileSystemEntity.isDirectory(gitFile);
+  return FileSystemEntity.isDirectorySync(gitFile);
 }

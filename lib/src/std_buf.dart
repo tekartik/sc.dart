@@ -20,10 +20,10 @@ class StdBuf {
   }
 
   void appendResult(ProcessResult result) {
-    if (result.stdout.toString().length > 0) {
+    if (result.stdout.toString().isNotEmpty) {
       outAppend('${result.stdout}');
     }
-    if (result.stderr.toString().length > 0) {
+    if (result.stderr.toString().isNotEmpty) {
       errAppend('${result.stderr}');
     }
   }
@@ -32,23 +32,23 @@ class StdBuf {
   void appendCmdResult(ProcessCmd cmd, ProcessResult result) {
     outAppend('> ${cmd}');
     outAppend('=> ${result.exitCode}');
-    if (result.stdout.toString().length > 0) {
+    if (result.stdout.toString().isNotEmpty) {
       outAppend('out: ${result.stdout}');
     }
-    if (result.stderr.toString().length > 0) {
+    if (result.stderr.toString().isNotEmpty) {
       errAppend('err: ${result.stderr}');
     }
   }
 
   void print([String header]) {
     if (header != null &&
-        (out.toString().length > 0 || err.toString().length > 0)) {
+        (out.toString().isNotEmpty || err.toString().isNotEmpty)) {
       stdout.writeln(header);
     }
-    if (out.toString().length > 0) {
+    if (out.toString().isNotEmpty) {
       stdout.writeln(out);
     }
-    if (err.toString().length > 0) {
+    if (err.toString().isNotEmpty) {
       stderr.writeln(err);
     }
   }

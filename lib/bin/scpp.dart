@@ -29,7 +29,7 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 /// Recursively update (pull) git folders
 ///
 ///
-main(List<String> arguments) async {
+Future main(List<String> arguments) async {
   //Logger log;
   //setupQuickLogging();
 

@@ -42,7 +42,7 @@ void main() {
         expect(result.exitCode, 0);
         File file = File(join(outPath, 'hg', 'bitbucket.org', 'alextk',
             'public_hg_test', 'one_file.txt'));
-        expect(await file.exists(), isTrue);
+        expect(file.existsSync(), isTrue);
       }
     });
   });

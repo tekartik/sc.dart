@@ -1,9 +1,11 @@
 library tekartik_io_tools.io_common;
 
-import 'package:path/path.dart';
 import 'dart:io';
+
 import 'package:dev_test/test.dart';
+import 'package:path/path.dart';
 import 'package:tekartik_common_utils/bool_utils.dart';
+
 export 'package:dev_test/test.dart';
 
 String get outDataPath => getOutTestPath(testDescriptions);
@@ -19,10 +21,10 @@ String clearOutTestPath([List<String> parts]) {
   String outPath = getOutTestPath(parts);
   try {
     Directory(outPath).deleteSync(recursive: true);
-  } catch (e) {}
+  } catch (_) {}
   try {
     Directory(outPath).createSync(recursive: true);
-  } catch (e) {}
+  } catch (_) {}
   return outPath;
 }
 

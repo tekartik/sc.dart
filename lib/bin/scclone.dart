@@ -25,7 +25,7 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 ///
 /// clone hg or git repository
 ///
-main(List<String> arguments) async {
+Future main(List<String> arguments) async {
   //setupQuickLogging();
 
   ArgParser parser = ArgParser(allowTrailingOptions: true);
@@ -47,7 +47,7 @@ main(List<String> arguments) async {
   bool verbose = _argsResult[verboseFlag] as bool;
   var branch = _argsResult[branchOption] as String;
 
-  _printUsage() {
+  void _printUsage() {
     stdout.writeln(
         'clone one or multiple projects by their url and create pre-defined directory structure');
     stdout.writeln();
@@ -88,7 +88,7 @@ main(List<String> arguments) async {
     String topDirName = basename(Directory.current.path);
 
     bool done = false;
-    _tryGit(String uri, List<String> parts) async {
+    Future _tryGit(String uri, List<String> parts) async {
       if (verbose) {
         print('trying $uri with git');
       }

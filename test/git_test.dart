@@ -52,19 +52,28 @@ Future main() async {
     });
     */
 
-      test('isGitRepository', () async {
+      test('isGitRepository1', () async {
         expect(
             await isGitRepository(
                 'https://github.com/alextekartik/tekartik_io_tools.dart'),
             isTrue);
+      });
+
+      test('isGitRepository2', () async {
         expect(
             await isGitRepository(
-                'https://github.com/alextekartik/tekartik_io_tools.dart_NO'),
+                'git://github.com/alextekartik/tekartik_io_tools.dart_NO'),
             isFalse);
+      });
+
+      test('isGitRepository3', () async {
         expect(
             await isGitRepository(
                 'https://bitbucket.org/alextk/public_git_test'),
             isTrue);
+      });
+
+      test('isGitRepository4', () async {
         expect(
             await isGitRepository(
                 'https://bitbucket.org/alextk/public_hg_test'),
