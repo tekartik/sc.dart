@@ -173,7 +173,7 @@ bool get checkHgSupportDisabled =>
     parseBool(Platform.environment['TEKARTIK_HG_SUPPORT']) == false;
 bool checkHgSupportedSync({bool verbose}) {
   if (checkHgSupportDisabled) {
-    if (verbose) {
+    if (verbose == true) {
       print('hg disabled by env TEKARTIK_HG_SUPPORT');
     }
     return false;
