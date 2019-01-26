@@ -66,7 +66,7 @@ void defineTests() {
               isFalse);
         }
       }, skip: true);
-    }, skip: !isHgSupportedSync);
+    }, skip: !isHgSupportedSync && isRunningOnTravis());
 
     test('isHgSupported', () async {
       expect(await isHgSupported, _isHgSupported);

@@ -10,6 +10,7 @@ import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/sc.dart';
 
+import 'hg_test.dart';
 import 'io_test_common.dart';
 
 void main() => defineTests();
@@ -38,7 +39,7 @@ void defineTests() {
     test('hg', () async {
       bool _isHgSupported = await isHgSupported;
 
-      if (_isHgSupported) {
+      if (_isHgSupported && !isRunningOnTravis()) {
         String outPath = normalize(absolute(clearOutTestPath()));
 
         var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
