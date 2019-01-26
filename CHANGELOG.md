@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.5
+
+* Allow for insecure connection (travis)
+
 ## 0.8.4
 
 * fix `scpp` don't push if not ahead (git)

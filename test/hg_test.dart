@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_common_utils/bool_utils.dart';
 import 'package:tekartik_sc/hg.dart';
 
 import 'io_test_common.dart';
@@ -21,6 +22,51 @@ void defineTests() {
         _isHgSupported = await isHgSupported;
       }
     });
+
+    group('hgSupported', () async {
+      // to debug travis issues
+      test('verbose', () async {
+        expect(
+            await isHgRepository('https://bitbucket.org/alextk/public_hg_test',
+                verbose: true, insecure: true),
+            isTrue);
+      });
+
+      // expect(await isHgSupported, true);
+      test('isHgRepository insecure', () async {
+        expect(
+            await isHgRepository('https://bitbucket.org/alextk/public_hg_test',
+                insecure: true),
+            isTrue);
+        expect(
+            await isHgRepository(
+                'https://bitbucket.org/alextk/public_hg_test_NO',
+                insecure: true),
+            isFalse);
+        expect(
+            await isHgRepository('https://bitbucket.org/alextk/public_git_test',
+                insecure: true),
+            isFalse);
+      });
+
+      // only works locally
+      test('isHgRepository secure', () async {
+        if (_isHgSupported) {
+          expect(
+              await isHgRepository(
+                  'https://bitbucket.org/alextk/public_hg_test'),
+              isTrue);
+          expect(
+              await isHgRepository(
+                  'https://bitbucket.org/alextk/public_hg_test_NO'),
+              isFalse);
+          expect(
+              await isHgRepository(
+                  'https://bitbucket.org/alextk/public_git_test'),
+              isFalse);
+        }
+      }, skip: true);
+    }, skip: !isHgSupportedSync);
 
     test('isHgSupported', () async {
       expect(await isHgSupported, _isHgSupported);
@@ -41,16 +87,6 @@ void defineTests() {
       }
     });
 
-    // to debug travis issues
-    test('verbose', () async {
-      if (_isHgSupported) {
-        expect(
-            await isHgRepository('https://bitbucket.org/alextk/public_hg_test',
-                verbose: true),
-            isTrue);
-      }
-    });
-
     /*
     test('isHgTopLevelPath', () async {
       print(Platform.script);
@@ -59,21 +95,6 @@ void defineTests() {
       expect(await isHgTopLevelPath(dirname(scriptDirPath)), isTrue, reason: dirname(scriptDirPath));
     });
     */
-    test('isHgRepository', () async {
-      if (_isHgSupported) {
-        expect(
-            await isHgRepository('https://bitbucket.org/alextk/public_hg_test'),
-            isTrue);
-        expect(
-            await isHgRepository(
-                'https://bitbucket.org/alextk/public_hg_test_NO'),
-            isFalse);
-        expect(
-            await isHgRepository(
-                'https://bitbucket.org/alextk/public_git_test'),
-            isFalse);
-      }
-    });
 
     test('HgProject', () async {
       if (_isHgSupported) {
@@ -81,9 +102,9 @@ void defineTests() {
         var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
             rootFolder: outPath);
         expect(await (isHgTopLevelPath(outPath)), isFalse);
-        await runCmd(prj.cloneCmd());
+        await runCmd(prj.cloneCmd(), verbose: true);
         expect(await (isHgTopLevelPath(outPath)), isTrue);
-        HgStatusResult statusResult = await prj.status();
+        HgStatusResult statusResult = await prj.status(verbose: true);
         expect(statusResult.nothingToCommit, true);
         HgOutgoingResult outgoingResult = await prj.outgoing();
         expect(outgoingResult.branchIsAhead, false);
@@ -96,12 +117,19 @@ void defineTests() {
         expect(outgoingResult.branchIsAhead, false);
 
         await runCmd(prj.addCmd(pathspec: "."));
-        await runCmd(prj.commitCmd("test"));
-        statusResult = await prj.status();
+        await runCmd(prj.commitCmd("test"), verbose: true);
+        statusResult = await prj.status(verbose: true);
         expect(statusResult.nothingToCommit, true);
         outgoingResult = await prj.outgoing();
         expect(outgoingResult.branchIsAhead, true);
       }
-    });
+    }, skip: isRunningOnTravis());
   });
 }
+
+bool _isRunningOnTravis;
+bool isRunningOnTravis() => _isRunningOnTravis ??= () {
+      var _onTravis = parseBool(Platform.environment['TRAVIS']) ?? false;
+      print('Running on travis: $_onTravis');
+      return _onTravis;
+    }();
