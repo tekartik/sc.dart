@@ -37,9 +37,9 @@ class HgPath {
     return hgCmd(args)..workingDirectory = path;
   }
 
-  Future<HgStatusResult> status() async {
+  Future<HgStatusResult> status({bool verbose}) async {
     ProcessCmd cmd = _hgCmd(['status']);
-    ProcessResult result = await runCmd(cmd);
+    ProcessResult result = await runCmd(cmd, verbose: verbose);
 
     HgStatusResult statusResult = HgStatusResult(cmd, result);
 
@@ -144,9 +144,13 @@ class HgProject extends HgPath {
   }
 
   // Don't specify a working dir here
-  ProcessCmd cloneCmd() {
+  // [insecure] added for travis test
+  ProcessCmd cloneCmd({bool insecure}) {
     List<String> args = ['clone'];
     args.addAll([src, path]);
+    if (insecure == true) {
+      args.add('--insecure');
+    }
     return hgCmd(args);
   }
 
@@ -169,7 +173,7 @@ bool get checkHgSupportDisabled =>
     parseBool(Platform.environment['TEKARTIK_HG_SUPPORT']) == false;
 bool checkHgSupportedSync({bool verbose}) {
   if (checkHgSupportDisabled) {
-    if (verbose) {
+    if (verbose == true) {
       print('hg disabled by env TEKARTIK_HG_SUPPORT');
     }
     return false;
@@ -226,12 +230,15 @@ bool canBeHgRepository(String uri) {
   return true;
 }
 
-Future<bool> isHgRepository(String uri, {bool verbose}) async {
+Future<bool> isHgRepository(String uri, {bool verbose, bool insecure}) async {
   if (!canBeHgRepository(uri)) {
     return false;
   }
-  ProcessResult runResult =
-      await runCmd(hgCmd(['identify', uri]), verbose: verbose);
+  var args = ['identify', uri];
+  if (insecure == true) {
+    args.add('--insecure');
+  }
+  ProcessResult runResult = await runCmd(hgCmd(args), verbose: verbose);
   // 0 is returned if found (or empty), out contains the last revision number such as 947e3404e4b7
   // 255 if an error occured
   return (runResult.exitCode == 0);
