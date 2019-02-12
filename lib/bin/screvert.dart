@@ -13,7 +13,7 @@ import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 
-const String _HELP = 'help';
+const String _helpFlag = 'help';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -25,7 +25,7 @@ void main(List<String> arguments) {
   //setupQuickLogging();
 
   ArgParser parser = ArgParser(allowTrailingOptions: true);
-  parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
+  parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
   parser.addFlag("dry-run",
@@ -36,7 +36,7 @@ void main(List<String> arguments) {
 
   ArgResults _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_HELP] as bool;
+  bool help = _argsResult[_helpFlag] as bool;
   if (help) {
     stdout.writeln('Revert files in the given directories');
     stdout.writeln();
