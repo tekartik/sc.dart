@@ -3,7 +3,7 @@ version: 0.8.5
 author: Alexandre Roux Tekartik <alex@tekartik.com>
 homepage: https://github.com/tekartik/sc.dart
 environment:
-  sdk: '>=2.0.0-dev.58 <3.0.0'
+  sdk: '>=2.1.0-dev <3.0.0'
 
 dependencies:
   process_run: '>=0.7.0'
