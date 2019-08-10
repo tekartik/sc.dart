@@ -24,31 +24,36 @@ void defineTests() {
     });
 
     group('hgSupported', () async {
-      // to debug travis issues
-      test('verbose', () async {
-        expect(
-            await isHgRepository('https://bitbucket.org/alextk/public_hg_test',
-                verbose: true, insecure: true),
-            isTrue);
-      });
+      if (!isRunningOnTravis()) {
+        // to debug travis issues
+        test('verbose', () async {
+          expect(
+              await isHgRepository(
+                  'https://bitbucket.org/alextk/public_hg_test',
+                  verbose: true,
+                  insecure: true),
+              isTrue);
+        });
 
-      // expect(await isHgSupported, true);
-      test('isHgRepository insecure', () async {
-        expect(
-            await isHgRepository('https://bitbucket.org/alextk/public_hg_test',
-                insecure: true),
-            isTrue);
-        expect(
-            await isHgRepository(
-                'https://bitbucket.org/alextk/public_hg_test_NO',
-                insecure: true),
-            isFalse);
-        expect(
-            await isHgRepository('https://bitbucket.org/alextk/public_git_test',
-                insecure: true),
-            isFalse);
-      });
-
+        // expect(await isHgSupported, true);
+        test('isHgRepository insecure', () async {
+          expect(
+              await isHgRepository(
+                  'https://bitbucket.org/alextk/public_hg_test',
+                  insecure: true),
+              isTrue);
+          expect(
+              await isHgRepository(
+                  'https://bitbucket.org/alextk/public_hg_test_NO',
+                  insecure: true),
+              isFalse);
+          expect(
+              await isHgRepository(
+                  'https://bitbucket.org/alextk/public_git_test',
+                  insecure: true),
+              isFalse);
+        });
+      }
       // only works locally
       test('isHgRepository secure', () async {
         if (_isHgSupported) {
@@ -66,7 +71,7 @@ void defineTests() {
               isFalse);
         }
       }, skip: true);
-    }, skip: !isHgSupportedSync);
+    }, skip: !isHgSupportedSync && isRunningOnTravis());
 
     test('isHgSupported', () async {
       expect(await isHgSupported, _isHgSupported);

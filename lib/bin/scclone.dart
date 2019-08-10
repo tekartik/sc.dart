@@ -14,8 +14,8 @@ import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
 
-const String _HELP = 'help';
-const String _DRY_RUN = 'dry-run';
+const String _helpFlag = 'help';
+const String _dryRunFlag = 'dry-run';
 const String verboseFlag = "verbose";
 const String branchOption = "branch";
 const String depthParam = 'depth';
@@ -29,10 +29,10 @@ Future main(List<String> arguments) async {
   //setupQuickLogging();
 
   ArgParser parser = ArgParser(allowTrailingOptions: true);
-  parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
+  parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
-  parser.addFlag(_DRY_RUN,
+  parser.addFlag(_dryRunFlag,
       abbr: 'd',
       help: 'Do not clone, simple show the folders created',
       negatable: false);
@@ -43,7 +43,7 @@ Future main(List<String> arguments) async {
       abbr: 'b', help: 'branch (git clone -b <branch>)');
   ArgResults _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_HELP] as bool;
+  bool help = _argsResult[_helpFlag] as bool;
   bool verbose = _argsResult[verboseFlag] as bool;
   var branch = _argsResult[branchOption] as String;
 
@@ -73,7 +73,7 @@ Future main(List<String> arguments) async {
     return;
   }
 
-  bool dryRun = _argsResult[_DRY_RUN] as bool;
+  bool dryRun = _argsResult[_dryRunFlag] as bool;
   int depth = parseInt(_argsResult[depthParam]);
 
   // get uris in parameters, default to current

@@ -12,6 +12,7 @@ import 'package:tekartik_pub/io.dart';
 import 'package:tekartik_sc/hg.dart' as hg;
 import 'package:tekartik_sc/src/bin_version.dart';
 
+import 'hg_test.dart';
 import 'io_test_common.dart';
 
 String get _pubPackageRoot => normalize(absolute('.'));
@@ -33,7 +34,7 @@ void main() {
       expect(Version.parse(parts.last), version);
     });
     test('scclone_hg', () async {
-      if (await hg.isHgSupported) {
+      if (await hg.isHgSupported && !isRunningOnTravis()) {
         // check hg location
         String outPath = clearOutTestPath(testDescriptions);
         ProcessResult result = await runCmd(DartCmd(

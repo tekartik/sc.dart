@@ -17,9 +17,9 @@ import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
 import 'package:tekartik_sc/src/std_buf.dart';
 
-const String _HELP = 'help';
-const String _LOG = 'log';
-const String _DRY_RUN = 'dry-run';
+const String _helpFlag = 'help';
+const String _logOption = 'log';
+const String _dryRunFlag = 'dry-run';
 const String verboseFlag = 'verbose';
 const String timeoutOption = 'timeout';
 
@@ -34,23 +34,23 @@ Future main(List<String> arguments) async {
   //setupQuickLogging();
 
   ArgParser parser = ArgParser(allowTrailingOptions: true);
-  parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
+  parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
   parser.addFlag(verboseFlag,
       abbr: 'v', help: 'Verbose output', negatable: false);
-  parser.addOption(_LOG,
+  parser.addOption(_logOption,
       abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
   parser.addOption(timeoutOption,
       abbr: 't', help: 'Timeout for each operation in milliseconds');
-  parser.addFlag(_DRY_RUN,
+  parser.addFlag(_dryRunFlag,
       abbr: 'n',
       help: 'Do not run test, simple show packages to be tested',
       negatable: false);
 
   ArgResults argResults = parser.parse(arguments);
 
-  bool help = argResults[_HELP] as bool;
+  bool help = argResults[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
         'Push & Pull(update) from source control recursively (default from current directory)');
@@ -62,7 +62,7 @@ Future main(List<String> arguments) async {
     stdout.writeln(parser.usage);
     return;
   }
-  bool dryRun = argResults[_DRY_RUN] as bool;
+  bool dryRun = argResults[_dryRunFlag] as bool;
   var timeout = int.tryParse((argResults[timeoutOption] as String) ?? '');
 
   if (argResults['version'] as bool) {
@@ -70,8 +70,8 @@ Future main(List<String> arguments) async {
     return;
   }
 
-  bool verbose = argResults[verboseFlag];
-  Level level = parseLogLevel(argResults[_LOG] as String);
+  bool verbose = argResults[verboseFlag] as bool;
+  Level level = parseLogLevel(argResults[_logOption] as String);
   if (verbose) {
     level = Level.FINEST;
   }

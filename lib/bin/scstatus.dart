@@ -18,8 +18,8 @@ import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
 import 'package:tekartik_sc/src/std_buf.dart';
 
-const String _HELP = 'help';
-const String _LOG = 'log';
+const String _helpFlag = 'help';
+const String _logOption = 'log';
 const String verboseFlag = 'verbose';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
@@ -32,16 +32,16 @@ Future main(List<String> arguments) async {
   //setupQuickLogging();
 
   ArgParser parser = ArgParser(allowTrailingOptions: true);
-  parser.addFlag(_HELP, abbr: 'h', help: 'Usage help', negatable: false);
+  parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag("version",
       help: 'Display the script version', negatable: false);
   parser.addFlag(verboseFlag, abbr: 'v', help: 'Verbose', negatable: false);
-  parser.addOption(_LOG,
+  parser.addOption(_logOption,
       abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
 
   ArgResults _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_HELP] as bool;
+  bool help = _argsResult[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
         'Display source control status recursively (default from current directory)');
@@ -57,7 +57,7 @@ Future main(List<String> arguments) async {
     return;
   }
 
-  Level level = parseLogLevel(_argsResult[_LOG] as String);
+  Level level = parseLogLevel(_argsResult[_logOption] as String);
   if (_argsResult[verboseFlag] as bool) {
     level = Level.FINEST;
   }

@@ -1,12 +1,11 @@
 language: dart
+sudo: required
+dist: trusty
 dart:
+  - '2.4.0'
   - stable
   - dev
-sudo: false
-env:
-  global:
-    - TEKARTIK_HG_SUPPORT=false
-before_install:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-script: ./tool/travis.sh
+before_script:
+  - source $(pub run chrome_travis:env_rc)
+script:
+  - dart tool/travis.dart
