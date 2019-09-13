@@ -56,7 +56,7 @@ void main() {
           stdout.writeln(
               'Cannot test scpp - write access require to git@gitlab.com:tkexp/branch_exp.git');
         }
-      }, timeout: Timeout(Duration(minutes: 2)), skip: runningInTravis);
+      }, timeout: const Timeout(Duration(minutes: 2)), skip: runningInTravis);
     }
   });
 }
