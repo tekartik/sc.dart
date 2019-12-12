@@ -10,8 +10,8 @@ import 'hg.dart';
 
 export 'src/scpath.dart' show handleScPath;
 
-String git = "git";
-String hg = "hg";
+String git = 'git';
+String hg = 'hg';
 
 ///
 /// Check whether the path is a mercurial or git path

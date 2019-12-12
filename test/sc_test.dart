@@ -1,4 +1,4 @@
-@TestOn("vm")
+@TestOn('vm')
 library tekartik_sc.test.sc_test;
 
 import 'dart:async';
@@ -18,38 +18,38 @@ void main() => defineTests();
 void defineTests() {
   group('sc', () {
     test('git', () async {
-      bool _isGitSupported = await isGitSupported;
+      final _isGitSupported = await isGitSupported;
 
       if (_isGitSupported) {
-        String outPath = normalize(absolute(clearOutTestPath()));
+        final outPath = normalize(absolute(clearOutTestPath()));
 
         var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
             path: outPath);
         await runCmd(prj.cloneCmd());
 
         expect(await isScTopLevelPath(outPath), isTrue);
-        expect(await getScName(outPath), "git");
+        expect(await getScName(outPath), 'git');
         expect(await findScTopLevelPath(outPath), outPath);
-        String sub = join(outPath, "sub");
+        final sub = join(outPath, 'sub');
         expect(await findScTopLevelPath(sub), outPath);
         expect(await getScName(sub), isNull);
       }
     });
 
     test('hg', () async {
-      bool _isHgSupported = await isHgSupported;
+      final _isHgSupported = await isHgSupported;
 
       if (_isHgSupported && !isRunningOnTravis()) {
-        String outPath = normalize(absolute(clearOutTestPath()));
+        final outPath = normalize(absolute(clearOutTestPath()));
 
         var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
             rootFolder: outPath);
         await runCmd(prj.cloneCmd());
 
         expect(await isScTopLevelPath(outPath), isTrue);
-        expect(await getScName(outPath), "hg");
+        expect(await getScName(outPath), 'hg');
         expect(await findScTopLevelPath(outPath), outPath);
-        String sub = join(outPath, "sub");
+        final sub = join(outPath, 'sub');
         expect(await findScTopLevelPath(sub), outPath);
         expect(await getScName(sub), isNull);
       }
@@ -57,7 +57,7 @@ void defineTests() {
 
     test('handleScPath', () async {
       // find top path
-      List<String> dirs = [];
+      final dirs = <String>[];
       Future handle(String dir) async {
         dirs.add(dir);
       }

@@ -1,8 +1,7 @@
-@TestOn("vm")
+@TestOn('vm')
 library tekartik_sc.test.bin_scpull_test;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
@@ -16,7 +15,7 @@ import 'io_test_common.dart';
 String get _pubPackageRoot => '.';
 
 String get screvertDartScript {
-  PubPackage pkg = PubPackage(_pubPackageRoot);
+  final pkg = PubPackage(_pubPackageRoot);
   return join(pkg.path, 'bin', 'screvert.dart');
 }
 
@@ -24,9 +23,8 @@ void main() {
   //useVMConfiguration();
   group('scpull', () {
     test('version', () async {
-      ProcessResult result =
-          await runCmd(DartCmd([screvertDartScript, '--version']));
-      List<String> parts =
+      final result = await runCmd(DartCmd([screvertDartScript, '--version']));
+      final parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'screvert');
       expect(Version.parse(parts.last), version);

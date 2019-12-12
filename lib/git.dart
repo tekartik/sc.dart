@@ -46,13 +46,13 @@ class GitPath {
   String get path => _path;
 
   GitPath([String path]) {
-    this._path = path;
+    _path = path;
   }
 
   GitPath._();
 
   ProcessCmd _gitCmd(List<String> args) {
-    ProcessCmd cmd = gitCmd(args)..workingDirectory = path;
+    final cmd = gitCmd(args)..workingDirectory = path;
     return cmd;
   }
 
@@ -61,7 +61,7 @@ class GitPath {
   }
 
   ProcessCmd pushCmd() {
-    List<String> args = ['push'];
+    final args = <String>['push'];
     return _gitCmd(args);
   }
 
@@ -70,7 +70,7 @@ class GitPath {
   }
 
   ProcessCmd statusCmd({bool short}) {
-    List<String> args = ['status'];
+    final args = <String>['status'];
     if (short == true) {
       args.add('--short');
     }
@@ -79,15 +79,15 @@ class GitPath {
 
   /// printResultIfChanges: show result if different than 'nothing to commit'
   Future<GitStatusResult> status({bool verbose}) async {
-    ProcessCmd cmd = statusCmd();
+    final cmd = statusCmd();
     if (verbose == true) {
       print('working dir: ${cmd.workingDirectory}');
     }
-    ProcessResult result = await runCmd(cmd, verbose: verbose);
-    GitStatusResult statusResult = GitStatusResult(cmd, result);
+    final result = await runCmd(cmd, verbose: verbose);
+    final statusResult = GitStatusResult(cmd, result);
 
     if (result.exitCode == 0) {
-      Iterable<String> lines = LineSplitter.split(result.stdout.toString());
+      final lines = LineSplitter.split(result.stdout.toString());
 
       lines.forEach((String line) {
         // Linux /Win?/Mac?
@@ -124,14 +124,14 @@ class GitPath {
      */
 
   ProcessCmd addCmd({String pathspec}) {
-    List<String> args = ['add', pathspec];
+    final args = <String>['add', pathspec];
     return _gitCmd(args);
   }
 
   ProcessCmd commitCmd(String message, {bool all}) {
-    List<String> args = ['commit'];
+    final args = <String>['commit'];
     if (all == true) {
-      args.add("--all");
+      args.add('--all');
     }
     args.addAll(['-m', message]);
     return _gitCmd(args);
@@ -175,14 +175,14 @@ class GitProject extends GitPath {
         _path = absolute(_path);
       }
     } else {
-      this._path = path;
+      _path = path;
     }
   }
 
   // no using _gitCmd as not using workingDirectory
   // only get latest revision if [depth] = 1
   ProcessCmd cloneCmd({bool progress, int depth, String branch}) {
-    List<String> args = ['clone'];
+    final args = <String>['clone'];
     if (progress == true) {
       args.add('--progress');
     }
@@ -267,7 +267,7 @@ Future<bool> isGitRepository(String uri, {bool verbose}) async {
   if (!canBeGitRepository(uri)) {
     return false;
   }
-  ProcessResult runResult = await runCmd(
+  final runResult = await runCmd(
       gitCmd(['ls-remote', '--exit-code', '-h', uri]),
       verbose: verbose);
   // 2 is returned if not found
@@ -280,7 +280,7 @@ Future<bool> isGitTopLevelPath(String path) async {
 }
 
 bool isGitTopLevelPathSync(String path) {
-  String dotGit = ".git";
-  String gitFile = join(path, dotGit);
+  final dotGit = '.git';
+  final gitFile = join(path, dotGit);
   return FileSystemEntity.isDirectorySync(gitFile);
 }

@@ -31,17 +31,17 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 Future main(List<String> arguments) async {
   //setupQuickLogging();
 
-  ArgParser parser = ArgParser(allowTrailingOptions: true);
+  final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag("version",
+  parser.addFlag('version',
       help: 'Display the script version', negatable: false);
   parser.addFlag(verboseFlag, abbr: 'v', help: 'Verbose', negatable: false);
   parser.addOption(_logOption,
       abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
 
-  ArgResults _argsResult = parser.parse(arguments);
+  final _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_helpFlag] as bool;
+  final help = _argsResult[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
         'Display source control status recursively (default from current directory)');
@@ -49,20 +49,20 @@ Future main(List<String> arguments) async {
     stdout.writeln(
         'Usage: ${currentScriptName} [<folder_paths...>] [<arguments>]');
     stdout.writeln();
-    stdout.writeln("--log finer will display all path");
-    stdout.writeln("--log finest will display all path and command executed");
+    stdout.writeln('--log finer will display all path');
+    stdout.writeln('--log finest will display all path and command executed');
     stdout.writeln();
-    stdout.writeln("Global options:");
+    stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
     return;
   }
 
-  Level level = parseLogLevel(_argsResult[_logOption] as String);
+  var level = parseLogLevel(_argsResult[_logOption] as String);
   if (_argsResult[verboseFlag] as bool) {
     level = Level.FINEST;
   }
 
-  bool commandVerbose = level <= Level.FINEST;
+  final commandVerbose = level <= Level.FINEST;
 
   if (_argsResult['version'] as bool) {
     stdout.write('${currentScriptName} ${version}');
@@ -73,25 +73,25 @@ Future main(List<String> arguments) async {
   if (logLevel != null) {
     setupQuickLogging(parseLogLevel(logLevel));
   }
-  log = new Logger("rscstatus");
+  log = new Logger('rscstatus');
   log.fine('Log level ${Logger.root.level}');
   */
 
   // get dirs in parameters, default to current
-  List<String> dirs = _argsResult.rest;
+  var dirs = _argsResult.rest;
   if (dirs.isEmpty) {
     dirs = [Directory.current.path];
   }
 
-  List<Future> futures = [];
+  final futures = <Future>[];
 
   Future _handleDir(String dir) async {
     if (await isGitPathAndSupported(dir)) {
-      GitPath prj = GitPath(dir);
+      final prj = GitPath(dir);
 
-      GitStatusResult statusResult = await (prj.status());
+      final statusResult = await (prj.status());
 
-      StdBuf buf = StdBuf();
+      final buf = StdBuf();
       if (level <= Level.FINER) {
         buf.outAppend('--- git ${prj}');
       }
@@ -109,27 +109,26 @@ Future main(List<String> arguments) async {
         }
         //stdout.writeln(statusResult.runResult.stdout);
         // rerun in short version mode
-        ProcessCmd cmd = prj.statusCmd(short: true);
+        final cmd = prj.statusCmd(short: true);
         if (level <= Level.FINEST) {
           buf.outAppend('> ${cmd}');
         }
-        ProcessResult result =
-            await runCmd(cmd, commandVerbose: commandVerbose);
+        final result = await runCmd(cmd, commandVerbose: commandVerbose);
         buf.appendResult(result);
       }
       buf.print();
     } else if (await isHgPathAndSupported(dir)) {
-      HgPath prj = HgPath(dir);
+      final prj = HgPath(dir);
 
-      StdBuf buf = StdBuf();
-      HgStatusResult statusResult = await (prj.status());
+      final buf = StdBuf();
+      final statusResult = await (prj.status());
       if (level <= Level.FINEST) {
         buf.outAppend('--- hg ${prj}');
         buf.outAppend('> ${statusResult.cmd}');
         buf.appendResult(statusResult.runResult);
       }
       if (statusResult.nothingToCommit) {
-        HgOutgoingResult outgoingResult = await (prj.outgoing());
+        final outgoingResult = await (prj.outgoing());
         if (level <= Level.FINEST) {
           buf.outAppend('> ${outgoingResult.cmd}');
         }
@@ -146,7 +145,7 @@ Future main(List<String> arguments) async {
     }
   }
 
-  for (String dir in dirs) {
+  for (final dir in dirs) {
     print(dir);
     var _handle = handleScPath(dir, _handleDir, recursive: true);
     if (_handle is Future) {

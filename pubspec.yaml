@@ -33,6 +33,11 @@ dev_dependencies:
       url: git://github.com/tekartik/chrome_travis.dart
       ref: dart2
     version: '>=0.1.4'
+  tekartik_common_utils:
+    git:
+      url: git://github.com/tekartik/common_utils.dart
+      ref: dart2
+    version: '>=0.5.1'
 
 dependency_overrides:
 #  process_run:

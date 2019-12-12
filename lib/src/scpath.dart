@@ -16,13 +16,13 @@ List<String> scUriToPathParts(String uri) {
   List<String> parts;
   String domain;
   try {
-    Uri _uri = Uri.parse(uri);
+    final _uri = Uri.parse(uri);
     parts = posix.split(_uri.path);
     domain = _uri.host;
   } on FormatException catch (_) {
     // ssh? something like git@github.com:tekartik/sc.dart.git
     // find first part (before :)
-    List<String> domainParts = uri.split(":");
+    final domainParts = uri.split(':');
     domain = domainParts[0];
     parts = posix.split(domainParts[1]);
   }
@@ -33,7 +33,7 @@ List<String> scUriToPathParts(String uri) {
   }
   // remove user information from domain
 
-  int userInfoIndex = domain.indexOf("@");
+  final userInfoIndex = domain.indexOf('@');
   if (userInfoIndex != -1) {
     domain = domain.substring(userInfoIndex + 1);
   }
@@ -41,7 +41,7 @@ List<String> scUriToPathParts(String uri) {
   parts.insert(0, domain);
 
   // remove tilde ~ which causes issue
-  int tildeIndex = parts.indexOf("~");
+  final tildeIndex = parts.indexOf('~');
   if (tildeIndex != -1) {
     parts.removeAt(tildeIndex);
   }
@@ -64,7 +64,7 @@ Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
   } else {
     if (recursive) {
       try {
-        List<Future> sub = [];
+        final sub = <Future>[];
         await Directory(dir).list().listen((FileSystemEntity fse) {
           sub.add(() async {
             var path = fse.path;

@@ -38,10 +38,10 @@ class HgPath {
   }
 
   Future<HgStatusResult> status({bool verbose}) async {
-    ProcessCmd cmd = _hgCmd(['status']);
-    ProcessResult result = await runCmd(cmd, verbose: verbose);
+    final cmd = _hgCmd(['status']);
+    final result = await runCmd(cmd, verbose: verbose);
 
-    HgStatusResult statusResult = HgStatusResult(cmd, result);
+    final statusResult = HgStatusResult(cmd, result);
 
     //bool showResult = true;
     if (result.exitCode == 0) {
@@ -54,14 +54,14 @@ class HgPath {
   }
 
   Future<HgOutgoingResult> outgoing() async {
-    ProcessCmd cmd = _hgCmd(['outgoing']);
-    ProcessResult result = await runCmd(cmd);
-    HgOutgoingResult outgoingResult = HgOutgoingResult(cmd, result);
+    final cmd = _hgCmd(['outgoing']);
+    final result = await runCmd(cmd);
+    final outgoingResult = HgOutgoingResult(cmd, result);
     switch (result.exitCode) {
       case 0:
       case 1:
         {
-          Iterable<String> lines = LineSplitter.split(result.stdout as String);
+          final lines = LineSplitter.split(result.stdout as String);
           //print(lines.last);
           if (lines.last.startsWith('no changes found') ||
               lines.last.startsWith('aucun changement')) {
@@ -76,7 +76,7 @@ class HgPath {
   }
 
   ProcessCmd revertCmd({String path, bool noBackup}) {
-    List<String> args = ['revert'];
+    final args = <String>['revert'];
     if (path != null) {
       args.add(path);
     }
@@ -87,12 +87,12 @@ class HgPath {
   }
 
   ProcessCmd pushCmd() {
-    List<String> args = ['push'];
+    final args = <String>['push'];
     return _hgCmd(args);
   }
 
   ProcessCmd pullCmd({bool update = true}) {
-    List<String> args = ['pull'];
+    final args = <String>['pull'];
     if (update == true) {
       args.add('-u');
     }
@@ -100,14 +100,14 @@ class HgPath {
   }
 
   ProcessCmd addCmd({String pathspec}) {
-    List<String> args = ['add', pathspec];
+    final args = <String>['add', pathspec];
     return _hgCmd(args);
   }
 
   ProcessCmd commitCmd(String message, {bool all}) {
-    List<String> args = ['commit'];
+    final args = <String>['commit'];
     if (all == true) {
-      args.add("--all");
+      args.add('--all');
     }
     args.addAll(['-m', message]);
     return _hgCmd(args);
@@ -146,7 +146,7 @@ class HgProject extends HgPath {
   // Don't specify a working dir here
   // [insecure] added for travis test
   ProcessCmd cloneCmd({bool insecure}) {
-    List<String> args = ['clone'];
+    final args = <String>['clone'];
     args.addAll([src, path]);
     if (insecure == true) {
       args.add('--insecure');
@@ -187,9 +187,7 @@ bool checkHgSupportedSync({bool verbose}) {
 }
 
 Future<bool> get isHgSupported async {
-  if (_isHgSupported == null) {
-    _isHgSupported = await checkHgSupported();
-  }
+  _isHgSupported ??= await checkHgSupported();
   return _isHgSupported;
 }
 
@@ -216,15 +214,15 @@ Future<ProcessResult> hgRun(List<String> args,
 */
 ProcessCmd hgCmd(List<String> args) {
   // Force hg language to english
-  Map<String, String> environment = {"LANGUAGE": "en_US.UTF8"};
-  return ProcessCmd("hg", args)..environment = environment;
+  final environment = <String, String>{'LANGUAGE': 'en_US.UTF8'};
+  return ProcessCmd('hg', args)..environment = environment;
 }
 
 ProcessCmd hgVersionCmd() => hgCmd(['--version']);
 
 bool canBeHgRepository(String uri) {
   // this is only for git
-  if (uri.startsWith("git@")) {
+  if (uri.startsWith('git@')) {
     return false;
   }
   return true;
@@ -238,15 +236,15 @@ Future<bool> isHgRepository(String uri, {bool verbose, bool insecure}) async {
   if (insecure == true) {
     args.add('--insecure');
   }
-  ProcessResult runResult = await runCmd(hgCmd(args), verbose: verbose);
+  final runResult = await runCmd(hgCmd(args), verbose: verbose);
   // 0 is returned if found (or empty), out contains the last revision number such as 947e3404e4b7
   // 255 if an error occured
   return (runResult.exitCode == 0);
 }
 
 bool isHgTopLevelPathSync(String path) {
-  String dotHg = ".hg";
-  String hgFile = join(path, dotHg);
+  final dotHg = '.hg';
+  final hgFile = join(path, dotHg);
   return FileSystemEntity.isDirectorySync(hgFile);
 }
 

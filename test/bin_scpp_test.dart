@@ -1,4 +1,4 @@
-@TestOn("vm")
+@TestOn('vm')
 library tekartik_sc.test.bin_scpull_test;
 
 import 'dart:async';
@@ -18,7 +18,7 @@ import 'io_test_common.dart';
 String get _pubPackageRoot => '.';
 
 String get scppDartScript {
-  PubPackage pkg = PubPackage(_pubPackageRoot);
+  final pkg = PubPackage(_pubPackageRoot);
   return join(pkg.path, 'bin', 'scpp.dart');
 }
 
@@ -26,9 +26,8 @@ void main() {
   //useVMConfiguration();
   group('scpp', () {
     test('version', () async {
-      ProcessResult result =
-          await runCmd(DartCmd([scppDartScript, '--version']));
-      List<String> parts =
+      final result = await runCmd(DartCmd([scppDartScript, '--version']));
+      final parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'scpp');
       expect(Version.parse(parts.last), version);
@@ -40,16 +39,16 @@ void main() {
         return result.exitCode == 0;
       }
 
-      // skip with $env:TRAVIS = "true"
+      // skip with $env:TRAVIS = 'true'
       test('push no change', () async {
-        String outPath = clearOutTestPath(testDescriptions);
+        final outPath = clearOutTestPath(testDescriptions);
         expect(await (isGitTopLevelPath(outPath)), isFalse);
         expect(await (isGitTopLevelPath(outPath)), isFalse);
         var prj =
             GitProject('git@gitlab.com:tkexp/branch_exp.git', path: outPath);
         if (await clone(prj)) {
-          ProcessResult result = await runCmd(DartCmd([scppDartScript, '-v']));
-          String output = result.stdout.toString();
+          final result = await runCmd(DartCmd([scppDartScript, '-v']));
+          final output = result.stdout.toString();
           expect(output, contains('no push'));
           expect(output, contains('not ahead'));
         } else {
