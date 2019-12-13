@@ -33,9 +33,9 @@ Future main(List<String> arguments) async {
   //Logger log;
   //setupQuickLogging();
 
-  ArgParser parser = ArgParser(allowTrailingOptions: true);
+  final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag("version",
+  parser.addFlag('version',
       help: 'Display the script version', negatable: false);
   parser.addFlag(verboseFlag,
       abbr: 'v', help: 'Verbose output', negatable: false);
@@ -48,9 +48,9 @@ Future main(List<String> arguments) async {
       help: 'Do not run test, simple show packages to be tested',
       negatable: false);
 
-  ArgResults argResults = parser.parse(arguments);
+  final argResults = parser.parse(arguments);
 
-  bool help = argResults[_helpFlag] as bool;
+  final help = argResults[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
         'Push & Pull(update) from source control recursively (default from current directory)');
@@ -58,11 +58,11 @@ Future main(List<String> arguments) async {
     stdout.writeln(
         'Usage: ${currentScriptName} [<folder_paths...>] [<arguments>]');
     stdout.writeln();
-    stdout.writeln("Global options:");
+    stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
     return;
   }
-  bool dryRun = argResults[_dryRunFlag] as bool;
+  final dryRun = argResults[_dryRunFlag] as bool;
   var timeout = int.tryParse((argResults[timeoutOption] as String) ?? '');
 
   if (argResults['version'] as bool) {
@@ -70,8 +70,8 @@ Future main(List<String> arguments) async {
     return;
   }
 
-  bool verbose = argResults[verboseFlag] as bool;
-  Level level = parseLogLevel(argResults[_logOption] as String);
+  final verbose = argResults[verboseFlag] as bool;
+  var level = parseLogLevel(argResults[_logOption] as String);
   if (verbose) {
     level = Level.FINEST;
   }
@@ -80,17 +80,17 @@ Future main(List<String> arguments) async {
   if (logLevel != null) {
     setupQuickLogging(parseLogLevel(logLevel));
   }
-  log = new Logger("rscpull");
+  log = new Logger('rscpull');
   log.fine('Log level ${Logger.root.level}');
   */
 
   // get dirs in parameters, default to current
-  List<String> dirs = argResults.rest;
+  var dirs = argResults.rest;
   if (dirs.isEmpty) {
     dirs = [Directory.current.path];
   }
 
-  List<Future> futures = [];
+  final futures = <Future>[];
 
   Future _handleDir(String dir) async {
     Future<ProcessResult> _execute(StdBuf buf, ProcessCmd cmd) async {
@@ -98,7 +98,7 @@ Future main(List<String> arguments) async {
         stdout.writeln(cmd);
         return null;
       } else {
-        ProcessResult result = await runCmd(cmd);
+        final result = await runCmd(cmd);
         if (level <= Level.FINEST) {
           buf.appendCmdResult(cmd, result);
         }
@@ -107,14 +107,14 @@ Future main(List<String> arguments) async {
     }
 
     if (await isGitPathAndSupported(dir)) {
-      StdBuf buf = StdBuf();
-      GitPath prj = GitPath(dir);
+      final buf = StdBuf();
+      final prj = GitPath(dir);
 
       var statusResult = await prj.status();
       // Only push if branch is ahead
       if (statusResult.branchIsAhead) {
-        ProcessCmd cmd = prj.pushCmd();
-        ProcessResult result = await _execute(buf, cmd);
+        final cmd = prj.pushCmd();
+        final result = await _execute(buf, cmd);
         // dry-run returns null
         if (result != null) {
           if (result.exitCode != 0 ||
@@ -125,7 +125,7 @@ Future main(List<String> arguments) async {
         }
       } else {
         if (level <= Level.FINEST) {
-          buf.outAppend("no push, branch is not ahead");
+          buf.outAppend('no push, branch is not ahead');
         }
       }
       var cmd = prj.pullCmd();
@@ -141,13 +141,13 @@ Future main(List<String> arguments) async {
         }
       }
 
-      buf.print("--- git ${prj}");
+      buf.print('--- git ${prj}');
     } else if (await isHgPathAndSupported(dir)) {
-      StdBuf buf = StdBuf();
-      HgPath prj = HgPath(dir);
+      final buf = StdBuf();
+      final prj = HgPath(dir);
       //ProcessResult result =
-      ProcessCmd cmd = prj.pushCmd();
-      ProcessResult result = await _execute(buf, cmd);
+      var cmd = prj.pushCmd();
+      var result = await _execute(buf, cmd);
       // exitCode seems to be always 1 on linux...
       // result.exitCode != 0 ||
       if (!result.stdout.toString().contains('no changes found')) {
@@ -161,7 +161,7 @@ Future main(List<String> arguments) async {
         buf.outAppend('> ${cmd}');
         buf.appendResult(result);
       }
-      buf.print("--- hg ${prj}");
+      buf.print('--- hg ${prj}');
     }
   }
 
@@ -170,14 +170,14 @@ Future main(List<String> arguments) async {
       await _handleDir(dir)
           .timeout(Duration(milliseconds: timeout))
           .catchError((e) {
-        stderr.writeln("$e for $dir");
+        stderr.writeln('$e for $dir');
       });
     } else {
       await _handleDir(dir);
     }
   }
 
-  for (String dir in dirs) {
+  for (final dir in dirs) {
     print(dir);
     var _handle = handleScPath(dir, _handleDirWithTimeout, recursive: true);
     if (_handle is Future) {

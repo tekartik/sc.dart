@@ -24,26 +24,26 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 void main(List<String> arguments) {
   //setupQuickLogging();
 
-  ArgParser parser = ArgParser(allowTrailingOptions: true);
+  final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag("version",
+  parser.addFlag('version',
       help: 'Display the script version', negatable: false);
-  parser.addFlag("dry-run",
+  parser.addFlag('dry-run',
       abbr: 'n',
       help: 'Do not run test, simple show packages to be tested',
       negatable: false);
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
 
-  ArgResults _argsResult = parser.parse(arguments);
+  final _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_helpFlag] as bool;
+  final help = _argsResult[_helpFlag] as bool;
   if (help) {
     stdout.writeln('Revert files in the given directories');
     stdout.writeln();
     stdout
         .writeln('Usage: ${currentScriptName} <folder_paths...> [<arguments>]');
     stdout.writeln();
-    stdout.writeln("Global options:");
+    stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
     return;
   }
@@ -53,32 +53,32 @@ void main(List<String> arguments) {
     return;
   }
 
-  bool dryRun = _argsResult["dry-run"] as bool;
+  final dryRun = _argsResult['dry-run'] as bool;
 
   // get dirs in parameters, default to current
-  List<String> dirOrFiles = _argsResult.rest;
+  final dirOrFiles = _argsResult.rest;
   if (dirOrFiles.isEmpty) {
     stderr.writeln(
-        "you must specify a directory. Example: ${currentScriptName} .");
+        'you must specify a directory. Example: ${currentScriptName} .');
     exit(1);
   }
 
-  List<Future> futures = [];
+  final futures = <Future>[];
 
   Future _handleDir(String dirOrFile) async {
     // Get top level
     dirOrFile = absolute(dirOrFile);
-    String scTopPath = await findScTopLevelPath(dirOrFile);
+    final scTopPath = await findScTopLevelPath(dirOrFile);
     if (scTopPath == null) {
       stderr.writeln('$dirOrFile does not belong to source control');
     } else {
       //print(dirOrFile);
       //print(dirOrFile);
-      String rel = relative(dirOrFile, from: scTopPath);
+      final rel = relative(dirOrFile, from: scTopPath);
       if (await isGitTopLevelPath(scTopPath)) {
         if (await isGitSupported) {
-          GitPath prj = GitPath(scTopPath);
-          ProcessCmd cmd = prj.checkoutCmd(path: rel);
+          final prj = GitPath(scTopPath);
+          final cmd = prj.checkoutCmd(path: rel);
 
           stdout.writeln(cmd);
           if (!dryRun) {
@@ -94,8 +94,8 @@ void main(List<String> arguments) {
         }
         */
         } else if (await isHgTopLevelPath(scTopPath)) {
-          HgPath prj = HgPath(scTopPath);
-          ProcessCmd cmd = prj.revertCmd(path: rel, noBackup: true);
+          final prj = HgPath(scTopPath);
+          final cmd = prj.revertCmd(path: rel, noBackup: true);
 
           stdout.writeln(cmd);
           if (!dryRun) {
@@ -106,7 +106,7 @@ void main(List<String> arguments) {
     }
   }
 
-  for (String dirOrFile in dirOrFiles) {
+  for (final dirOrFile in dirOrFiles) {
     var _handle = _handleDir(dirOrFile);
     if (_handle is Future) {
       futures.add(_handle);

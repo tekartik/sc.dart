@@ -1,8 +1,7 @@
-@TestOn("vm")
+@TestOn('vm')
 library tekartik_sc.test.bin_scstatus_test;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
@@ -16,7 +15,7 @@ import 'io_test_common.dart';
 String get _pubPackageRoot => '.';
 
 String get scstatusDartScript {
-  PubPackage pkg = PubPackage(_pubPackageRoot);
+  final pkg = PubPackage(_pubPackageRoot);
   return join(pkg.path, 'bin', 'scstatus.dart');
 }
 
@@ -24,9 +23,8 @@ void main() {
   //useVMConfiguration();
   group('scstatus', () {
     test('version', () async {
-      ProcessResult result =
-          await runCmd(DartCmd([scstatusDartScript, '--version']));
-      List<String> parts =
+      final result = await runCmd(DartCmd([scstatusDartScript, '--version']));
+      final parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'scstatus');
       expect(Version.parse(parts.last), version);

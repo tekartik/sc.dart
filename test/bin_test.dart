@@ -1,4 +1,4 @@
-@TestOn("vm")
+@TestOn('vm')
 library tekartik_sc.test.bin_test;
 
 import 'package:dev_test/test.dart';
@@ -10,7 +10,7 @@ import 'io_test_common.dart';
 String get _pubPackageRoot => '.';
 
 String get pubTestDartScript {
-  PubPackage pkg = PubPackage(_pubPackageRoot);
+  final pkg = PubPackage(_pubPackageRoot);
   return join(pkg.path, 'bin', 'pubtest.dart');
 }
 

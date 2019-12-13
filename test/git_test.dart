@@ -1,4 +1,4 @@
-@TestOn("vm")
+@TestOn('vm')
 library tekartik_sc.test.git_test;
 
 import 'dart:async';
@@ -12,7 +12,7 @@ import 'io_test_common.dart';
 
 Future main() async {
   //useVMConfiguration();
-  bool _isGitSupported = isGitSupportedSync;
+  final _isGitSupported = isGitSupportedSync;
   group('Git', () {
     group('supported', () {
       test('check', () async {
@@ -37,9 +37,9 @@ Future main() async {
 
       test('version', () async {
         if (_isGitSupported) {
-          ProcessResult result = await runCmd(gitVersionCmd());
+          final result = await runCmd(gitVersionCmd());
           // git version 1.9.1
-          expect(result.stdout.startsWith("git version"), isTrue);
+          expect(result.stdout.startsWith('git version'), isTrue);
         }
       });
 
@@ -83,24 +83,24 @@ Future main() async {
       group('bitbucket.org', () {
         test('bbGitProject', () async {
           if (_isGitSupported) {
-            String outPath = clearOutTestPath(testDescriptions);
+            final outPath = clearOutTestPath(testDescriptions);
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
                 path: outPath);
             await runCmd(prj.cloneCmd(depth: 1));
             expect(await (isGitTopLevelPath(outPath)), isTrue);
-            GitStatusResult statusResult = await prj.status();
+            var statusResult = await prj.status();
             expect(statusResult.nothingToCommit, true);
             expect(statusResult.branchIsAhead, false);
 
-            File tempFile = File(join(prj.path, "temp_file.txt"));
-            await tempFile.writeAsString("echo", flush: true);
+            final tempFile = File(join(prj.path, 'temp_file.txt'));
+            await tempFile.writeAsString('echo', flush: true);
             statusResult = await prj.status();
             expect(statusResult.nothingToCommit, false);
             expect(statusResult.branchIsAhead, false);
 
-            await runCmd(prj.addCmd(pathspec: "."));
-            ProcessResult commitResult = await runCmd(prj.commitCmd("test"));
+            await runCmd(prj.addCmd(pathspec: '.'));
+            final commitResult = await runCmd(prj.commitCmd('test'));
             // Needed to travis
             if (commitResult.exitCode == 0) {
               statusResult = await prj.status();
@@ -116,25 +116,25 @@ Future main() async {
       group('github.com', () {
         test('GitProject', () async {
           if (_isGitSupported) {
-            String outPath = clearOutTestPath(testDescriptions);
+            final outPath = clearOutTestPath(testDescriptions);
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject(
                 'https://github.com/alextekartik/data_test.git',
                 path: outPath);
             await runCmd(prj.cloneCmd());
             expect(await (isGitTopLevelPath(outPath)), isTrue);
-            GitStatusResult statusResult = await prj.status();
+            var statusResult = await prj.status();
             expect(statusResult.nothingToCommit, true);
             expect(statusResult.branchIsAhead, false);
 
-            File tempFile = File(join(prj.path, "temp_file.txt"));
-            await tempFile.writeAsString("echo", flush: true);
+            final tempFile = File(join(prj.path, 'temp_file.txt'));
+            await tempFile.writeAsString('echo', flush: true);
             statusResult = await prj.status();
             expect(statusResult.nothingToCommit, false);
             expect(statusResult.branchIsAhead, false);
 
-            await runCmd(prj.addCmd(pathspec: "."));
-            ProcessResult commitResult = await runCmd(prj.commitCmd("test"));
+            await runCmd(prj.addCmd(pathspec: '.'));
+            final commitResult = await runCmd(prj.commitCmd('test'));
             // Needed to travis
             if (commitResult.exitCode == 0) {
               statusResult = await prj.status();
@@ -149,24 +149,24 @@ Future main() async {
       group('gitlab.com', () {
         test('GitProject', () async {
           if (_isGitSupported) {
-            String outPath = clearOutTestPath(testDescriptions);
+            final outPath = clearOutTestPath(testDescriptions);
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject('https://gitlab.com/tkexp/branch_exp.git',
                 path: outPath);
             await runCmd(prj.cloneCmd());
             expect(await (isGitTopLevelPath(outPath)), isTrue);
-            GitStatusResult statusResult = await prj.status();
+            var statusResult = await prj.status();
             expect(statusResult.nothingToCommit, true);
             expect(statusResult.branchIsAhead, false);
 
-            File tempFile = File(join(prj.path, "temp_file.txt"));
-            await tempFile.writeAsString("echo", flush: true);
+            final tempFile = File(join(prj.path, 'temp_file.txt'));
+            await tempFile.writeAsString('echo', flush: true);
             statusResult = await prj.status();
             expect(statusResult.nothingToCommit, false);
             expect(statusResult.branchIsAhead, false);
 
-            await runCmd(prj.addCmd(pathspec: "."));
-            ProcessResult commitResult = await runCmd(prj.commitCmd("test"));
+            await runCmd(prj.addCmd(pathspec: '.'));
+            final commitResult = await runCmd(prj.commitCmd('test'));
             // Needed to travis
             if (commitResult.exitCode == 0) {
               statusResult = await prj.status();

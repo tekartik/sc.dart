@@ -11,14 +11,13 @@ export 'package:dev_test/test.dart';
 String get outDataPath => getOutTestPath(testDescriptions);
 
 String getOutTestPath([List<String> parts]) {
-  if (parts == null) {
-    parts = testDescriptions;
-  }
+  parts ??= testDescriptions;
+
   return join('.dart_tool', 'tekartik_sc', 'test', joinAll(parts));
 }
 
 String clearOutTestPath([List<String> parts]) {
-  String outPath = getOutTestPath(parts);
+  final outPath = getOutTestPath(parts);
   try {
     Directory(outPath).deleteSync(recursive: true);
   } catch (_) {}

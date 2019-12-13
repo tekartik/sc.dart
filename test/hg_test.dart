@@ -1,4 +1,4 @@
-@TestOn("vm")
+@TestOn('vm')
 library tekartik_sc.test.hg_test;
 
 import 'dart:io';
@@ -18,9 +18,7 @@ void defineTests() {
     bool _isHgSupported;
 
     setUp(() async {
-      if (_isHgSupported == null) {
-        _isHgSupported = await isHgSupported;
-      }
+      _isHgSupported ??= await isHgSupported;
     });
 
     group('hgSupported', () async {
@@ -78,9 +76,9 @@ void defineTests() {
     });
     test('version', () async {
       if (_isHgSupported) {
-        ProcessResult result = await runCmd(hgVersionCmd());
+        final result = await runCmd(hgVersionCmd());
         // git version 1.9.1
-        expect(result.stdout.startsWith("Mercurial Distributed SCM"), isTrue);
+        expect(result.stdout.startsWith('Mercurial Distributed SCM'), isTrue);
         // print for travis debugging
         print('\$ ${hgVersionCmd()}');
         print(result.stdout);
@@ -103,26 +101,26 @@ void defineTests() {
 
     test('HgProject', () async {
       if (_isHgSupported) {
-        String outPath = clearOutTestPath(testDescriptions);
+        final outPath = clearOutTestPath(testDescriptions);
         var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
             rootFolder: outPath);
         expect(await (isHgTopLevelPath(outPath)), isFalse);
         await runCmd(prj.cloneCmd(), verbose: true);
         expect(await (isHgTopLevelPath(outPath)), isTrue);
-        HgStatusResult statusResult = await prj.status(verbose: true);
+        var statusResult = await prj.status(verbose: true);
         expect(statusResult.nothingToCommit, true);
-        HgOutgoingResult outgoingResult = await prj.outgoing();
+        var outgoingResult = await prj.outgoing();
         expect(outgoingResult.branchIsAhead, false);
 
-        File tempFile = File(join(prj.path, "temp_file.txt"));
-        await tempFile.writeAsString("echo");
+        final tempFile = File(join(prj.path, 'temp_file.txt'));
+        await tempFile.writeAsString('echo');
         statusResult = await prj.status();
         expect(statusResult.nothingToCommit, false);
         outgoingResult = await prj.outgoing();
         expect(outgoingResult.branchIsAhead, false);
 
-        await runCmd(prj.addCmd(pathspec: "."));
-        await runCmd(prj.commitCmd("test"), verbose: true);
+        await runCmd(prj.addCmd(pathspec: '.'));
+        await runCmd(prj.commitCmd('test'), verbose: true);
         statusResult = await prj.status(verbose: true);
         expect(statusResult.nothingToCommit, true);
         outgoingResult = await prj.outgoing();

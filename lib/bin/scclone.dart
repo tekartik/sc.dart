@@ -16,8 +16,8 @@ import 'package:tekartik_sc/src/scpath.dart';
 
 const String _helpFlag = 'help';
 const String _dryRunFlag = 'dry-run';
-const String verboseFlag = "verbose";
-const String branchOption = "branch";
+const String verboseFlag = 'verbose';
+const String branchOption = 'branch';
 const String depthParam = 'depth';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
@@ -28,9 +28,9 @@ String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 Future main(List<String> arguments) async {
   //setupQuickLogging();
 
-  ArgParser parser = ArgParser(allowTrailingOptions: true);
+  final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag("version",
+  parser.addFlag('version',
       help: 'Display the script version', negatable: false);
   parser.addFlag(_dryRunFlag,
       abbr: 'd',
@@ -38,13 +38,13 @@ Future main(List<String> arguments) async {
       negatable: false);
   parser.addFlag(verboseFlag,
       abbr: 'v', help: 'Verbose output', negatable: false);
-  parser.addOption(depthParam, help: "depth (git --depth 1)");
+  parser.addOption(depthParam, help: 'depth (git --depth 1)');
   parser.addOption(branchOption,
       abbr: 'b', help: 'branch (git clone -b <branch>)');
-  ArgResults _argsResult = parser.parse(arguments);
+  final _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_helpFlag] as bool;
-  bool verbose = _argsResult[verboseFlag] as bool;
+  final help = _argsResult[_helpFlag] as bool;
+  final verbose = _argsResult[verboseFlag] as bool;
   var branch = _argsResult[branchOption] as String;
 
   void _printUsage() {
@@ -59,7 +59,7 @@ Future main(List<String> arguments) async {
     stdout.writeln(
         'will clone the project into ./git/github.com/alextekartik/tekartik_io_tools.dart');
     stdout.writeln();
-    stdout.writeln("Global options:");
+    stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
   }
 
@@ -73,21 +73,21 @@ Future main(List<String> arguments) async {
     return;
   }
 
-  bool dryRun = _argsResult[_dryRunFlag] as bool;
-  int depth = parseInt(_argsResult[depthParam]);
+  final dryRun = _argsResult[_dryRunFlag] as bool;
+  final depth = parseInt(_argsResult[depthParam]);
 
   // get uris in parameters, default to current
-  List<String> uris = _argsResult.rest;
+  final uris = _argsResult.rest;
   if (uris.isEmpty) {
     _printUsage();
   }
 
   Future _handleUri(String uri) async {
-    List<String> parts = scUriToPathParts(uri);
+    final parts = scUriToPathParts(uri);
 
-    String topDirName = basename(Directory.current.path);
+    final topDirName = basename(Directory.current.path);
 
-    bool done = false;
+    var done = false;
     Future _tryGit(String uri, List<String> parts) async {
       if (verbose) {
         print('trying $uri with git');
@@ -98,19 +98,19 @@ Future main(List<String> arguments) async {
           await isGitRepository(uri, verbose: verbose)) {
         done = true;
         // Check if remote is a git repository
-        List<String> gitParts = List.from(parts);
-        if (topDirName != "git") {
-          gitParts.insert(0, "git");
+        final gitParts = List<String>.from(parts);
+        if (topDirName != 'git') {
+          gitParts.insert(0, 'git');
         }
-        String path = absolute(joinAll(gitParts));
+        final path = absolute(joinAll(gitParts));
         if (await isGitTopLevelPath(path)) {
-          stderr.writeln("git: ${path} already exists");
+          stderr.writeln('git: ${path} already exists');
         } else {
-          GitProject prj = GitProject(uri, path: path);
+          final prj = GitProject(uri, path: path);
           if (dryRun) {
-            print("git clone ${prj.src} ${prj.path}");
+            print('git clone ${prj.src} ${prj.path}');
           } else {
-            ProcessCmd cmd = prj.cloneCmd(depth: depth, branch: branch);
+            final cmd = prj.cloneCmd(depth: depth, branch: branch);
             stdout.writeln('> $cmd');
             await runCmd(cmd, verbose: true);
           }
@@ -119,8 +119,8 @@ Future main(List<String> arguments) async {
     }
 
     // try remove .git
-    if (uri.endsWith(".git")) {
-      String newUri = uri.substring(0, uri.length - 4);
+    if (uri.endsWith('.git')) {
+      final newUri = uri.substring(0, uri.length - 4);
       await _tryGit(newUri, scUriToPathParts(newUri));
     }
 
@@ -134,20 +134,20 @@ Future main(List<String> arguments) async {
       done = true;
 
       // try hg then
-      List<String> hgParts = List.from(parts);
-      if (topDirName != "hg") {
-        hgParts.insert(0, "hg");
+      final hgParts = List<String>.from(parts);
+      if (topDirName != 'hg') {
+        hgParts.insert(0, 'hg');
       }
 
-      String path = absolute(joinAll(hgParts));
+      final path = absolute(joinAll(hgParts));
       if (await isHgTopLevelPath(path)) {
-        stdout.writeln("hg: ${path} already exists");
+        stdout.writeln('hg: ${path} already exists');
       } else {
-        HgProject prj = HgProject(uri, path: path);
+        final prj = HgProject(uri, path: path);
         if (dryRun) {
-          print("hg clone ${prj.src} ${prj.path}");
+          print('hg clone ${prj.src} ${prj.path}');
         } else {
-          ProcessCmd cmd = prj.cloneCmd();
+          final cmd = prj.cloneCmd();
           await runCmd(cmd, verbose: true);
         }
       }
@@ -155,12 +155,12 @@ Future main(List<String> arguments) async {
 
     if (!done) {
       stderr.writeln(
-          "Could not find sc control for $uri. Try running with verbose mode on (-v) for more information");
+          'Could not find sc control for $uri. Try running with verbose mode on (-v) for more information');
     }
   }
 
   // handle all uris
-  for (String uri in uris) {
+  for (final uri in uris) {
     await _handleUri(uri);
   }
 }

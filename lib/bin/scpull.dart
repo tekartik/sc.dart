@@ -17,7 +17,7 @@ import 'package:tekartik_sc/src/scpath.dart';
 const String _helpFlag = 'help';
 //const String _LOG = 'log';
 const String _dryRunFlag = 'dry-run';
-const String verboseFlag = "verbose";
+const String verboseFlag = 'verbose';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -40,11 +40,11 @@ Future main(List<String> arguments) async {
   //Logger log;
   //setupQuickLogging();
 
-  ArgParser parser = ArgParser(allowTrailingOptions: true);
+  final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag(verboseFlag,
       abbr: 'v', help: 'Verbose output', negatable: false);
-  parser.addFlag("version",
+  parser.addFlag('version',
       help: 'Display the script version', negatable: false);
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
   parser.addFlag(_dryRunFlag,
@@ -52,9 +52,9 @@ Future main(List<String> arguments) async {
       help: 'Do not run test, simple show packages to be tested',
       negatable: false);
 
-  ArgResults _argsResult = parser.parse(arguments);
+  final _argsResult = parser.parse(arguments);
 
-  bool help = _argsResult[_helpFlag] as bool;
+  final help = _argsResult[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
         'Pull(update) from source control recursively (default from current directory)');
@@ -62,12 +62,12 @@ Future main(List<String> arguments) async {
     stdout.writeln(
         'Usage: ${currentScriptName} [<folder_paths...>] [<arguments>]');
     stdout.writeln();
-    stdout.writeln("Global options:");
+    stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
     return;
   }
-  bool dryRun = _argsResult[_dryRunFlag] as bool;
-  bool verbose = _argsResult[verboseFlag] as bool;
+  final dryRun = _argsResult[_dryRunFlag] as bool;
+  final verbose = _argsResult[verboseFlag] as bool;
 
   if (_argsResult['version'] as bool) {
     stdout.write('${currentScriptName} ${version}');
@@ -79,17 +79,17 @@ Future main(List<String> arguments) async {
   if (logLevel != null) {
     setupQuickLogging(parseLogLevel(logLevel));
   }
-  log = new Logger("rscpull");
+  log = new Logger('rscpull');
   log.fine('Log level ${Logger.root.level}');
   */
 
   // get dirs in parameters, default to current
-  List<String> dirs = _argsResult.rest;
+  var dirs = _argsResult.rest;
   if (dirs.isEmpty) {
     dirs = [Directory.current.path];
   }
 
-  List<Future> futures = [];
+  final futures = <Future>[];
 
   Future _handleDir(String dir) async {
     Future<ProcessResult> _execute(ProcessCmd cmd) async {
@@ -119,17 +119,17 @@ Future main(List<String> arguments) async {
     // Ignore folder starting with .
     // don't event go below
     if (await isGitPathAndSupported(dir)) {
-      GitPath prj = GitPath(dir);
+      final prj = GitPath(dir);
       //ProcessResult result =
       await _execute(prj.pullCmd());
     } else if (await isHgPathAndSupported(dir)) {
-      HgPath prj = HgPath(dir);
+      final prj = HgPath(dir);
       //ProcessResult result =
       await _execute(prj.pullCmd());
     }
   }
 
-  for (String dir in dirs) {
+  for (final dir in dirs) {
     print(dir);
     var _handle = handleScPath(dir, _handleDir, recursive: true);
     if (_handle is Future) {
