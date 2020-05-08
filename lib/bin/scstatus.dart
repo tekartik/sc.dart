@@ -1,4 +1,5 @@
 #!/usr/bin/env dart
+
 library tekartik_sc.bin.scstatus;
 
 // Pull recursively
