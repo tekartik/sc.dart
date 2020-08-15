@@ -1,5 +1,5 @@
 name: tekartik_sc
-version: 0.9.0
+version: 0.9.1
 author: Alexandre Roux Tekartik <alex@tekartik.com>
 homepage: https://github.com/tekartik/sc.dart
 environment:
@@ -25,7 +25,7 @@ dev_dependencies:
     git:
       url: git://github.com/tekartik/pub.dart
       ref: dart2
-    version: '>=0.11.0'
+    version: '>=0.11.1'
   build_runner: '>=0.9.1'
   build_test: '>=0.10.2'
   chrome_travis:
