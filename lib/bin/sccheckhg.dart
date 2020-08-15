@@ -1,7 +1,3 @@
-#!/usr/bin/env dart
-
-library tekartik_sc.bin.sccheckhg;
-
 import 'dart:async';
 
 import 'package:tekartik_sc/hg.dart';

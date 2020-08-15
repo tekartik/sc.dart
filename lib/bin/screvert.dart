@@ -1,8 +1,3 @@
-#!/usr/bin/env dart
-
-library tekartik_sc.bin.screvert;
-
-// revert directories
 import 'dart:async';
 import 'dart:io';
 

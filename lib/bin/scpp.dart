@@ -1,9 +1,3 @@
-#!/usr/bin/env dart
-
-library tekartik_sc.bin.scpp;
-
-// Pull recursively
-
 import 'dart:async';
 import 'dart:io';
 
