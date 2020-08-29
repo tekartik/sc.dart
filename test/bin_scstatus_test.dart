@@ -7,16 +7,13 @@ import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:tekartik_pub/io.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 
+import 'bin_test.dart';
 import 'io_test_common.dart';
 
-String get _pubPackageRoot => '.';
-
 String get scstatusDartScript {
-  final pkg = PubPackage(_pubPackageRoot);
-  return join(pkg.path, 'bin', 'scstatus.dart');
+  return join(exampleBinPath, 'scstatus.dart');
 }
 
 void main() {

@@ -6,6 +6,8 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:process_run/shell_run.dart';
+import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
 
 import 'io_test_common.dart';
@@ -67,18 +69,26 @@ Future main() async {
       });
 
       test('isGitRepository3', () async {
-        expect(
-            await isGitRepository(
-                'https://bitbucket.org/alextk/public_git_test'),
-            isTrue);
+        try {
+          expect(
+              await isGitRepository(
+                  'https://bitbucket.org/alextk/public_git_test'),
+              isTrue);
+        } on TestFailure catch (e) {
+          await Shell().run(
+              'git ls-remote --exit-code -h https://bitbucket.org/alextk/public_git_test');
+          print('previous error $e');
+          rethrow;
+        }
       });
 
+      // Skipped since 2020-08-29 asking for credentials with hg shutdown
       test('isGitRepository4', () async {
         expect(
-            await isGitRepository(
-                'https://bitbucket.org/alextk/public_hg_test'),
+            await isGitRepository('https://bitbucket.org/alextk/public_hg_test',
+                verbose: true),
             isFalse);
-      });
+      }, skip: true);
 
       group('bitbucket.org', () {
         test('bbGitProject', () async {

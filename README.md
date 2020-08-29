@@ -37,12 +37,3 @@ Clone either mercurial/git repository building path like  `<sc>/domain.com/path`
 
     scsclone
 
-## Activation
-
-### From git repository
-
-    pub global activate -s git git://github.com/tekartik/sc.dart
-
-### From local path
-
-    pub global activate -s path .

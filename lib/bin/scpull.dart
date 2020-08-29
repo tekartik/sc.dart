@@ -1,9 +1,3 @@
-#!/usr/bin/env dart
-
-library tekartik_sc.bin.scpull;
-
-// Pull recursively
-
 import 'package:args/args.dart';
 import 'package:path/path.dart';
 import 'package:pedantic/pedantic.dart';

@@ -3,15 +3,13 @@ library tekartik_sc.test.bin_test;
 
 import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
-import 'package:tekartik_pub/io.dart';
 
 import 'io_test_common.dart';
 
-String get _pubPackageRoot => '.';
+var exampleBinPath = join('example', 'bin');
 
 String get pubTestDartScript {
-  final pkg = PubPackage(_pubPackageRoot);
-  return join(pkg.path, 'bin', 'pubtest.dart');
+  return join(exampleBinPath, 'pubtest.dart');
 }
 
 void main() {
