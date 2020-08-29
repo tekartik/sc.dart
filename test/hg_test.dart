@@ -31,7 +31,7 @@ void defineTests() {
                   verbose: true,
                   insecure: true),
               isTrue);
-        });
+        }, skip: 'Bitbucket hg no longer supported');
 
         // expect(await isHgSupported, true);
         test('isHgRepository insecure', () async {
@@ -50,7 +50,7 @@ void defineTests() {
                   'https://bitbucket.org/alextk/public_git_test',
                   insecure: true),
               isFalse);
-        });
+        }, skip: 'Bitbucket hg no longer supported');
       }
       // only works locally
       test('isHgRepository secure', () async {
@@ -126,7 +126,8 @@ void defineTests() {
         outgoingResult = await prj.outgoing();
         expect(outgoingResult.branchIsAhead, true);
       }
-    }, skip: isRunningOnTravis());
+    }, skip: 'Bitbucket hg no longer supported');
+    //skip: isRunningOnTravis());
   });
 }
 

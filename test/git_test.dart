@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
 
 import 'io_test_common.dart';
@@ -73,12 +74,13 @@ Future main() async {
             isTrue);
       });
 
+      // Skipped since 2020-08-29 asking for credentials with hg shutdown
       test('isGitRepository4', () async {
         expect(
-            await isGitRepository(
-                'https://bitbucket.org/alextk/public_hg_test'),
+            await isGitRepository('https://bitbucket.org/alextk/public_hg_test',
+                verbose: true),
             isFalse);
-      });
+      }, skip: true);
 
       group('bitbucket.org', () {
         test('bbGitProject', () async {

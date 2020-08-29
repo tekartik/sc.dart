@@ -53,7 +53,7 @@ void defineTests() {
         expect(await findScTopLevelPath(sub), outPath);
         expect(await getScName(sub), isNull);
       }
-    });
+    }, skip: 'Bitbucket hg no longer supported');
 
     test('handleScPath', () async {
       // find top path
