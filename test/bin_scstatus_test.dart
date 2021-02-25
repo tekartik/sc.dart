@@ -20,7 +20,8 @@ void main() {
   //useVMConfiguration();
   group('scstatus', () {
     test('version', () async {
-      final result = await runCmd(DartCmd([scstatusDartScript, '--version']));
+      final result =
+          await runCmd(DartCmd(['run', scstatusDartScript, '--version']));
       final parts =
           LineSplitter.split(result.stdout as String).first.split(' ');
       expect(parts.first, 'scstatus');

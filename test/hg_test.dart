@@ -15,7 +15,7 @@ void main() => defineTests();
 void defineTests() {
   //useVMConfiguration();
   group('hg', () {
-    bool _isHgSupported;
+    bool? _isHgSupported;
 
     setUp(() async {
       _isHgSupported ??= await isHgSupported;
@@ -54,7 +54,7 @@ void defineTests() {
       }
       // only works locally
       test('isHgRepository secure', () async {
-        if (_isHgSupported) {
+        if (_isHgSupported!) {
           expect(
               await isHgRepository(
                   'https://bitbucket.org/alextk/public_hg_test'),
@@ -75,7 +75,7 @@ void defineTests() {
       expect(await isHgSupported, _isHgSupported);
     });
     test('version', () async {
-      if (_isHgSupported) {
+      if (_isHgSupported!) {
         final result = await runCmd(hgVersionCmd());
         // git version 1.9.1
         expect(result.stdout.startsWith('Mercurial Distributed SCM'), isTrue);
@@ -100,7 +100,7 @@ void defineTests() {
     */
 
     test('HgProject', () async {
-      if (_isHgSupported) {
+      if (_isHgSupported!) {
         final outPath = clearOutTestPath(testDescriptions);
         var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
             rootFolder: outPath);
@@ -131,7 +131,7 @@ void defineTests() {
   });
 }
 
-bool _isRunningOnTravis;
+bool? _isRunningOnTravis;
 bool isRunningOnTravis() => _isRunningOnTravis ??= () {
       var _onTravis = parseBool(Platform.environment['TRAVIS']) ?? false;
       print('Running on travis: $_onTravis');

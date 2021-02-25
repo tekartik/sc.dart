@@ -44,7 +44,7 @@ void main() {
         var prj =
             GitProject('git@gitlab.com:tkexp/branch_exp.git', path: outPath);
         if (await clone(prj)) {
-          final result = await runCmd(DartCmd([scppDartScript, '-v']));
+          final result = await runCmd(DartCmd(['run', scppDartScript, '-v']));
           final output = result.stdout.toString();
           expect(output, contains('no push'));
           expect(output, contains('not ahead'));

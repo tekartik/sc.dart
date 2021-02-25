@@ -58,7 +58,7 @@ Future main(List<String> arguments) async {
     return;
   }
   final dryRun = argResults[_dryRunFlag] as bool;
-  var timeout = int.tryParse((argResults[timeoutOption] as String) ?? '');
+  var timeout = int.tryParse((argResults[timeoutOption] as String?) ?? '');
 
   if (argResults['version'] as bool) {
     stdout.write('${currentScriptName} ${version}');
@@ -66,7 +66,7 @@ Future main(List<String> arguments) async {
   }
 
   final verbose = argResults[verboseFlag] as bool;
-  var level = parseLogLevel(argResults[_logOption] as String);
+  var level = parseLogLevel((argResults[_logOption] as String?) ?? '');
   if (verbose) {
     level = Level.FINEST;
   }
@@ -88,7 +88,7 @@ Future main(List<String> arguments) async {
   final futures = <Future>[];
 
   Future _handleDir(String dir) async {
-    Future<ProcessResult> _execute(StdBuf buf, ProcessCmd cmd) async {
+    Future<ProcessResult?> _execute(StdBuf buf, ProcessCmd cmd) async {
       if (dryRun == true) {
         stdout.writeln(cmd);
         return null;
@@ -142,7 +142,7 @@ Future main(List<String> arguments) async {
       final prj = HgPath(dir);
       //ProcessResult result =
       var cmd = prj.pushCmd();
-      var result = await _execute(buf, cmd);
+      var result = await (_execute(buf, cmd) as FutureOr<ProcessResult>);
       // exitCode seems to be always 1 on linux...
       // result.exitCode != 0 ||
       if (!result.stdout.toString().contains('no changes found')) {
@@ -150,7 +150,7 @@ Future main(List<String> arguments) async {
         buf.appendResult(result);
       }
       cmd = prj.pullCmd();
-      result = await _execute(buf, cmd);
+      result = await (_execute(buf, cmd) as FutureOr<ProcessResult>);
       if (result.exitCode != 0 ||
           !result.stdout.toString().contains('no changes found')) {
         buf.outAppend('> ${cmd}');

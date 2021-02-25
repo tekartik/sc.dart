@@ -28,16 +28,15 @@ class HgOutgoingResult {
 class HgPath {
   @override
   String toString() => path;
-  String _path;
+  final String _path;
   String get path => _path;
   HgPath(this._path);
-  HgPath._();
 
   ProcessCmd _hgCmd(List<String> args) {
     return hgCmd(args)..workingDirectory = path;
   }
 
-  Future<HgStatusResult> status({bool verbose}) async {
+  Future<HgStatusResult> status({bool? verbose}) async {
     final cmd = _hgCmd(['status']);
     final result = await runCmd(cmd, verbose: verbose);
 
@@ -75,7 +74,7 @@ class HgPath {
     return outgoingResult;
   }
 
-  ProcessCmd revertCmd({String path, bool noBackup}) {
+  ProcessCmd revertCmd({String? path, bool? noBackup}) {
     final args = <String>['revert'];
     if (path != null) {
       args.add(path);
@@ -99,12 +98,12 @@ class HgPath {
     return _hgCmd(args);
   }
 
-  ProcessCmd addCmd({String pathspec}) {
+  ProcessCmd addCmd({required String pathspec}) {
     final args = <String>['add', pathspec];
     return _hgCmd(args);
   }
 
-  ProcessCmd commitCmd(String message, {bool all}) {
+  ProcessCmd commitCmd(String message, {bool? all}) {
     final args = <String>['commit'];
     if (all == true) {
       args.add('--all');
@@ -115,42 +114,25 @@ class HgPath {
 
   ///
   /// branch can be a commit/revision number
-  ProcessCmd checkoutCmd({String commit}) {
+  ProcessCmd checkoutCmd({required String commit}) {
     return _hgCmd(['checkout', commit]);
   }
 }
 
 class HgProject extends HgPath {
   String src;
-  HgProject(this.src, {String path, String rootFolder}) : super._() {
-    // Handle null
-    if (path == null) {
-      var parts = scUriToPathParts(src);
-
-      _path = joinAll(parts);
-
-      if (_path == null) {
-        throw Exception(
-            'null path only allowed for https://github.com/xxxuser/xxxproject src');
-      }
-      if (rootFolder != null) {
-        _path = absolute(join(rootFolder, path));
-      } else {
-        _path = absolute(_path);
-      }
-    } else {
-      _path = path;
-    }
-  }
+  HgProject(this.src, {String? path, String? rootFolder})
+      : super(path ?? joinAll(scUriToPathParts(src)));
 
   // Don't specify a working dir here
   // [insecure] added for travis test
-  ProcessCmd cloneCmd({bool insecure}) {
-    final args = <String>['clone'];
-    args.addAll([src, path]);
-    if (insecure == true) {
-      args.add('--insecure');
-    }
+  ProcessCmd cloneCmd({bool? insecure}) {
+    final args = <String>[
+      'clone',
+      src,
+      path,
+      if (insecure == true) '--insecure'
+    ];
     return hgCmd(args);
   }
 
@@ -164,14 +146,14 @@ class HgProject extends HgPath {
   }
 }
 
-bool _isHgSupported;
+bool? _isHgSupported;
 
 bool get isHgSupportedSync => _isHgSupported ??= checkHgSupportedSync();
 
 // can be disable by env variable
 bool get checkHgSupportDisabled =>
     parseBool(Platform.environment['TEKARTIK_HG_SUPPORT']) == false;
-bool checkHgSupportedSync({bool verbose}) {
+bool checkHgSupportedSync({bool? verbose}) {
   if (checkHgSupportDisabled) {
     if (verbose == true) {
       print('hg disabled by env TEKARTIK_HG_SUPPORT');
@@ -188,10 +170,10 @@ bool checkHgSupportedSync({bool verbose}) {
 
 Future<bool> get isHgSupported async {
   _isHgSupported ??= await checkHgSupported();
-  return _isHgSupported;
+  return _isHgSupported!;
 }
 
-Future<bool> checkHgSupported({bool verbose}) async {
+Future<bool> checkHgSupported({bool? verbose}) async {
   if (checkHgSupportDisabled) {
     if (verbose == true) {
       print('hg disabled by env TEKARTIK_HG_SUPPORT');
@@ -228,7 +210,7 @@ bool canBeHgRepository(String uri) {
   return true;
 }
 
-Future<bool> isHgRepository(String uri, {bool verbose, bool insecure}) async {
+Future<bool> isHgRepository(String uri, {bool? verbose, bool? insecure}) async {
   if (!canBeHgRepository(uri)) {
     return false;
   }

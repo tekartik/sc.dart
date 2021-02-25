@@ -23,7 +23,7 @@ Future<bool> isScTopLevelPath(String path) async {
 ///
 /// Only valid at the current path
 ///
-Future<String> getScName(String path) async {
+Future<String?> getScName(String path) async {
   if (await isGitTopLevelPath(path)) {
     return git;
   }
@@ -36,7 +36,7 @@ Future<String> getScName(String path) async {
 ///
 /// checking recursively the parent for any hg or git directory
 ///
-Future<String> findScTopLevelPath(String path) async {
+Future<String?> findScTopLevelPath(String path) async {
   path = normalize(absolute(path));
   String parent;
   while (true) {

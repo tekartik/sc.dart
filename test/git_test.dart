@@ -27,9 +27,7 @@ Future main() async {
 
     if (_isGitSupported) {
       test('path', () {
-        var giPath = GitPath();
-        expect(giPath.path, isNull);
-        giPath = GitPath('.');
+        var giPath = GitPath('.');
         expect(giPath.path, '.');
       });
 

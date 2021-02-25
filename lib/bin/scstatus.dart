@@ -52,7 +52,7 @@ Future main(List<String> arguments) async {
     return;
   }
 
-  var level = parseLogLevel(_argsResult[_logOption] as String);
+  var level = parseLogLevel((_argsResult[_logOption] as String?) ?? '');
   if (_argsResult[verboseFlag] as bool) {
     level = Level.FINEST;
   }

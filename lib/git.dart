@@ -11,8 +11,8 @@ import 'src/scpath.dart';
 
 class _GitCommand {
   _GitCommand({this.runInShell});
-  bool runInShell;
-  String binaryPath;
+  bool? runInShell;
+  String? binaryPath;
 
   ProcessCmd processCmd(List<String> args) {
     return ProcessCmd(binaryPath ?? 'git', args,
@@ -21,7 +21,7 @@ class _GitCommand {
 }
 
 // default git command
-_GitCommand _gitCommand;
+_GitCommand? _gitCommand;
 
 _GitCommand _defaultGitCommand = _GitCommand();
 
@@ -41,15 +41,11 @@ class GitPath {
   @override
   String toString() => path;
 
-  String _path;
+  final String _path;
 
   String get path => _path;
 
-  GitPath([String path]) {
-    _path = path;
-  }
-
-  GitPath._();
+  GitPath(String path) : _path = path;
 
   ProcessCmd _gitCmd(List<String> args) {
     final cmd = gitCmd(args)..workingDirectory = path;
@@ -69,7 +65,7 @@ class GitPath {
     return _gitCmd(['pull']);
   }
 
-  ProcessCmd statusCmd({bool short}) {
+  ProcessCmd statusCmd({bool? short}) {
     final args = <String>['status'];
     if (short == true) {
       args.add('--short');
@@ -78,7 +74,7 @@ class GitPath {
   }
 
   /// printResultIfChanges: show result if different than 'nothing to commit'
-  Future<GitStatusResult> status({bool verbose}) async {
+  Future<GitStatusResult> status({bool? verbose}) async {
     final cmd = statusCmd();
     if (verbose == true) {
       print('working dir: ${cmd.workingDirectory}');
@@ -123,12 +119,12 @@ class GitPath {
   }
      */
 
-  ProcessCmd addCmd({String pathspec}) {
+  ProcessCmd addCmd({required String pathspec}) {
     final args = <String>['add', pathspec];
     return _gitCmd(args);
   }
 
-  ProcessCmd commitCmd(String message, {bool all}) {
+  ProcessCmd commitCmd(String message, {bool? all}) {
     final args = <String>['commit'];
     if (all == true) {
       args.add('--all');
@@ -139,11 +135,11 @@ class GitPath {
 
   ///
   /// branch can be a commit/revision number
-  ProcessCmd checkoutCmd({String path, String commit}) {
+  ProcessCmd checkoutCmd({String? path, String? commit}) {
     if (path != null) {
       return _gitCmd(['checkout', path]);
     } else {
-      return _gitCmd(['checkout', commit]);
+      return _gitCmd(['checkout', commit!]);
     }
   }
 }
@@ -153,46 +149,21 @@ class GitProject extends GitPath {
 
   GitProject(
       this.src,
-      {String path,
+      {String? path,
       @deprecated // use path
-          String rootFolder})
-      : super._() {
-    // Handle null
-    if (path == null) {
-      var parts = scUriToPathParts(src);
-
-      _path = joinAll(parts);
-
-      if (_path == null) {
-        throw Exception(
-            'null path only allowed for https://github.com/xxxuser/xxxproject src');
-      }
-      // ignore: deprecated_member_use
-      if (rootFolder != null) {
-        // ignore: deprecated_member_use
-        _path = absolute(join(rootFolder, path));
-      } else {
-        _path = absolute(_path);
-      }
-    } else {
-      _path = path;
-    }
-  }
+          String? rootFolder})
+      : super(path ?? joinAll(scUriToPathParts(src)));
 
   // no using _gitCmd as not using workingDirectory
   // only get latest revision if [depth] = 1
-  ProcessCmd cloneCmd({bool progress, int depth, String branch}) {
-    final args = <String>['clone'];
-    if (progress == true) {
-      args.add('--progress');
-    }
-    if (depth != null) {
-      args.addAll(['--depth', depth.toString()]);
-    }
-    if (branch != null) {
-      args.addAll(['--branch', branch]);
-    }
-    args.addAll([src, path]);
+  ProcessCmd cloneCmd({bool? progress, int? depth, String? branch}) {
+    final args = <String>[
+      'clone',
+      if (progress == true) '--progress',
+      if (depth != null) ...['--depth', depth.toString()],
+      if (branch != null) ...['--branch', branch],
+      ...[src, path]
+    ];
     return gitCmd(args);
   }
 
@@ -209,7 +180,7 @@ class GitProject extends GitPath {
 /// Version command
 ProcessCmd gitVersionCmd() => gitCmd(['--version']);
 
-bool _isGitSupported;
+bool? _isGitSupported;
 
 /// check if git is supported, only once
 Future<bool> get isGitSupported async =>
@@ -217,7 +188,7 @@ Future<bool> get isGitSupported async =>
 
 bool get isGitSupportedSync => _isGitSupported ??= checkGitSupportedSync();
 
-bool checkGitSupportedSync({bool verbose}) {
+bool checkGitSupportedSync({bool? verbose}) {
   try {
     var result = Process.runSync('git', ['--version']);
     return result.exitCode == 0;
@@ -227,8 +198,8 @@ bool checkGitSupportedSync({bool verbose}) {
 }
 
 // [once] if true check only once and check the result for later calls with once: true
-Future<bool> checkGitSupported({bool verbose}) async {
-  Future<bool> tryGitCommand(_GitCommand gitCommand, bool verbose) async {
+Future<bool> checkGitSupported({bool? verbose}) async {
+  Future<bool> tryGitCommand(_GitCommand gitCommand, bool? verbose) async {
     try {
       await runCmd(gitCommand.processCmd(['--version']), verbose: verbose);
       _isGitSupported = true;
@@ -245,7 +216,7 @@ Future<bool> checkGitSupported({bool verbose}) async {
   }
 
   if (_gitCommand != null) {
-    return tryGitCommand(_gitCommand, verbose);
+    return tryGitCommand(_gitCommand!, verbose);
   } else {
     if (!await tryGitCommand(_defaultGitCommand, false)) {
       return tryGitCommand(_GitCommand(runInShell: true), verbose);
@@ -263,7 +234,7 @@ bool canBeGitRepository(String uri) {
 }
 
 /// Check if an url is a git repository
-Future<bool> isGitRepository(String uri, {bool verbose}) async {
+Future<bool> isGitRepository(String uri, {bool? verbose}) async {
   if (!canBeGitRepository(uri)) {
     return false;
   }

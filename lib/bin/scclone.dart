@@ -40,7 +40,7 @@ Future main(List<String> arguments) async {
 
   final help = _argsResult[_helpFlag] as bool;
   final verbose = _argsResult[verboseFlag] as bool;
-  var branch = _argsResult[branchOption] as String;
+  var branch = _argsResult[branchOption] as String?;
 
   void _printUsage() {
     stdout.writeln(

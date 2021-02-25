@@ -24,7 +24,7 @@ class App {
   }
 }
 
-App app;
+late App app;
 
 ///
 /// Recursively update (pull) git folders
@@ -87,7 +87,7 @@ Future main(List<String> arguments) async {
   final futures = <Future>[];
 
   Future _handleDir(String dir) async {
-    Future<ProcessResult> _execute(ProcessCmd cmd) async {
+    Future<ProcessResult?> _execute(ProcessCmd cmd) async {
       if (dryRun == true) {
         stdout.writeln(cmd);
         return null;
@@ -96,7 +96,7 @@ Future main(List<String> arguments) async {
         if (verbose) {
           stdout.writeln('[${cmd.workingDirectory}]');
         }
-        ProcessResult result;
+        ProcessResult? result;
         Future _waiter() async {
           await sleep(15000);
           if (result == null) {

@@ -62,9 +62,6 @@ void defineTests() {
         dirs.add(dir);
       }
 
-      await handleScPath(null, handle, recursive: true);
-      expect(dirs.length, 1);
-
       try {
         var dir = dirname(Directory.current.path);
         dirs.clear();

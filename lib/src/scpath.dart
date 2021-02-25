@@ -52,9 +52,8 @@ List<String> scUriToPathParts(String uri) {
 final pool = Pool(10);
 
 Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
-    {bool recursive}) async {
+    {bool? recursive}) async {
   recursive ??= false;
-  dir ??= Directory.current.path;
   dir = normalize(absolute(dir));
   var topDir = await findScTopLevelPath(dir);
 

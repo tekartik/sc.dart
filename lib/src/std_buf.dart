@@ -40,7 +40,7 @@ class StdBuf {
     }
   }
 
-  void print([String header]) {
+  void print([String? header]) {
     if (header != null &&
         (out.toString().isNotEmpty || err.toString().isNotEmpty)) {
       stdout.writeln(header);
