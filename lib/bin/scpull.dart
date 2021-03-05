@@ -54,8 +54,8 @@ Future main(List<String> arguments) async {
     stdout.writeln(
         'Pull(update) from source control recursively (default from current directory)');
     stdout.writeln();
-    stdout.writeln(
-        'Usage: ${currentScriptName} [<folder_paths...>] [<arguments>]');
+    stdout
+        .writeln('Usage: $currentScriptName [<folder_paths...>] [<arguments>]');
     stdout.writeln();
     stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
@@ -65,7 +65,7 @@ Future main(List<String> arguments) async {
   final verbose = _argsResult[verboseFlag] as bool;
 
   if (_argsResult['version'] as bool) {
-    stdout.write('${currentScriptName} ${version}');
+    stdout.write('$currentScriptName $version');
     return;
   }
 

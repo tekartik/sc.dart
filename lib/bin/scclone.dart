@@ -47,10 +47,10 @@ Future main(List<String> arguments) async {
         'clone one or multiple projects by their url and create pre-defined directory structure');
     stdout.writeln();
     stdout.writeln(
-        'Usage: ${currentScriptName} <source_control_uris...> [<arguments>]');
+        'Usage: $currentScriptName <source_control_uris...> [<arguments>]');
     stdout.writeln();
     stdout.writeln(
-        'Example: ${currentScriptName} https://github.com/alextekartik/tekartik_io_tools.dart');
+        'Example: $currentScriptName https://github.com/alextekartik/tekartik_io_tools.dart');
     stdout.writeln(
         'will clone the project into ./git/github.com/alextekartik/tekartik_io_tools.dart');
     stdout.writeln();
@@ -64,7 +64,7 @@ Future main(List<String> arguments) async {
   }
 
   if (_argsResult['version'] as bool) {
-    stdout.writeln('${currentScriptName} ${version}');
+    stdout.writeln('$currentScriptName $version');
     return;
   }
 
@@ -99,7 +99,7 @@ Future main(List<String> arguments) async {
         }
         final path = absolute(joinAll(gitParts));
         if (await isGitTopLevelPath(path)) {
-          stderr.writeln('git: ${path} already exists');
+          stderr.writeln('git: $path already exists');
         } else {
           final prj = GitProject(uri, path: path);
           if (dryRun) {
@@ -136,7 +136,7 @@ Future main(List<String> arguments) async {
 
       final path = absolute(joinAll(hgParts));
       if (await isHgTopLevelPath(path)) {
-        stdout.writeln('hg: ${path} already exists');
+        stdout.writeln('hg: $path already exists');
       } else {
         final prj = HgProject(uri, path: path);
         if (dryRun) {
