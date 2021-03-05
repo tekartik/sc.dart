@@ -41,8 +41,8 @@ Future main(List<String> arguments) async {
     stdout.writeln(
         'Display source control status recursively (default from current directory)');
     stdout.writeln();
-    stdout.writeln(
-        'Usage: ${currentScriptName} [<folder_paths...>] [<arguments>]');
+    stdout
+        .writeln('Usage: $currentScriptName [<folder_paths...>] [<arguments>]');
     stdout.writeln();
     stdout.writeln('--log finer will display all path');
     stdout.writeln('--log finest will display all path and command executed');
@@ -60,7 +60,7 @@ Future main(List<String> arguments) async {
   final commandVerbose = level <= Level.FINEST;
 
   if (_argsResult['version'] as bool) {
-    stdout.write('${currentScriptName} ${version}');
+    stdout.write('$currentScriptName $version');
     return;
   }
   /*
@@ -88,7 +88,7 @@ Future main(List<String> arguments) async {
 
       final buf = StdBuf();
       if (level <= Level.FINER) {
-        buf.outAppend('--- git ${prj}');
+        buf.outAppend('--- git $prj');
       }
       if (level <= Level.FINEST) {
         buf.outAppend('> ${statusResult.cmd}');
@@ -97,7 +97,7 @@ Future main(List<String> arguments) async {
       if (statusResult.branchIsAhead || !statusResult.nothingToCommit) {
         // already done
         if (level > Level.FINER) {
-          buf.outAppend('--- git ${prj}');
+          buf.outAppend('--- git $prj');
         }
         if (statusResult.branchIsAhead) {
           buf.outAppend('Branch is ahead');
@@ -106,7 +106,7 @@ Future main(List<String> arguments) async {
         // rerun in short version mode
         final cmd = prj.statusCmd(short: true);
         if (level <= Level.FINEST) {
-          buf.outAppend('> ${cmd}');
+          buf.outAppend('> $cmd');
         }
         final result = await runCmd(cmd, commandVerbose: commandVerbose);
         buf.appendResult(result);
@@ -118,7 +118,7 @@ Future main(List<String> arguments) async {
       final buf = StdBuf();
       final statusResult = await (prj.status());
       if (level <= Level.FINEST) {
-        buf.outAppend('--- hg ${prj}');
+        buf.outAppend('--- hg $prj');
         buf.outAppend('> ${statusResult.cmd}');
         buf.appendResult(statusResult.runResult);
       }
@@ -128,12 +128,12 @@ Future main(List<String> arguments) async {
           buf.outAppend('> ${outgoingResult.cmd}');
         }
         if (outgoingResult.branchIsAhead) {
-          buf.outAppend('--- hg ${prj}');
+          buf.outAppend('--- hg $prj');
           buf.outAppend('Branch is ahead');
           buf.appendResult(outgoingResult.runResult);
         }
       } else {
-        buf.outAppend('--- hg ${prj}');
+        buf.outAppend('--- hg $prj');
         buf.appendResult(statusResult.runResult);
       }
       buf.print();

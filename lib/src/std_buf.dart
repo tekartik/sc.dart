@@ -30,7 +30,7 @@ class StdBuf {
 
   // debug
   void appendCmdResult(ProcessCmd cmd, ProcessResult result) {
-    outAppend('> ${cmd}');
+    outAppend('> $cmd');
     outAppend('=> ${result.exitCode}');
     if (result.stdout.toString().isNotEmpty) {
       outAppend('out: ${result.stdout}');

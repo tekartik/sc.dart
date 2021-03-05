@@ -36,8 +36,7 @@ void main(List<String> arguments) {
   if (help) {
     stdout.writeln('Revert files in the given directories');
     stdout.writeln();
-    stdout
-        .writeln('Usage: ${currentScriptName} <folder_paths...> [<arguments>]');
+    stdout.writeln('Usage: $currentScriptName <folder_paths...> [<arguments>]');
     stdout.writeln();
     stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
@@ -45,7 +44,7 @@ void main(List<String> arguments) {
   }
 
   if (_argsResult['version'] as bool) {
-    stdout.write('${currentScriptName} ${version}');
+    stdout.write('$currentScriptName $version');
     return;
   }
 
@@ -54,8 +53,8 @@ void main(List<String> arguments) {
   // get dirs in parameters, default to current
   final dirOrFiles = _argsResult.rest;
   if (dirOrFiles.isEmpty) {
-    stderr.writeln(
-        'you must specify a directory. Example: ${currentScriptName} .');
+    stderr
+        .writeln('you must specify a directory. Example: $currentScriptName .');
     exit(1);
   }
 

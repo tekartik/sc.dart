@@ -50,8 +50,8 @@ Future main(List<String> arguments) async {
     stdout.writeln(
         'Push & Pull(update) from source control recursively (default from current directory)');
     stdout.writeln();
-    stdout.writeln(
-        'Usage: ${currentScriptName} [<folder_paths...>] [<arguments>]');
+    stdout
+        .writeln('Usage: $currentScriptName [<folder_paths...>] [<arguments>]');
     stdout.writeln();
     stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
@@ -61,7 +61,7 @@ Future main(List<String> arguments) async {
   var timeout = int.tryParse((argResults[timeoutOption] as String?) ?? '');
 
   if (argResults['version'] as bool) {
-    stdout.write('${currentScriptName} ${version}');
+    stdout.write('$currentScriptName $version');
     return;
   }
 
@@ -114,7 +114,7 @@ Future main(List<String> arguments) async {
         if (result != null) {
           if (result.exitCode != 0 ||
               !result.stderr.toString().contains('up-to-date')) {
-            buf.outAppend('> ${cmd}');
+            buf.outAppend('> $cmd');
             buf.appendResult(result);
           }
         }
@@ -131,12 +131,12 @@ Future main(List<String> arguments) async {
         if (result.exitCode != 0 ||
             !(pullOutput.contains('up-to-date') ||
                 pullOutput.contains('up to date'))) {
-          buf.outAppend('> ${cmd}');
+          buf.outAppend('> $cmd');
           buf.appendResult(result);
         }
       }
 
-      buf.print('--- git ${prj}');
+      buf.print('--- git $prj');
     } else if (await isHgPathAndSupported(dir)) {
       final buf = StdBuf();
       final prj = HgPath(dir);
@@ -146,17 +146,17 @@ Future main(List<String> arguments) async {
       // exitCode seems to be always 1 on linux...
       // result.exitCode != 0 ||
       if (!result.stdout.toString().contains('no changes found')) {
-        buf.outAppend('> ${cmd}');
+        buf.outAppend('> $cmd');
         buf.appendResult(result);
       }
       cmd = prj.pullCmd();
       result = await (_execute(buf, cmd) as FutureOr<ProcessResult>);
       if (result.exitCode != 0 ||
           !result.stdout.toString().contains('no changes found')) {
-        buf.outAppend('> ${cmd}');
+        buf.outAppend('> $cmd');
         buf.appendResult(result);
       }
-      buf.print('--- hg ${prj}');
+      buf.print('--- hg $prj');
     }
   }
 
