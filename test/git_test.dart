@@ -39,7 +39,7 @@ Future main() async {
         if (_isGitSupported) {
           final result = await runCmd(gitVersionCmd());
           // git version 1.9.1
-          expect(result.stdout.startsWith('git version'), isTrue);
+          expect(result.stdout.toString().startsWith('git version'), isTrue);
         }
       });
 
