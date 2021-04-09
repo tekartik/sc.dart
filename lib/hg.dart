@@ -44,7 +44,7 @@ class HgPath {
 
     //bool showResult = true;
     if (result.exitCode == 0) {
-      if (result.stdout.isEmpty as bool) {
+      if (result.stdout.toString().isEmpty) {
         statusResult.nothingToCommit = true;
       }
     }

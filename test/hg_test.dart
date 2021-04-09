@@ -78,7 +78,8 @@ void defineTests() {
       if (_isHgSupported!) {
         final result = await runCmd(hgVersionCmd());
         // git version 1.9.1
-        expect(result.stdout.startsWith('Mercurial Distributed SCM'), isTrue);
+        expect(result.stdout.toString().startsWith('Mercurial Distributed SCM'),
+            isTrue);
         // print for travis debugging
         print('\$ ${hgVersionCmd()}');
         print(result.stdout);
