@@ -1,6 +1,6 @@
 name: tekartik_sc
 version: 0.10.0
-author: Alexandre Roux Tekartik <alex@tekartik.com>
+
 homepage: https://github.com/tekartik/sc.dart
 publish_to: none
 
