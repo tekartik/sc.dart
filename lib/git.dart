@@ -85,7 +85,7 @@ class GitPath {
     if (result.exitCode == 0) {
       final lines = LineSplitter.split(result.stdout.toString());
 
-      lines.forEach((String line) {
+      for (var line in lines) {
         // Linux /Win?/Mac?
         if (line.startsWith('nothing to commit')) {
           statusResult.nothingToCommit = true;
@@ -96,7 +96,7 @@ class GitPath {
             ) {
           statusResult.branchIsAhead = true;
         }
-      });
+      }
     }
 
     return statusResult;
@@ -147,11 +147,8 @@ class GitPath {
 class GitProject extends GitPath {
   String src;
 
-  GitProject(
-      this.src,
-      {String? path,
-      @deprecated // use path
-          String? rootFolder})
+  GitProject(this.src,
+      {String? path, @Deprecated('use path') String? rootFolder})
       : super(path ?? joinAll(scUriToPathParts(src)));
 
   // no using _gitCmd as not using workingDirectory
