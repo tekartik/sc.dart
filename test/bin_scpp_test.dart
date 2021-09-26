@@ -5,7 +5,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:pub_semver/pub_semver.dart';

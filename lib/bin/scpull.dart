@@ -5,7 +5,6 @@ import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_io_utils/io_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
-import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
 
@@ -127,9 +126,7 @@ Future main(List<String> arguments) async {
   for (final dir in dirs) {
     print(dir);
     var _handle = handleScPath(dir, _handleDir, recursive: true);
-    if (_handle is Future) {
-      futures.add(_handle);
-    }
+    futures.add(_handle);
   }
 
   await Future.wait(futures);
