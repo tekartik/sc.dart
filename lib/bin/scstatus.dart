@@ -2,13 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:logging/logging.dart';
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_common_utils/log_utils.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
-import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
 import 'package:tekartik_sc/src/std_buf.dart';
@@ -143,9 +141,8 @@ Future main(List<String> arguments) async {
   for (final dir in dirs) {
     print(dir);
     var _handle = handleScPath(dir, _handleDir, recursive: true);
-    if (_handle is Future) {
-      futures.add(_handle);
-    }
+
+    futures.add(_handle);
   }
 
   await Future.wait(futures);

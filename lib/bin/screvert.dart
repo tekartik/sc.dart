@@ -103,8 +103,7 @@ void main(List<String> arguments) {
 
   for (final dirOrFile in dirOrFiles) {
     var _handle = _handleDir(dirOrFile);
-    if (_handle is Future) {
-      futures.add(_handle);
-    }
+
+    futures.add(_handle);
   }
 }
