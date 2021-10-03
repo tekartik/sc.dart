@@ -1,6 +1,5 @@
 import 'package:args/args.dart';
 import 'package:path/path.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_io_utils/io_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
