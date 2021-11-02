@@ -12,8 +12,8 @@ pubspec.yaml:
 dependencies
   tekartik_sc:
     git:
-      url: git://github.com/tekartik/sc.dart
-      ref: dart2
+      url: https://github.com/tekartik/sc.dart
+      ref: dart2_3
     version: '>=0.7.0'
 ```
 
