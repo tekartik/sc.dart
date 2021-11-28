@@ -62,7 +62,7 @@ Future main() async {
       test('isGitRepository2', () async {
         expect(
             await isGitRepository(
-                'git://github.com/alextekartik/tekartik_io_tools.dart_NO'),
+                'https://github.com/alextekartik/tekartik_io_tools.dart_NO'),
             isFalse);
       });
 
