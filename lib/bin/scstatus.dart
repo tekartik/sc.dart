@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:process_run/shell.dart';
 import 'package:tekartik_common_utils/log_utils.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
@@ -14,6 +15,7 @@ import 'package:tekartik_sc/src/std_buf.dart';
 const String _helpFlag = 'help';
 const String _logOption = 'log';
 const String verboseFlag = 'verbose';
+const String modifiedFilesFlag = 'modified';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -29,6 +31,8 @@ Future main(List<String> arguments) async {
   parser.addFlag('version',
       help: 'Display the script version', negatable: false);
   parser.addFlag(verboseFlag, abbr: 'v', help: 'Verbose', negatable: false);
+  parser.addFlag(modifiedFilesFlag,
+      abbr: 'm', help: 'Modified files only', negatable: false);
   parser.addOption(_logOption,
       abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
 
@@ -50,6 +54,7 @@ Future main(List<String> arguments) async {
     return;
   }
 
+  var modifiedFilesOnly = _argsResult[modifiedFilesFlag] as bool;
   var level = parseLogLevel((_argsResult[_logOption] as String?) ?? '');
   if (_argsResult[verboseFlag] as bool) {
     level = Level.FINEST;
@@ -100,14 +105,23 @@ Future main(List<String> arguments) async {
         if (statusResult.branchIsAhead) {
           buf.outAppend('Branch is ahead');
         }
-        //stdout.writeln(statusResult.runResult.stdout);
-        // rerun in short version mode
-        final cmd = prj.statusCmd(short: true);
-        if (level <= Level.FINEST) {
-          buf.outAppend('> $cmd');
+        if (modifiedFilesOnly) {
+          var shell = Shell(
+              workingDirectory: prj.path,
+              commandVerbose: commandVerbose,
+              verbose: false);
+          var result = (await shell.run('git ls-files -m')).first;
+          buf.appendResult(result);
+        } else {
+          //stdout.writeln(statusResult.runResult.stdout);
+          // rerun in short version mode
+          final cmd = prj.statusCmd(short: true);
+          if (level <= Level.FINEST) {
+            buf.outAppend('> $cmd');
+          }
+          final result = await runCmd(cmd, commandVerbose: commandVerbose);
+          buf.appendResult(result);
         }
-        final result = await runCmd(cmd, commandVerbose: commandVerbose);
-        buf.appendResult(result);
       }
       buf.print();
     } else if (await isHgPathAndSupported(dir)) {
