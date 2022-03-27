@@ -54,11 +54,9 @@ Future main(List<String> arguments) async {
     return;
   }
 
+  var modifiedFilesOnly = argResults[modifiedFilesFlag] as bool;
   var level = parseLogLevel((argResults[_logOption] as String?) ?? '');
   if (argResults[verboseFlag] as bool) {
-  var modifiedFilesOnly = _argsResult[modifiedFilesFlag] as bool;
-  var level = parseLogLevel((_argsResult[_logOption] as String?) ?? '');
-  if (_argsResult[verboseFlag] as bool) {
     level = Level.FINEST;
   }
 
