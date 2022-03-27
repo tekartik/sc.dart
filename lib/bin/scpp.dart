@@ -70,7 +70,7 @@ Future main(List<String> arguments) async {
     level = Level.FINEST;
   }
   /*
-  String logLevel = _argsResult[_LOG];
+  String logLevel = argResults[_LOG];
   if (logLevel != null) {
     setupQuickLogging(parseLogLevel(logLevel));
   }
@@ -173,8 +173,8 @@ Future main(List<String> arguments) async {
 
   for (final dir in dirs) {
     print(dir);
-    var _handle = handleScPath(dir, _handleDirWithTimeout, recursive: true);
-    futures.add(_handle);
+    var handle = handleScPath(dir, _handleDirWithTimeout, recursive: true);
+    futures.add(handle);
   }
 
   await Future.wait(futures);

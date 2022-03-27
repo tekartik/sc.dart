@@ -36,11 +36,11 @@ Future main(List<String> arguments) async {
   parser.addOption(depthParam, help: 'depth (git --depth 1)');
   parser.addOption(branchOption,
       abbr: 'b', help: 'branch (git clone -b <branch>)');
-  final _argsResult = parser.parse(arguments);
+  final argResults = parser.parse(arguments);
 
-  final help = _argsResult[_helpFlag] as bool;
-  final verbose = _argsResult[verboseFlag] as bool;
-  var branch = _argsResult[branchOption] as String?;
+  final help = argResults[_helpFlag] as bool;
+  final verbose = argResults[verboseFlag] as bool;
+  var branch = argResults[branchOption] as String?;
 
   void _printUsage() {
     stdout.writeln(
@@ -63,16 +63,16 @@ Future main(List<String> arguments) async {
     return;
   }
 
-  if (_argsResult['version'] as bool) {
+  if (argResults['version'] as bool) {
     stdout.writeln('$currentScriptName $version');
     return;
   }
 
-  final dryRun = _argsResult[_dryRunFlag] as bool;
-  final depth = parseInt(_argsResult[depthParam]);
+  final dryRun = argResults[_dryRunFlag] as bool;
+  final depth = parseInt(argResults[depthParam]);
 
   // get uris in parameters, default to current
-  final uris = _argsResult.rest;
+  final uris = argResults.rest;
   if (uris.isEmpty) {
     _printUsage();
   }

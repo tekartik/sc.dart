@@ -45,9 +45,9 @@ Future main(List<String> arguments) async {
       help: 'Do not run test, simple show packages to be tested',
       negatable: false);
 
-  final _argsResult = parser.parse(arguments);
+  final argResults = parser.parse(arguments);
 
-  final help = _argsResult[_helpFlag] as bool;
+  final help = argResults[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
         'Pull(update) from source control recursively (default from current directory)');
@@ -59,16 +59,16 @@ Future main(List<String> arguments) async {
     stdout.writeln(parser.usage);
     return;
   }
-  final dryRun = _argsResult[_dryRunFlag] as bool;
-  final verbose = _argsResult[verboseFlag] as bool;
+  final dryRun = argResults[_dryRunFlag] as bool;
+  final verbose = argResults[verboseFlag] as bool;
 
-  if (_argsResult['version'] as bool) {
+  if (argResults['version'] as bool) {
     stdout.write('$currentScriptName $version');
     return;
   }
 
   /*
-  String logLevel = _argsResult[_LOG];
+  String logLevel = argResults[_LOG];
   if (logLevel != null) {
     setupQuickLogging(parseLogLevel(logLevel));
   }
@@ -77,7 +77,7 @@ Future main(List<String> arguments) async {
   */
 
   // get dirs in parameters, default to current
-  var dirs = _argsResult.rest;
+  var dirs = argResults.rest;
   if (dirs.isEmpty) {
     dirs = [Directory.current.path];
   }
@@ -124,8 +124,8 @@ Future main(List<String> arguments) async {
 
   for (final dir in dirs) {
     print(dir);
-    var _handle = handleScPath(dir, _handleDir, recursive: true);
-    futures.add(_handle);
+    var handle = handleScPath(dir, _handleDir, recursive: true);
+    futures.add(handle);
   }
 
   await Future.wait(futures);

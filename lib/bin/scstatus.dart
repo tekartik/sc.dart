@@ -36,9 +36,9 @@ Future main(List<String> arguments) async {
   parser.addOption(_logOption,
       abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
 
-  final _argsResult = parser.parse(arguments);
+  final argResults = parser.parse(arguments);
 
-  final help = _argsResult[_helpFlag] as bool;
+  final help = argResults[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
         'Display source control status recursively (default from current directory)');
@@ -54,6 +54,8 @@ Future main(List<String> arguments) async {
     return;
   }
 
+  var level = parseLogLevel((argResults[_logOption] as String?) ?? '');
+  if (argResults[verboseFlag] as bool) {
   var modifiedFilesOnly = _argsResult[modifiedFilesFlag] as bool;
   var level = parseLogLevel((_argsResult[_logOption] as String?) ?? '');
   if (_argsResult[verboseFlag] as bool) {
@@ -62,12 +64,12 @@ Future main(List<String> arguments) async {
 
   final commandVerbose = level <= Level.FINEST;
 
-  if (_argsResult['version'] as bool) {
+  if (argResults['version'] as bool) {
     stdout.write('$currentScriptName $version');
     return;
   }
   /*
-  String logLevel = _argsResult[_LOG];
+  String logLevel = argResults[_LOG];
   if (logLevel != null) {
     setupQuickLogging(parseLogLevel(logLevel));
   }
@@ -76,7 +78,7 @@ Future main(List<String> arguments) async {
   */
 
   // get dirs in parameters, default to current
-  var dirs = _argsResult.rest;
+  var dirs = argResults.rest;
   if (dirs.isEmpty) {
     dirs = [Directory.current.path];
   }
@@ -154,9 +156,9 @@ Future main(List<String> arguments) async {
 
   for (final dir in dirs) {
     print(dir);
-    var _handle = handleScPath(dir, _handleDir, recursive: true);
+    var handle = handleScPath(dir, _handleDir, recursive: true);
 
-    futures.add(_handle);
+    futures.add(handle);
   }
 
   await Future.wait(futures);
