@@ -30,9 +30,9 @@ void main(List<String> arguments) {
       negatable: false);
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
 
-  final _argsResult = parser.parse(arguments);
+  final argResults = parser.parse(arguments);
 
-  final help = _argsResult[_helpFlag] as bool;
+  final help = argResults[_helpFlag] as bool;
   if (help) {
     stdout.writeln('Revert files in the given directories');
     stdout.writeln();
@@ -43,15 +43,15 @@ void main(List<String> arguments) {
     return;
   }
 
-  if (_argsResult['version'] as bool) {
+  if (argResults['version'] as bool) {
     stdout.write('$currentScriptName $version');
     return;
   }
 
-  final dryRun = _argsResult['dry-run'] as bool;
+  final dryRun = argResults['dry-run'] as bool;
 
   // get dirs in parameters, default to current
-  final dirOrFiles = _argsResult.rest;
+  final dirOrFiles = argResults.rest;
   if (dirOrFiles.isEmpty) {
     stderr
         .writeln('you must specify a directory. Example: $currentScriptName .');
@@ -102,8 +102,8 @@ void main(List<String> arguments) {
   }
 
   for (final dirOrFile in dirOrFiles) {
-    var _handle = _handleDir(dirOrFile);
+    var handle = _handleDir(dirOrFile);
 
-    futures.add(_handle);
+    futures.add(handle);
   }
 }

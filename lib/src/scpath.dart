@@ -16,9 +16,9 @@ List<String> scUriToPathParts(String uri) {
   List<String> parts;
   String domain;
   try {
-    final _uri = Uri.parse(uri);
-    parts = posix.split(_uri.path);
-    domain = _uri.host;
+    final parseUri = Uri.parse(uri);
+    parts = posix.split(parseUri.path);
+    domain = parseUri.host;
   } on FormatException catch (_) {
     // ssh? something like git@github.com:tekartik/sc.dart.git
     // find first part (before :)
@@ -76,7 +76,7 @@ Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
           }());
         }).asFuture();
         await Future.wait(sub);
-      } catch (_, __) {}
+      } catch (_) {}
     } else {
       stderr.writeln('$dir does not belong to source control');
     }

@@ -18,9 +18,9 @@ void main() => defineTests();
 void defineTests() {
   group('sc', () {
     test('git', () async {
-      final _isGitSupported = await isGitSupported;
+      final testIsGitSupported = await isGitSupported;
 
-      if (_isGitSupported) {
+      if (testIsGitSupported) {
         final outPath = normalize(absolute(clearOutTestPath()));
 
         var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
@@ -37,9 +37,9 @@ void defineTests() {
     });
 
     test('hg', () async {
-      final _isHgSupported = await isHgSupported;
+      final testIsHgSupported = await isHgSupported;
 
-      if (_isHgSupported && !isRunningOnTravis()) {
+      if (testIsHgSupported && !isRunningOnTravis()) {
         final outPath = normalize(absolute(clearOutTestPath()));
 
         var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',

@@ -14,29 +14,29 @@ import 'io_test_common.dart';
 
 Future main() async {
   //useVMConfiguration();
-  final _isGitSupported = isGitSupportedSync;
+  final testIsGitSupported = isGitSupportedSync;
   group('Git', () {
     group('supported', () {
       test('check', () async {
-        expect(checkGitSupportedSync(), _isGitSupported);
-        expect(await checkGitSupported(), _isGitSupported);
+        expect(checkGitSupportedSync(), testIsGitSupported);
+        expect(await checkGitSupported(), testIsGitSupported);
       });
       test('missing', () {},
-          skip: _isGitSupported ? false : 'Git (Mercurial) not supported');
+          skip: testIsGitSupported ? false : 'Git (Mercurial) not supported');
     });
 
-    if (_isGitSupported) {
+    if (testIsGitSupported) {
       test('path', () {
         var giPath = GitPath('.');
         expect(giPath.path, '.');
       });
 
       test('isGitSupported', () async {
-        expect(await isGitSupported, _isGitSupported);
+        expect(await isGitSupported, testIsGitSupported);
       });
 
       test('version', () async {
-        if (_isGitSupported) {
+        if (testIsGitSupported) {
           final result = await runCmd(gitVersionCmd());
           // git version 1.9.1
           expect(result.stdout.toString().startsWith('git version'), isTrue);
@@ -90,7 +90,7 @@ Future main() async {
 
       group('bitbucket.org', () {
         test('bbGitProject', () async {
-          if (_isGitSupported) {
+          if (testIsGitSupported) {
             final outPath = clearOutTestPath(testDescriptions);
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
@@ -123,7 +123,7 @@ Future main() async {
 
       group('github.com', () {
         test('GitProject', () async {
-          if (_isGitSupported) {
+          if (testIsGitSupported) {
             final outPath = clearOutTestPath(testDescriptions);
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject(
@@ -156,7 +156,7 @@ Future main() async {
 
       group('gitlab.com', () {
         test('GitProject', () async {
-          if (_isGitSupported) {
+          if (testIsGitSupported) {
             final outPath = clearOutTestPath(testDescriptions);
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject('https://gitlab.com/tkexp/branch_exp.git',
