@@ -83,7 +83,7 @@ Future main(List<String> arguments) async {
 
   final futures = <Future>[];
 
-  Future _handleDir(String dir) async {
+  Future handleDir(String dir) async {
     if (await isGitPathAndSupported(dir)) {
       final prj = GitPath(dir);
 
@@ -154,7 +154,7 @@ Future main(List<String> arguments) async {
 
   for (final dir in dirs) {
     print(dir);
-    var handle = handleScPath(dir, _handleDir, recursive: true);
+    var handle = handleScPath(dir, handleDir, recursive: true);
 
     futures.add(handle);
   }

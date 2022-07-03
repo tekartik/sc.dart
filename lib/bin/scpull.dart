@@ -84,8 +84,8 @@ Future main(List<String> arguments) async {
 
   final futures = <Future>[];
 
-  Future _handleDir(String dir) async {
-    Future<ProcessResult?> _execute(ProcessCmd cmd) async {
+  Future handleDir(String dir) async {
+    Future<ProcessResult?> execute(ProcessCmd cmd) async {
       if (dryRun == true) {
         stdout.writeln(cmd);
         return null;
@@ -95,15 +95,15 @@ Future main(List<String> arguments) async {
           stdout.writeln('[${cmd.workingDirectory}]');
         }
         ProcessResult? result;
-        Future _waiter() async {
+        Future waiter() async {
           await sleep(15000);
           if (result == null) {
             stderr.writeln('[${cmd.workingDirectory}]...');
-            await _waiter();
+            await waiter();
           }
         }
 
-        unawaited(_waiter());
+        unawaited(waiter());
         result = await runCmd(cmd, verbose: verbose);
         return result;
       }
@@ -114,17 +114,17 @@ Future main(List<String> arguments) async {
     if (await isGitPathAndSupported(dir)) {
       final prj = GitPath(dir);
       //ProcessResult result =
-      await _execute(prj.pullCmd());
+      await execute(prj.pullCmd());
     } else if (await isHgPathAndSupported(dir)) {
       final prj = HgPath(dir);
       //ProcessResult result =
-      await _execute(prj.pullCmd());
+      await execute(prj.pullCmd());
     }
   }
 
   for (final dir in dirs) {
     print(dir);
-    var handle = handleScPath(dir, _handleDir, recursive: true);
+    var handle = handleScPath(dir, handleDir, recursive: true);
     futures.add(handle);
   }
 

@@ -60,7 +60,7 @@ void main(List<String> arguments) {
 
   final futures = <Future>[];
 
-  Future _handleDir(String dirOrFile) async {
+  Future handleDir(String dirOrFile) async {
     // Get top level
     dirOrFile = absolute(dirOrFile);
     final scTopPath = await findScTopLevelPath(dirOrFile);
@@ -102,7 +102,7 @@ void main(List<String> arguments) {
   }
 
   for (final dirOrFile in dirOrFiles) {
-    var handle = _handleDir(dirOrFile);
+    var handle = handleDir(dirOrFile);
 
     futures.add(handle);
   }
