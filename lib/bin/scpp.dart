@@ -86,8 +86,8 @@ Future main(List<String> arguments) async {
 
   final futures = <Future>[];
 
-  Future _handleDir(String dir) async {
-    Future<ProcessResult?> _execute(StdBuf buf, ProcessCmd cmd) async {
+  Future handleDir(String dir) async {
+    Future<ProcessResult?> execute(StdBuf buf, ProcessCmd cmd) async {
       if (dryRun == true) {
         stdout.writeln(cmd);
         return null;
@@ -108,7 +108,7 @@ Future main(List<String> arguments) async {
       // Only push if branch is ahead
       if (statusResult.branchIsAhead) {
         final cmd = prj.pushCmd();
-        final result = await _execute(buf, cmd);
+        final result = await execute(buf, cmd);
         // dry-run returns null
         if (result != null) {
           if (result.exitCode != 0 ||
@@ -123,7 +123,7 @@ Future main(List<String> arguments) async {
         }
       }
       var cmd = prj.pullCmd();
-      var result = await _execute(buf, cmd);
+      var result = await execute(buf, cmd);
       // dry-run returns null
       if (result != null) {
         var pullOutput = result.stdout.toString();
@@ -141,7 +141,7 @@ Future main(List<String> arguments) async {
       final prj = HgPath(dir);
       //ProcessResult result =
       var cmd = prj.pushCmd();
-      var result = await (_execute(buf, cmd) as FutureOr<ProcessResult>);
+      var result = await (execute(buf, cmd) as FutureOr<ProcessResult>);
       // exitCode seems to be always 1 on linux...
       // result.exitCode != 0 ||
       if (!result.stdout.toString().contains('no changes found')) {
@@ -149,7 +149,7 @@ Future main(List<String> arguments) async {
         buf.appendResult(result);
       }
       cmd = prj.pullCmd();
-      result = await (_execute(buf, cmd) as FutureOr<ProcessResult>);
+      result = await (execute(buf, cmd) as FutureOr<ProcessResult>);
       if (result.exitCode != 0 ||
           !result.stdout.toString().contains('no changes found')) {
         buf.outAppend('> $cmd');
@@ -159,21 +159,21 @@ Future main(List<String> arguments) async {
     }
   }
 
-  Future _handleDirWithTimeout(String dir) async {
+  Future handleDirWithTimeout(String dir) async {
     if (timeout != null) {
-      await _handleDir(dir)
+      await handleDir(dir)
           .timeout(Duration(milliseconds: timeout))
           .catchError((e) {
         stderr.writeln('$e for $dir');
       });
     } else {
-      await _handleDir(dir);
+      await handleDir(dir);
     }
   }
 
   for (final dir in dirs) {
     print(dir);
-    var handle = handleScPath(dir, _handleDirWithTimeout, recursive: true);
+    var handle = handleScPath(dir, handleDirWithTimeout, recursive: true);
     futures.add(handle);
   }
 

@@ -42,7 +42,7 @@ Future main(List<String> arguments) async {
   final verbose = argResults[verboseFlag] as bool;
   var branch = argResults[branchOption] as String?;
 
-  void _printUsage() {
+  void printUsage() {
     stdout.writeln(
         'clone one or multiple projects by their url and create pre-defined directory structure');
     stdout.writeln();
@@ -59,7 +59,7 @@ Future main(List<String> arguments) async {
   }
 
   if (help) {
-    _printUsage();
+    printUsage();
     return;
   }
 
@@ -74,16 +74,16 @@ Future main(List<String> arguments) async {
   // get uris in parameters, default to current
   final uris = argResults.rest;
   if (uris.isEmpty) {
-    _printUsage();
+    printUsage();
   }
 
-  Future _handleUri(String uri) async {
+  Future handleUri(String uri) async {
     final parts = scUriToPathParts(uri);
 
     final topDirName = basename(Directory.current.path);
 
     var done = false;
-    Future _tryGit(String uri, List<String> parts) async {
+    Future tryGit(String uri, List<String> parts) async {
       if (verbose) {
         print('trying $uri with git');
       }
@@ -116,11 +116,11 @@ Future main(List<String> arguments) async {
     // try remove .git
     if (uri.endsWith('.git')) {
       final newUri = uri.substring(0, uri.length - 4);
-      await _tryGit(newUri, scUriToPathParts(newUri));
+      await tryGit(newUri, scUriToPathParts(newUri));
     }
 
     if (!done) {
-      await _tryGit(uri, parts);
+      await tryGit(uri, parts);
     }
 
     if ((!done) &&
@@ -156,6 +156,6 @@ Future main(List<String> arguments) async {
 
   // handle all uris
   for (final uri in uris) {
-    await _handleUri(uri);
+    await handleUri(uri);
   }
 }
