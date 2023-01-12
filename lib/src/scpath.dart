@@ -74,7 +74,7 @@ Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
               await handleScPath(fse.path, handleScDir, recursive: recursive);
             }
           }());
-        }).asFuture();
+        }).asFuture<void>();
         await Future.wait(sub);
       } catch (_) {}
     } else {
