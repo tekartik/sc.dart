@@ -9,7 +9,7 @@ Tekartik source control helpers (git &amp; hg) for dart
 pubspec.yaml:
 
 ```yaml
-dependencies
+dependencies:
   tekartik_sc:
     git:
       url: https://github.com/tekartik/sc.dart

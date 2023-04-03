@@ -16,6 +16,8 @@ class _GitCommand {
 
   ProcessCmd processCmd(List<String> args) {
     return ProcessCmd(binaryPath ?? 'git', args,
+        // Force english
+        environment: {'LC_ALL': 'C'},
         runInShell: runInShell ?? false);
   }
 }

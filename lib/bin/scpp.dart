@@ -163,7 +163,7 @@ Future main(List<String> arguments) async {
     if (timeout != null) {
       await handleDir(dir)
           .timeout(Duration(milliseconds: timeout))
-          .catchError((e) {
+          .catchError((Object e) {
         stderr.writeln('$e for $dir');
       });
     } else {
