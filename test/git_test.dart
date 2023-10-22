@@ -184,6 +184,12 @@ Future main() async {
             }
           }
         });
+
+        test('branches', () async {
+          var gitPath = GitPath('.');
+          var branches = await gitPath.getBranches();
+          expect(branches, isNotEmpty);
+        });
       });
     }
   }, timeout: const Timeout(Duration(minutes: 2)));

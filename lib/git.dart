@@ -6,8 +6,10 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:process_run/process_run.dart';
 
 import 'src/scpath.dart';
+export 'src/git.dart' show GitPathExt;
 
 class _GitCommand {
   _GitCommand({this.runInShell});
@@ -102,6 +104,12 @@ class GitPath {
     }
 
     return statusResult;
+  }
+
+  /// Run a git command
+  Future<ProcessResult> runGit(String command, {bool? verbose}) async {
+    final cmd = gitCmd(stringToArguments(command))..workingDirectory = path;
+    return runCmd(cmd, verbose: verbose);
   }
 
   /*
