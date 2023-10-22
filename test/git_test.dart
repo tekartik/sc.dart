@@ -189,6 +189,8 @@ Future main() async {
           var gitPath = GitPath('.');
           var branches = await gitPath.getBranches();
           expect(branches, isNotEmpty);
+          var currentBranch = await gitPath.getCurrentBranch();
+          expect(branches, contains(currentBranch));
         });
       });
     }

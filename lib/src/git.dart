@@ -7,4 +7,10 @@ extension GitPathExt on GitPath {
         .outLines
         .toList();
   }
+
+  Future<String> getCurrentBranch() async {
+    return (await runGit('branch --show-current', verbose: true))
+        .outLines
+        .first;
+  }
 }
