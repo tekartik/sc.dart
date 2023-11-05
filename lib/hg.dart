@@ -92,7 +92,7 @@ class HgPath {
 
   ProcessCmd pullCmd({bool update = true}) {
     final args = <String>['pull'];
-    if (update == true) {
+    if (update) {
       args.add('-u');
     }
     return _hgCmd(args);

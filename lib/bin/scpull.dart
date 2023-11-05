@@ -86,7 +86,7 @@ Future main(List<String> arguments) async {
 
   Future handleDir(String dir) async {
     Future<ProcessResult?> execute(ProcessCmd cmd) async {
-      if (dryRun == true) {
+      if (dryRun) {
         stdout.writeln(cmd);
         return null;
       } else {
