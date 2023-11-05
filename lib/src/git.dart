@@ -7,14 +7,15 @@ import 'package:tekartik_sc/git.dart';
 import 'scpath.dart';
 
 extension GitPathExt on GitPath {
-  Future<List<String>> getBranches() async {
-    return (await runGit("branch --format='%(refname:short)'", verbose: true))
+  Future<List<String>> getBranches({bool? verbose}) async {
+    return (await runGit("branch --format='%(refname:short)'",
+            verbose: verbose))
         .outLines
         .toList();
   }
 
-  Future<String> getCurrentBranch() async {
-    return (await runGit('branch --show-current', verbose: true))
+  Future<String> getCurrentBranch({bool? verbose}) async {
+    return (await runGit('branch --show-current', verbose: verbose))
         .outLines
         .first;
   }
