@@ -1,9 +1,8 @@
 library tekartik_sc.sc;
 
 import 'dart:async';
-import 'dart:io';
 
-import 'package:path/path.dart';
+import 'package:tekartik_sc/src/scpath.dart';
 
 import 'git.dart';
 import 'hg.dart';
@@ -37,19 +36,5 @@ Future<String?> getScName(String path) async {
 /// checking recursively the parent for any hg or git directory
 ///
 Future<String?> findScTopLevelPath(String path) async {
-  path = normalize(absolute(path));
-  String parent;
-  while (true) {
-    if (FileSystemEntity.isDirectorySync(path)) {
-      if (await isScTopLevelPath(path)) {
-        return path;
-      }
-    }
-    parent = dirname(path);
-    if (parent == path) {
-      break;
-    }
-    path = parent;
-  }
-  return null;
+  return await pathFindTopLevelPath(path, pathIsTopLevel: isScTopLevelPath);
 }

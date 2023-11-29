@@ -2,7 +2,20 @@
 
 Tekartik source control helpers (git &amp; hg) for dart
 
-[![Build Status](https://travis-ci.org/tekartik/tekartik_sc.dart.svg?branch=master)](https://travis-ci.org/tekartik/tekartik_sc.dart)
+## Setup
+
+in `pubspec.yaml`:
+
+```yaml
+dependencies:
+  tekartik_sc:
+    git:
+      url: https://github.com/tekartik/sc.dart
+      ref: dart3a
+    version: '>=0.7.0'
+```
+
+Versioning follows [dart project versioning](https://github.com/tekartik/common.dart/blob/main/doc/tekartik_versioning.md) conventions.
 
 ## Usage
 

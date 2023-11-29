@@ -12,7 +12,7 @@ import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 
 import 'bin_test.dart';
-import 'io_test_common.dart';
+import 'io_dev_test_common.dart';
 
 String get scppDartScript {
   return join(exampleBinPath, 'scpp.dart');

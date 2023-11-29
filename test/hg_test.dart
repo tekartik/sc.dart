@@ -8,7 +8,7 @@ import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_common_utils/bool_utils.dart';
 import 'package:tekartik_sc/hg.dart';
 
-import 'io_test_common.dart';
+import 'io_dev_test_common.dart';
 
 void main() => defineTests();
 

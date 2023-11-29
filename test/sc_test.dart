@@ -11,7 +11,7 @@ import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/sc.dart';
 
 import 'hg_test.dart';
-import 'io_test_common.dart';
+import 'io_dev_test_common.dart';
 
 void main() => defineTests();
 

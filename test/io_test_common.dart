@@ -2,22 +2,18 @@ library tekartik_io_tools.io_common;
 
 import 'dart:io';
 
-import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
-import 'package:tekartik_common_utils/bool_utils.dart';
 
-export 'package:dev_test/test.dart';
+export 'package:test/test.dart';
 
-String get outDataPath => getOutTestPath(testDescriptions);
+String get outDataPath => join('.dart_tool', 'tekartik', 'sc.dart', 'test');
 
-String getOutTestPath([List<String>? parts]) {
-  parts ??= testDescriptions;
-
-  return join('.dart_tool', 'tekartik_sc', 'test', joinAll(parts));
+String getOutTestPath(String path) {
+  return join(outDataPath, path);
 }
 
-String clearOutTestPath([List<String>? parts]) {
-  final outPath = getOutTestPath(parts);
+String clearOutTestPath(String path) {
+  final outPath = getOutTestPath(path);
   try {
     Directory(outPath).deleteSync(recursive: true);
   } catch (_) {}
@@ -25,8 +21,4 @@ String clearOutTestPath([List<String>? parts]) {
     Directory(outPath).createSync(recursive: true);
   } catch (_) {}
   return outPath;
-}
-
-bool get runningInTravis {
-  return parseBool(Platform.environment['TRAVIS']) == true;
 }

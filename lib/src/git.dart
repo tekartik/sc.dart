@@ -187,3 +187,10 @@ class GitProject extends GitPath {
     }
   }
 }
+
+///
+/// checking recursively the parent for any hg or git directory
+///
+Future<String?> findGitTopLevelPath(String path) async {
+  return await pathFindTopLevelPath(path, pathIsTopLevel: isGitTopLevelPath);
+}

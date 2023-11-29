@@ -10,7 +10,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 
 import 'bin_test.dart';
-import 'io_test_common.dart';
+import 'io_dev_test_common.dart';
 
 String get screvertDartScript {
   return join(exampleBinPath, 'screvert.dart');

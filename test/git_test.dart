@@ -43,6 +43,21 @@ Future main() async {
         }
       });
 
+      test('findGitTopLevelPath', () async {
+        var topGitDir = '.';
+        try {
+          // Keep the code in case we add a package subdir.
+          topGitDir = join('.');
+        } catch (e) {
+          // ignore: avoid_catches_without_on_clauses
+          print('Ignored git local error $e');
+        }
+        if (await isGitTopLevelPath(topGitDir)) {
+          expect(
+              await findGitTopLevelPath('.'), normalize(absolute(topGitDir)));
+        }
+      });
+
       /*
     test('isGitTopLevelPath', () async {
       print(Platform.script);
@@ -91,7 +106,7 @@ Future main() async {
       group('bitbucket.org', () {
         test('bbGitProject', () async {
           if (testIsGitSupported) {
-            final outPath = clearOutTestPath(testDescriptions);
+            final outPath = clearOutTestPath('git/bb_git_project');
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
                 path: outPath);
@@ -124,7 +139,7 @@ Future main() async {
       group('github.com', () {
         test('GitProject', () async {
           if (testIsGitSupported) {
-            final outPath = clearOutTestPath(testDescriptions);
+            final outPath = clearOutTestPath('git/github/git_project');
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject(
                 'https://github.com/alextekartik/data_test.git',
@@ -157,7 +172,7 @@ Future main() async {
       group('gitlab.com', () {
         test('GitProject', () async {
           if (testIsGitSupported) {
-            final outPath = clearOutTestPath(testDescriptions);
+            final outPath = clearOutTestPath('git/gitlab/git_project');
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject('https://gitlab.com/tkexp/branch_exp.git',
                 path: outPath);

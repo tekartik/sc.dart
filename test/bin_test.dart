@@ -4,7 +4,7 @@ library tekartik_sc.test.bin_test;
 import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
 
-import 'io_test_common.dart';
+import 'io_dev_test_common.dart';
 
 var exampleBinPath = join('example', 'bin');
 

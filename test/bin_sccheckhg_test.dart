@@ -7,7 +7,7 @@ import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_sc/hg.dart';
 
 import 'bin_test.dart';
-import 'io_test_common.dart';
+import 'io_dev_test_common.dart';
 
 String get sccheckhgDartScript {
   return join(exampleBinPath, 'sccheckhg.dart');

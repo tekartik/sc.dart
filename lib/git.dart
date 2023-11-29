@@ -7,10 +7,17 @@ import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 
 export 'src/git.dart'
-    show GitPathExt, recursiveGitRun, GitPath, GitProject, GitStatusResult;
+    show
+        GitPathExt,
+        recursiveGitRun,
+        GitPath,
+        GitProject,
+        GitStatusResult,
+        findGitTopLevelPath;
 
 class _GitCommand {
   _GitCommand({this.runInShell});
+
   bool? runInShell;
   String? binaryPath;
 
