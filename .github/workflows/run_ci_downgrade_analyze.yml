@@ -18,7 +18,7 @@ jobs:
       matrix:
         includes:
           - os: ubuntu-latest
-          - dart: stable
+            dart: stable
     steps:
       - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1.4
