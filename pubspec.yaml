@@ -22,7 +22,7 @@ dependencies:
     version: '>=0.5.1'
 dev_dependencies:
   test: any
-  dev_test: '>=0.13.2-dev.2'
+  dev_test: '>=0.16.4'
   build_runner: '>=0.9.1'
   build_test: '>=0.10.2'
   tekartik_common_utils:
