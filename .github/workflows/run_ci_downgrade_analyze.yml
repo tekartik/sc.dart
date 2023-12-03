@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Test on ${{ matrix.os }} / ${{ matrix.dart }}
+    name: Test on ${{ matrix.os }} / dart ${{ matrix.dart }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        includes:
+        include:
           - os: ubuntu-latest
             dart: stable
     steps:
