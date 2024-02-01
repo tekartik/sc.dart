@@ -35,9 +35,9 @@ extension GitPathExt on GitPath {
 Future<void> recursiveGitRun(List<String> paths,
     {required FutureOr<dynamic> Function(String package) action}) async {
   for (var path in paths) {
-    await handleScPath(path, (dir) {
+    await handleScPath(path, (dir) async {
       if (isGitTopLevelPathSync(dir)) {
-        action(dir);
+        await action(dir);
       }
     }, recursive: true);
   }
