@@ -7,7 +7,7 @@ import 'package:tekartik_sc/src/scpath.dart';
 import 'git.dart';
 import 'hg.dart';
 
-export 'src/scpath.dart' show handleScPath;
+export 'src/scpath.dart' show handleScPath, recursiveHandleScPathPoolSize;
 
 String git = 'git';
 String hg = 'hg';

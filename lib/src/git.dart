@@ -6,6 +6,14 @@ import 'package:tekartik_sc/git.dart';
 
 import 'scpath.dart';
 
+/// recursive git run pool size.
+int get recursiveGitRunPoolSize => recursiveHandleScPathPoolSize;
+
+/// recursive git run pool size.
+set recursiveGitRunPoolSize(int value) {
+  recursiveHandleScPathPoolSize = value;
+}
+
 extension GitPathExt on GitPath {
   Future<List<String>> getBranches({bool? verbose}) async {
     return (await runGit("branch --format='%(refname:short)'",

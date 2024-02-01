@@ -48,8 +48,19 @@ List<String> scUriToPathParts(String uri) {
   return parts;
 }
 
-// Needed for MacOS...
-final pool = Pool(10);
+int _recursiveHandleScPathPoolSize = 10;
+
+/// Must be called before running any command.
+int get recursiveHandleScPathPoolSize => _recursiveHandleScPathPoolSize;
+
+/// Update the pool size.
+set recursiveHandleScPathPoolSize(int value) {
+  _recursiveHandleScPathPoolSize = value;
+  _pool = Pool(recursiveHandleScPathPoolSize);
+}
+
+/// Needed for MacOS...
+var _pool = Pool(recursiveHandleScPathPoolSize);
 
 Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
     {bool? recursive}) async {
@@ -59,7 +70,7 @@ Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
 
   // We are in a git, don't recurse)
   if (topDir != null) {
-    await pool.withResource(() => handleScDir(topDir));
+    await _pool.withResource(() => handleScDir(topDir));
   } else {
     if (recursive) {
       try {
