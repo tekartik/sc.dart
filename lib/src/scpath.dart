@@ -83,8 +83,13 @@ Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
   }
 }
 
+/// Options
+var skipRunScppFilePath = join('.local', '.skip_scpp');
+
 Future<bool> isGitPathAndSupported(String path) async {
-  return await isGitSupported && await isGitTopLevelPath(path);
+  return await isGitSupported &&
+      await isGitTopLevelPath(path) &&
+      !File(join(path, skipRunScppFilePath)).existsSync();
 }
 
 Future<bool> isHgPathAndSupported(String path) async {
