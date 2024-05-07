@@ -111,7 +111,7 @@ Future main(List<String> arguments) async {
 
     // Ignore folder starting with .
     // don't event go below
-    if (await isGitPathAndSupported(dir)) {
+    if (await isGitPathAndScSupported(dir)) {
       final prj = GitPath(dir);
       //ProcessResult result =
       await execute(prj.pullCmd());

@@ -84,7 +84,7 @@ Future main(List<String> arguments) async {
   final futures = <Future>[];
 
   Future handleDir(String dir) async {
-    if (await isGitPathAndSupported(dir)) {
+    if (await isGitPathAndScSupported(dir)) {
       final prj = GitPath(dir);
 
       final statusResult = await (prj.status());

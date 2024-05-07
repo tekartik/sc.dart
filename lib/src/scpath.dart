@@ -98,6 +98,17 @@ Future<bool> isGitPathAndSupported(String path) async {
   return await isGitSupported && await isGitTopLevelPath(path);
 }
 
+Future<bool> isGitPathAndScSupported(String path) async {
+  if (await isGitPathAndSupported(path)) {
+    var skipRunCiFilePath = join(path, '.local', '.skip_sc');
+    if (File(skipRunCiFilePath).existsSync()) {
+      stderr.writeln('Skipping $path');
+      return true;
+    }
+  }
+  return false;
+}
+
 Future<bool> isHgPathAndSupported(String path) async {
   return await isHgSupported && await isHgTopLevelPath(path);
 }
