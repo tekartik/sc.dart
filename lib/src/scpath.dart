@@ -103,6 +103,7 @@ Future<bool> isGitPathAndScSupported(String path) async {
     var skipRunCiFilePath = join(path, '.local', '.skip_sc');
     if (File(skipRunCiFilePath).existsSync()) {
       stderr.writeln('Skipping $path');
+    } else {
       return true;
     }
   }

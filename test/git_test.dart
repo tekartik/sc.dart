@@ -9,6 +9,7 @@ import 'package:process_run/cmd_run.dart';
 import 'package:process_run/shell_run.dart';
 import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
+import 'package:tekartik_sc/src/scpath.dart' show isGitPathAndScSupported;
 
 import 'io_test_common.dart';
 
@@ -56,6 +57,11 @@ Future main() async {
           expect(
               await findGitTopLevelPath('.'), normalize(absolute(topGitDir)));
         }
+      });
+
+      test('isGitPathAndScSupported', () async {
+        expect(await isGitPathAndScSupported('example'), isFalse);
+        expect(await isGitPathAndScSupported('.'), isTrue);
       });
 
       /*

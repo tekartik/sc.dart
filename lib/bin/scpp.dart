@@ -101,10 +101,6 @@ Future main(List<String> arguments) async {
     }
 
     if (await isGitPathAndScSupported(dir)) {
-      var skipRunCiFilePath = join(dir, '.local', '.skip_sc');
-      if (File(skipRunCiFilePath).existsSync()) {
-        stderr.write('Skipping $dir');
-      }
       final buf = StdBuf();
       final prj = GitPath(dir);
 
