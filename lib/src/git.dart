@@ -15,8 +15,9 @@ set recursiveGitRunPoolSize(int value) {
 }
 
 extension GitPathExt on GitPath {
-  Future<List<String>> getBranches({bool? verbose}) async {
-    return (await runGit("branch --format='%(refname:short)'",
+  Future<List<String>> getBranches({bool? verbose, bool? remote}) async {
+    return (await runGit(
+            "branch${(remote ?? false) ? ' -r' : ''} --format='%(refname:short)'",
             verbose: verbose))
         .outLines
         .toList();
