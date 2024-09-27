@@ -6,8 +6,11 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 
+import 'src/git.dart';
+
 export 'src/git.dart'
     show
+        gitEnvironment,
         GitPathExt,
         recursiveGitRun,
         GitPath,
@@ -25,7 +28,7 @@ class _GitCommand {
   ProcessCmd processCmd(List<String> args) {
     return ProcessCmd(binaryPath ?? 'git', args,
         // Force english
-        environment: {'LC_ALL': 'C'},
+        environment: gitEnvironment,
         runInShell: runInShell ?? false);
   }
 }

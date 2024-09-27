@@ -6,6 +6,9 @@ import 'package:tekartik_sc/git.dart';
 
 import 'scpath.dart';
 
+/// Proper git environment.
+Map<String, String> gitEnvironment = {'LC_ALL': 'C'};
+
 /// recursive git run pool size.
 int get recursiveGitRunPoolSize => recursiveHandleScPathPoolSize;
 
