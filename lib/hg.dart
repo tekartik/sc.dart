@@ -1,4 +1,4 @@
-library tekartik_sc.hg;
+library;
 
 import 'dart:io';
 

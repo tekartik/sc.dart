@@ -1,4 +1,4 @@
-library tekartik_sc.git;
+library;
 
 import 'dart:async';
 import 'dart:io';

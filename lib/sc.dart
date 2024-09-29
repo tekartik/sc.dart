@@ -1,4 +1,4 @@
-library tekartik_sc.sc;
+library;
 
 import 'dart:async';
 

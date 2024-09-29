@@ -1,5 +1,5 @@
 @TestOn('vm')
-library tekartik_sc.test.bin_scpull_test;
+library;
 
 import 'dart:convert';
 

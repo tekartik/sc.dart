@@ -1,5 +1,5 @@
 @TestOn('vm')
-library tekartik_sc.test.hg_test;
+library;
 
 import 'dart:io';
 

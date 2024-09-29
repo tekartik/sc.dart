@@ -1,5 +1,5 @@
 @TestOn('vm')
-library tekartik_sc.test.sc_test;
+library;
 
 import 'dart:async';
 import 'dart:io';

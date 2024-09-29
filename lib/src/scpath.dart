@@ -1,4 +1,4 @@
-library tekartik_io_tools.src.scpath;
+library;
 
 import 'dart:async';
 import 'dart:io';
