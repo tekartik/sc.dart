@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:process_run/process_run.dart';
 import 'package:tekartik_io_utils/io_utils_import.dart';
+import 'package:tekartik_io_utils/path_utils.dart';
 import 'package:tekartik_sc/git.dart';
 
 import 'scpath.dart';
@@ -204,5 +205,5 @@ class GitProject extends GitPath {
 /// checking recursively the parent for any hg or git directory
 ///
 Future<String?> findGitTopLevelPath(String path) async {
-  return await pathFindTopLevelPath(path, pathIsTopLevel: isGitTopLevelPath);
+  return await pathFindTopLevelDirPath(path, pathIsTopLevel: isGitTopLevelPath);
 }

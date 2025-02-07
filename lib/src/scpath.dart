@@ -113,26 +113,3 @@ Future<bool> isGitPathAndScSupported(String path) async {
 Future<bool> isHgPathAndSupported(String path) async {
   return await isHgSupported && await isHgTopLevelPath(path);
 }
-
-///
-/// checking recursively the parent for any hg or git directory
-///
-Future<String?> pathFindTopLevelPath(String path,
-    {FutureOr<bool> Function(String path)? pathIsTopLevel}) async {
-  path = normalize(absolute(path));
-  String parent;
-  var checkFn = pathIsTopLevel ?? isScTopLevelPath;
-  while (true) {
-    if (FileSystemEntity.isDirectorySync(path)) {
-      if (await checkFn(path)) {
-        return path;
-      }
-    }
-    parent = dirname(path);
-    if (parent == path) {
-      break;
-    }
-    path = parent;
-  }
-  return null;
-}
