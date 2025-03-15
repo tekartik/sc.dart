@@ -24,6 +24,7 @@ void main(List<String> arguments) {
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag('version',
       help: 'Display the script version', negatable: false);
+  parser.addFlag('recursive', abbr: 'r', help: 'Recursive', negatable: false);
   parser.addFlag('dry-run',
       abbr: 'n',
       help: 'Do not run test, simple show packages to be tested',
@@ -32,7 +33,7 @@ void main(List<String> arguments) {
 
   final argResults = parser.parse(arguments);
 
-  final help = argResults[_helpFlag] as bool;
+  final help = argResults.flag(_helpFlag);
   if (help) {
     stdout.writeln('Revert files in the given directories');
     stdout.writeln();
@@ -43,12 +44,13 @@ void main(List<String> arguments) {
     return;
   }
 
-  if (argResults['version'] as bool) {
+  if (argResults.flag('version')) {
     stdout.write('$currentScriptName $version');
     return;
   }
 
-  final dryRun = argResults['dry-run'] as bool;
+  final dryRun = argResults.flag('dry-run');
+  final recursive = argResults.flag('recursive');
 
   // get dirs in parameters, default to current
   final dirOrFiles = argResults.rest;
@@ -73,21 +75,19 @@ void main(List<String> arguments) {
       if (await isGitTopLevelPath(scTopPath)) {
         if (await isGitSupported) {
           final prj = GitPath(scTopPath);
-          final cmd = prj.checkoutCmd(path: rel);
+          var status = await prj.status();
+          if (status.nothingToCommit) {
+            return;
+          } else {
+            final cmd = prj.checkoutCmd(path: rel);
 
-          stdout.writeln(cmd);
-          if (!dryRun) {
-            await runCmd(cmd, verbose: true);
+            stdout.writeln('# $scTopPath');
+            if (dryRun) {
+              stdout.writeln('[dry-run] $cmd');
+            } else {
+              await runCmd(cmd, verbose: true);
+            }
           }
-          /*
-        GitStatusResult statusResult = await (prj.status());
-        if (statusResult.branchIsAhead ||
-            statusResult.nothingToCommit != true) {
-          stdout.writeln('--- git');
-          stdout.writeln(prj);
-          stdout.writeln(statusResult.runResult.stdout);
-        }
-        */
         } else if (await isHgTopLevelPath(scTopPath)) {
           final prj = HgPath(scTopPath);
           final cmd = prj.revertCmd(path: rel, noBackup: true);
@@ -101,8 +101,15 @@ void main(List<String> arguments) {
     }
   }
 
+  Future handleDirRecursively(String dirOrFile) async {
+    await recursiveGitRun([dirOrFile], action: (path) async {
+      await handleDir(path);
+    });
+  }
+
   for (final dirOrFile in dirOrFiles) {
-    var handle = handleDir(dirOrFile);
+    var handle =
+        recursive ? handleDirRecursively(dirOrFile) : handleDir(dirOrFile);
 
     futures.add(handle);
   }
