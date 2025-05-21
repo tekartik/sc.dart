@@ -23,8 +23,10 @@ void defineTests() {
       if (testIsGitSupported) {
         final outPath = normalize(absolute(clearOutTestPath()));
 
-        var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
-            path: outPath);
+        var prj = GitProject(
+          'https://bitbucket.org/alextk/public_git_test',
+          path: outPath,
+        );
         await runCmd(prj.cloneCmd());
 
         expect(await isScTopLevelPath(outPath), isTrue);
@@ -42,8 +44,10 @@ void defineTests() {
       if (testIsHgSupported && !isRunningOnTravis()) {
         final outPath = normalize(absolute(clearOutTestPath()));
 
-        var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
-            rootFolder: outPath);
+        var prj = HgProject(
+          'https://bitbucket.org/alextk/hg_data_test',
+          rootFolder: outPath,
+        );
         await runCmd(prj.cloneCmd());
 
         expect(await isScTopLevelPath(outPath), isTrue);

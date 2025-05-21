@@ -26,10 +26,13 @@ class _GitCommand {
   String? binaryPath;
 
   ProcessCmd processCmd(List<String> args) {
-    return ProcessCmd(binaryPath ?? 'git', args,
-        // Force english
-        environment: gitEnvironment,
-        runInShell: runInShell ?? false);
+    return ProcessCmd(
+      binaryPath ?? 'git',
+      args,
+      // Force english
+      environment: gitEnvironment,
+      runInShell: runInShell ?? false,
+    );
   }
 }
 
@@ -102,8 +105,9 @@ Future<bool> isGitRepository(String uri, {bool? verbose}) async {
     return false;
   }
   final runResult = await runCmd(
-      gitCmd(['ls-remote', '--exit-code', '-h', uri]),
-      verbose: verbose);
+    gitCmd(['ls-remote', '--exit-code', '-h', uri]),
+    verbose: verbose,
+  );
   // 2 is returned if not found
   // 128 if an error occured
   return (runResult.exitCode == 0) || (runResult.exitCode == 2);

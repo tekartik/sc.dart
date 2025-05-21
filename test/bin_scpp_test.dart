@@ -23,8 +23,9 @@ void main() {
   group('scpp', () {
     test('version', () async {
       final result = await runCmd(DartCmd([scppDartScript, '--version']));
-      final parts =
-          LineSplitter.split(result.stdout as String).first.split(' ');
+      final parts = LineSplitter.split(
+        result.stdout as String,
+      ).first.split(' ');
       expect(parts.first, 'scpp');
       expect(Version.parse(parts.last), version);
     });
@@ -36,22 +37,30 @@ void main() {
       }
 
       // skip with $env:TRAVIS = 'true'
-      test('push no change', () async {
-        final outPath = clearOutTestPath(testDescriptions);
-        expect(await (isGitTopLevelPath(outPath)), isFalse);
-        expect(await (isGitTopLevelPath(outPath)), isFalse);
-        var prj =
-            GitProject('git@gitlab.com:tkexp/branch_exp.git', path: outPath);
-        if (await clone(prj)) {
-          final result = await runCmd(DartCmd(['run', scppDartScript, '-v']));
-          final output = result.stdout.toString();
-          expect(output, contains('no push'));
-          expect(output, contains('not ahead'));
-        } else {
-          stdout.writeln(
-              'Cannot test scpp - write access require to git@gitlab.com:tkexp/branch_exp.git');
-        }
-      }, timeout: const Timeout(Duration(minutes: 2)), skip: runningInTravis);
+      test(
+        'push no change',
+        () async {
+          final outPath = clearOutTestPath(testDescriptions);
+          expect(await (isGitTopLevelPath(outPath)), isFalse);
+          expect(await (isGitTopLevelPath(outPath)), isFalse);
+          var prj = GitProject(
+            'git@gitlab.com:tkexp/branch_exp.git',
+            path: outPath,
+          );
+          if (await clone(prj)) {
+            final result = await runCmd(DartCmd(['run', scppDartScript, '-v']));
+            final output = result.stdout.toString();
+            expect(output, contains('no push'));
+            expect(output, contains('not ahead'));
+          } else {
+            stdout.writeln(
+              'Cannot test scpp - write access require to git@gitlab.com:tkexp/branch_exp.git',
+            );
+          }
+        },
+        timeout: const Timeout(Duration(minutes: 2)),
+        skip: runningInTravis,
+      );
     }
   });
 }

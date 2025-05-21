@@ -21,24 +21,26 @@ set recursiveGitRunPoolSize(int value) {
 extension GitPathExt on GitPath {
   Future<List<String>> getBranches({bool? verbose, bool? remote}) async {
     return (await runGit(
-            "branch${(remote ?? false) ? ' -r' : ''} --format='%(refname:short)'",
-            verbose: verbose))
-        .outLines
-        .toList();
+      "branch${(remote ?? false) ? ' -r' : ''} --format='%(refname:short)'",
+      verbose: verbose,
+    )).outLines.toList();
   }
 
   Future<String> getCurrentBranch({bool? verbose}) async {
-    return (await runGit('branch --show-current', verbose: verbose))
-        .outLines
-        .first;
+    return (await runGit(
+      'branch --show-current',
+      verbose: verbose,
+    )).outLines.first;
   }
 }
 
 /// Each path is tested
 ///
 /// [poolSize] default to 4
-Future<void> recursiveGitRun(List<String> paths,
-    {required FutureOr<dynamic> Function(String package) action}) async {
+Future<void> recursiveGitRun(
+  List<String> paths, {
+  required FutureOr<dynamic> Function(String package) action,
+}) async {
   for (var path in paths) {
     await handleScPath(path, (dir) async {
       if (isGitTopLevelPathSync(dir)) {
@@ -112,8 +114,7 @@ class GitPath {
           statusResult.nothingToCommit = true;
         }
         if (line.startsWith('Your branch is ahead of') ||
-                line.startsWith(
-                    '# Your branch is ahead of') // output of drone io
+            line.startsWith('# Your branch is ahead of') // output of drone io
             ) {
           statusResult.branchIsAhead = true;
         }
@@ -174,9 +175,11 @@ class GitPath {
 class GitProject extends GitPath {
   String src;
 
-  GitProject(this.src,
-      {String? path, @Deprecated('use path') String? rootFolder})
-      : super(path ?? joinAll(scUriToPathParts(src)));
+  GitProject(
+    this.src, {
+    String? path,
+    @Deprecated('use path') String? rootFolder,
+  }) : super(path ?? joinAll(scUriToPathParts(src)));
 
   // no using _gitCmd as not using workingDirectory
   // only get latest revision if [depth] = 1
@@ -186,7 +189,7 @@ class GitProject extends GitPath {
       if (progress == true) '--progress',
       if (depth != null) ...['--depth', depth.toString()],
       if (branch != null) ...['--branch', branch],
-      ...[src, path]
+      ...[src, path],
     ];
     return gitCmd(args);
   }

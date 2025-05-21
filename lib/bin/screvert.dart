@@ -22,13 +22,18 @@ void main(List<String> arguments) {
 
   final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag('version',
-      help: 'Display the script version', negatable: false);
+  parser.addFlag(
+    'version',
+    help: 'Display the script version',
+    negatable: false,
+  );
   parser.addFlag('recursive', abbr: 'r', help: 'Recursive', negatable: false);
-  parser.addFlag('dry-run',
-      abbr: 'n',
-      help: 'Do not run test, simple show packages to be tested',
-      negatable: false);
+  parser.addFlag(
+    'dry-run',
+    abbr: 'n',
+    help: 'Do not run test, simple show packages to be tested',
+    negatable: false,
+  );
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
 
   final argResults = parser.parse(arguments);
@@ -55,8 +60,9 @@ void main(List<String> arguments) {
   // get dirs in parameters, default to current
   final dirOrFiles = argResults.rest;
   if (dirOrFiles.isEmpty) {
-    stderr
-        .writeln('you must specify a directory. Example: $currentScriptName .');
+    stderr.writeln(
+      'you must specify a directory. Example: $currentScriptName .',
+    );
     exit(1);
   }
 
@@ -102,9 +108,12 @@ void main(List<String> arguments) {
   }
 
   Future handleDirRecursively(String dirOrFile) async {
-    await recursiveGitRun([dirOrFile], action: (path) async {
-      await handleDir(path);
-    });
+    await recursiveGitRun(
+      [dirOrFile],
+      action: (path) async {
+        await handleDir(path);
+      },
+    );
   }
 
   for (final dirOrFile in dirOrFiles) {

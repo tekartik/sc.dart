@@ -35,25 +35,36 @@ Future main(List<String> arguments) async {
 
   final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag(verboseFlag,
-      abbr: 'v', help: 'Verbose output', negatable: false);
-  parser.addFlag('version',
-      help: 'Display the script version', negatable: false);
+  parser.addFlag(
+    verboseFlag,
+    abbr: 'v',
+    help: 'Verbose output',
+    negatable: false,
+  );
+  parser.addFlag(
+    'version',
+    help: 'Display the script version',
+    negatable: false,
+  );
   //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
-  parser.addFlag(_dryRunFlag,
-      abbr: 'n',
-      help: 'Do not run test, simple show packages to be tested',
-      negatable: false);
+  parser.addFlag(
+    _dryRunFlag,
+    abbr: 'n',
+    help: 'Do not run test, simple show packages to be tested',
+    negatable: false,
+  );
 
   final argResults = parser.parse(arguments);
 
   final help = argResults[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
-        'Pull(update) from source control recursively (default from current directory)');
+      'Pull(update) from source control recursively (default from current directory)',
+    );
     stdout.writeln();
-    stdout
-        .writeln('Usage: $currentScriptName [<folder_paths...>] [<arguments>]');
+    stdout.writeln(
+      'Usage: $currentScriptName [<folder_paths...>] [<arguments>]',
+    );
     stdout.writeln();
     stdout.writeln('Global options:');
     stdout.writeln(parser.usage);

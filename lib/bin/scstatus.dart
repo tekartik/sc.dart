@@ -28,23 +28,35 @@ Future main(List<String> arguments) async {
 
   final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag('version',
-      help: 'Display the script version', negatable: false);
+  parser.addFlag(
+    'version',
+    help: 'Display the script version',
+    negatable: false,
+  );
   parser.addFlag(verboseFlag, abbr: 'v', help: 'Verbose', negatable: false);
-  parser.addFlag(modifiedFilesFlag,
-      abbr: 'm', help: 'Modified files only', negatable: false);
-  parser.addOption(_logOption,
-      abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
+  parser.addFlag(
+    modifiedFilesFlag,
+    abbr: 'm',
+    help: 'Modified files only',
+    negatable: false,
+  );
+  parser.addOption(
+    _logOption,
+    abbr: 'l',
+    help: 'Log level (finest, finer, fine, debug, info...)',
+  );
 
   final argResults = parser.parse(arguments);
 
   final help = argResults[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
-        'Display source control status recursively (default from current directory)');
+      'Display source control status recursively (default from current directory)',
+    );
     stdout.writeln();
-    stdout
-        .writeln('Usage: $currentScriptName [<folder_paths...>] [<arguments>]');
+    stdout.writeln(
+      'Usage: $currentScriptName [<folder_paths...>] [<arguments>]',
+    );
     stdout.writeln();
     stdout.writeln('--log finer will display all path');
     stdout.writeln('--log finest will display all path and command executed');
@@ -107,9 +119,10 @@ Future main(List<String> arguments) async {
         }
         if (modifiedFilesOnly) {
           var shell = Shell(
-              workingDirectory: prj.path,
-              commandVerbose: commandVerbose,
-              verbose: false);
+            workingDirectory: prj.path,
+            commandVerbose: commandVerbose,
+            verbose: false,
+          );
           var result = (await shell.run('git ls-files -m')).first;
           buf.appendResult(result);
         } else {

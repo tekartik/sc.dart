@@ -23,8 +23,9 @@ void main() {
   group('scclone', () {
     test('version', () async {
       final result = await runCmd(DartCmd([sccloneDartScript, '--version']));
-      final parts =
-          LineSplitter.split(result.stdout as String).first.split(' ');
+      final parts = LineSplitter.split(
+        result.stdout as String,
+      ).first.split(' ');
       expect(parts.first, 'scclone');
       expect(Version.parse(parts.last), version);
     });
@@ -32,12 +33,23 @@ void main() {
       if (await hg.isHgSupported && !isRunningOnTravis()) {
         // check hg location
         final outPath = clearOutTestPath(testDescriptions);
-        final result = await runCmd(DartCmd(
-            [sccloneDartScript, 'https://bitbucket.org/alextk/public_hg_test'])
-          ..workingDirectory = outPath);
+        final result = await runCmd(
+          DartCmd([
+            sccloneDartScript,
+            'https://bitbucket.org/alextk/public_hg_test',
+          ])..workingDirectory = outPath,
+        );
         expect(result.exitCode, 0);
-        final file = File(join(outPath, 'hg', 'bitbucket.org', 'alextk',
-            'public_hg_test', 'one_file.txt'));
+        final file = File(
+          join(
+            outPath,
+            'hg',
+            'bitbucket.org',
+            'alextk',
+            'public_hg_test',
+            'one_file.txt',
+          ),
+        );
         expect(file.existsSync(), isTrue);
       }
     }, skip: true); // No more hg

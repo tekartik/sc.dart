@@ -122,7 +122,7 @@ class HgPath {
 class HgProject extends HgPath {
   String src;
   HgProject(this.src, {String? path, String? rootFolder})
-      : super(path ?? joinAll(scUriToPathParts(src)));
+    : super(path ?? joinAll(scUriToPathParts(src)));
 
   // Don't specify a working dir here
   // [insecure] added for travis test
@@ -131,7 +131,7 @@ class HgProject extends HgPath {
       'clone',
       src,
       path,
-      if (insecure == true) '--insecure'
+      if (insecure == true) '--insecure',
     ];
     return hgCmd(args);
   }

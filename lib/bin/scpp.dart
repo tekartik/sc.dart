@@ -29,28 +29,45 @@ Future main(List<String> arguments) async {
 
   final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag('version',
-      help: 'Display the script version', negatable: false);
-  parser.addFlag(verboseFlag,
-      abbr: 'v', help: 'Verbose output', negatable: false);
-  parser.addOption(_logOption,
-      abbr: 'l', help: 'Log level (finest, finer, fine, debug, info...)');
-  parser.addOption(timeoutOption,
-      abbr: 't', help: 'Timeout for each operation in milliseconds');
-  parser.addFlag(_dryRunFlag,
-      abbr: 'n',
-      help: 'Do not run test, simple show packages to be tested',
-      negatable: false);
+  parser.addFlag(
+    'version',
+    help: 'Display the script version',
+    negatable: false,
+  );
+  parser.addFlag(
+    verboseFlag,
+    abbr: 'v',
+    help: 'Verbose output',
+    negatable: false,
+  );
+  parser.addOption(
+    _logOption,
+    abbr: 'l',
+    help: 'Log level (finest, finer, fine, debug, info...)',
+  );
+  parser.addOption(
+    timeoutOption,
+    abbr: 't',
+    help: 'Timeout for each operation in milliseconds',
+  );
+  parser.addFlag(
+    _dryRunFlag,
+    abbr: 'n',
+    help: 'Do not run test, simple show packages to be tested',
+    negatable: false,
+  );
 
   final argResults = parser.parse(arguments);
 
   final help = argResults[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
-        'Push & Pull(update) from source control recursively (default from current directory)');
+      'Push & Pull(update) from source control recursively (default from current directory)',
+    );
     stdout.writeln();
-    stdout
-        .writeln('Usage: $currentScriptName [<folder_paths...>] [<arguments>]');
+    stdout.writeln(
+      'Usage: $currentScriptName [<folder_paths...>] [<arguments>]',
+    );
     stdout.writeln();
     stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
@@ -161,9 +178,9 @@ Future main(List<String> arguments) async {
 
   Future handleDirWithTimeout(String dir) async {
     if (timeout != null) {
-      await handleDir(dir)
-          .timeout(Duration(milliseconds: timeout))
-          .catchError((Object e) {
+      await handleDir(dir).timeout(Duration(milliseconds: timeout)).catchError((
+        Object e,
+      ) {
         stderr.writeln('$e for $dir');
       });
     } else {

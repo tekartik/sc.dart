@@ -25,17 +25,29 @@ Future main(List<String> arguments) async {
 
   final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
-  parser.addFlag('version',
-      help: 'Display the script version', negatable: false);
-  parser.addFlag(_dryRunFlag,
-      abbr: 'd',
-      help: 'Do not clone, simple show the folders created',
-      negatable: false);
-  parser.addFlag(verboseFlag,
-      abbr: 'v', help: 'Verbose output', negatable: false);
+  parser.addFlag(
+    'version',
+    help: 'Display the script version',
+    negatable: false,
+  );
+  parser.addFlag(
+    _dryRunFlag,
+    abbr: 'd',
+    help: 'Do not clone, simple show the folders created',
+    negatable: false,
+  );
+  parser.addFlag(
+    verboseFlag,
+    abbr: 'v',
+    help: 'Verbose output',
+    negatable: false,
+  );
   parser.addOption(depthParam, help: 'depth (git --depth 1)');
-  parser.addOption(branchOption,
-      abbr: 'b', help: 'branch (git clone -b <branch>)');
+  parser.addOption(
+    branchOption,
+    abbr: 'b',
+    help: 'branch (git clone -b <branch>)',
+  );
   final argResults = parser.parse(arguments);
 
   final help = argResults[_helpFlag] as bool;
@@ -44,15 +56,19 @@ Future main(List<String> arguments) async {
 
   void printUsage() {
     stdout.writeln(
-        'clone one or multiple projects by their url and create pre-defined directory structure');
+      'clone one or multiple projects by their url and create pre-defined directory structure',
+    );
     stdout.writeln();
     stdout.writeln(
-        'Usage: $currentScriptName <source_control_uris...> [<arguments>]');
+      'Usage: $currentScriptName <source_control_uris...> [<arguments>]',
+    );
     stdout.writeln();
     stdout.writeln(
-        'Example: $currentScriptName https://github.com/alextekartik/tekartik_io_tools.dart');
+      'Example: $currentScriptName https://github.com/alextekartik/tekartik_io_tools.dart',
+    );
     stdout.writeln(
-        'will clone the project into ./git/github.com/alextekartik/tekartik_io_tools.dart');
+      'will clone the project into ./git/github.com/alextekartik/tekartik_io_tools.dart',
+    );
     stdout.writeln();
     stdout.writeln('Global options:');
     stdout.writeln(parser.usage);
@@ -150,7 +166,8 @@ Future main(List<String> arguments) async {
 
     if (!done) {
       stderr.writeln(
-          'Could not find sc control for $uri. Try running with verbose mode on (-v) for more information');
+        'Could not find sc control for $uri. Try running with verbose mode on (-v) for more information',
+      );
     }
   }
 

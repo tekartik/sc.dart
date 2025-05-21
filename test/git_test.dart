@@ -22,8 +22,11 @@ Future main() async {
         expect(checkGitSupportedSync(), testIsGitSupported);
         expect(await checkGitSupported(), testIsGitSupported);
       });
-      test('missing', () {},
-          skip: testIsGitSupported ? false : 'Git (Mercurial) not supported');
+      test(
+        'missing',
+        () {},
+        skip: testIsGitSupported ? false : 'Git (Mercurial) not supported',
+      );
     });
 
     if (testIsGitSupported) {
@@ -55,7 +58,9 @@ Future main() async {
         }
         if (await isGitTopLevelPath(topGitDir)) {
           expect(
-              await findGitTopLevelPath('.'), normalize(absolute(topGitDir)));
+            await findGitTopLevelPath('.'),
+            normalize(absolute(topGitDir)),
+          );
         }
       });
 
@@ -75,27 +80,34 @@ Future main() async {
 
       test('isGitRepository1', () async {
         expect(
-            await isGitRepository(
-                'https://github.com/alextekartik/tekartik_io_tools.dart'),
-            isTrue);
+          await isGitRepository(
+            'https://github.com/alextekartik/tekartik_io_tools.dart',
+          ),
+          isTrue,
+        );
       });
 
       test('isGitRepository2', () async {
         expect(
-            await isGitRepository(
-                'https://github.com/alextekartik/tekartik_io_tools.dart_NO'),
-            isFalse);
+          await isGitRepository(
+            'https://github.com/alextekartik/tekartik_io_tools.dart_NO',
+          ),
+          isFalse,
+        );
       });
 
       test('isGitRepository3', () async {
         try {
           expect(
-              await isGitRepository(
-                  'https://bitbucket.org/alextk/public_git_test'),
-              isTrue);
+            await isGitRepository(
+              'https://bitbucket.org/alextk/public_git_test',
+            ),
+            isTrue,
+          );
         } on TestFailure catch (e) {
           await Shell().run(
-              'git ls-remote --exit-code -h https://bitbucket.org/alextk/public_git_test');
+            'git ls-remote --exit-code -h https://bitbucket.org/alextk/public_git_test',
+          );
           print('previous error $e');
           rethrow;
         }
@@ -104,9 +116,12 @@ Future main() async {
       // Skipped since 2020-08-29 asking for credentials with hg shutdown
       test('isGitRepository4', () async {
         expect(
-            await isGitRepository('https://bitbucket.org/alextk/public_hg_test',
-                verbose: true),
-            isFalse);
+          await isGitRepository(
+            'https://bitbucket.org/alextk/public_hg_test',
+            verbose: true,
+          ),
+          isFalse,
+        );
       }, skip: true);
 
       group('bitbucket.org', () {
@@ -114,8 +129,10 @@ Future main() async {
           if (testIsGitSupported) {
             final outPath = clearOutTestPath('git/bb_git_project');
             expect(await (isGitTopLevelPath(outPath)), isFalse);
-            var prj = GitProject('https://bitbucket.org/alextk/public_git_test',
-                path: outPath);
+            var prj = GitProject(
+              'https://bitbucket.org/alextk/public_git_test',
+              path: outPath,
+            );
             await runCmd(prj.cloneCmd(depth: 1));
             expect(await (isGitTopLevelPath(outPath)), isTrue);
             var statusResult = await prj.status();
@@ -133,8 +150,11 @@ Future main() async {
             // Needed to travis
             if (commitResult.exitCode == 0) {
               statusResult = await prj.status();
-              expect(statusResult.nothingToCommit, true,
-                  reason: processResultToDebugString(statusResult.runResult));
+              expect(
+                statusResult.nothingToCommit,
+                true,
+                reason: processResultToDebugString(statusResult.runResult),
+              );
             }
             // not supported for empty repository
             //expect(statusResult.branchIsAhead, true);
@@ -148,8 +168,9 @@ Future main() async {
             final outPath = clearOutTestPath('git/github/git_project');
             expect(await (isGitTopLevelPath(outPath)), isFalse);
             var prj = GitProject(
-                'https://github.com/alextekartik/data_test.git',
-                path: outPath);
+              'https://github.com/alextekartik/data_test.git',
+              path: outPath,
+            );
             await runCmd(prj.cloneCmd());
             expect(await (isGitTopLevelPath(outPath)), isTrue);
             var statusResult = await prj.status();
@@ -167,8 +188,11 @@ Future main() async {
             // Needed to travis
             if (commitResult.exitCode == 0) {
               statusResult = await prj.status();
-              expect(statusResult.nothingToCommit, true,
-                  reason: processResultToDebugString(statusResult.runResult));
+              expect(
+                statusResult.nothingToCommit,
+                true,
+                reason: processResultToDebugString(statusResult.runResult),
+              );
               expect(statusResult.branchIsAhead, true);
             }
           }
@@ -180,8 +204,10 @@ Future main() async {
           if (testIsGitSupported) {
             final outPath = clearOutTestPath('git/gitlab/git_project');
             expect(await (isGitTopLevelPath(outPath)), isFalse);
-            var prj = GitProject('https://gitlab.com/tkexp/branch_exp.git',
-                path: outPath);
+            var prj = GitProject(
+              'https://gitlab.com/tkexp/branch_exp.git',
+              path: outPath,
+            );
             await runCmd(prj.cloneCmd());
             expect(await (isGitTopLevelPath(outPath)), isTrue);
             var statusResult = await prj.status();
@@ -199,8 +225,11 @@ Future main() async {
             // Needed to travis
             if (commitResult.exitCode == 0) {
               statusResult = await prj.status();
-              expect(statusResult.nothingToCommit, true,
-                  reason: processResultToDebugString(statusResult.runResult));
+              expect(
+                statusResult.nothingToCommit,
+                true,
+                reason: processResultToDebugString(statusResult.runResult),
+              );
               expect(statusResult.branchIsAhead, true);
             }
           }

@@ -26,47 +26,59 @@ void defineTests() {
         // to debug travis issues
         test('verbose', () async {
           expect(
-              await isHgRepository(
-                  'https://bitbucket.org/alextk/public_hg_test',
-                  verbose: true,
-                  insecure: true),
-              isTrue);
+            await isHgRepository(
+              'https://bitbucket.org/alextk/public_hg_test',
+              verbose: true,
+              insecure: true,
+            ),
+            isTrue,
+          );
         }, skip: 'Bitbucket hg no longer supported');
 
         // expect(await isHgSupported, true);
         test('isHgRepository insecure', () async {
           expect(
-              await isHgRepository(
-                  'https://bitbucket.org/alextk/public_hg_test',
-                  insecure: true),
-              isTrue);
+            await isHgRepository(
+              'https://bitbucket.org/alextk/public_hg_test',
+              insecure: true,
+            ),
+            isTrue,
+          );
           expect(
-              await isHgRepository(
-                  'https://bitbucket.org/alextk/public_hg_test_NO',
-                  insecure: true),
-              isFalse);
+            await isHgRepository(
+              'https://bitbucket.org/alextk/public_hg_test_NO',
+              insecure: true,
+            ),
+            isFalse,
+          );
           expect(
-              await isHgRepository(
-                  'https://bitbucket.org/alextk/public_git_test',
-                  insecure: true),
-              isFalse);
+            await isHgRepository(
+              'https://bitbucket.org/alextk/public_git_test',
+              insecure: true,
+            ),
+            isFalse,
+          );
         }, skip: 'Bitbucket hg no longer supported');
       }
       // only works locally
       test('isHgRepository secure', () async {
         if (testIsHgSupported!) {
           expect(
-              await isHgRepository(
-                  'https://bitbucket.org/alextk/public_hg_test'),
-              isTrue);
+            await isHgRepository('https://bitbucket.org/alextk/public_hg_test'),
+            isTrue,
+          );
           expect(
-              await isHgRepository(
-                  'https://bitbucket.org/alextk/public_hg_test_NO'),
-              isFalse);
+            await isHgRepository(
+              'https://bitbucket.org/alextk/public_hg_test_NO',
+            ),
+            isFalse,
+          );
           expect(
-              await isHgRepository(
-                  'https://bitbucket.org/alextk/public_git_test'),
-              isFalse);
+            await isHgRepository(
+              'https://bitbucket.org/alextk/public_git_test',
+            ),
+            isFalse,
+          );
         }
       }, skip: true);
     }, skip: !isHgSupportedSync && isRunningOnTravis());
@@ -78,8 +90,10 @@ void defineTests() {
       if (testIsHgSupported!) {
         final result = await runCmd(hgVersionCmd());
         // git version 1.9.1
-        expect(result.stdout.toString().startsWith('Mercurial Distributed SCM'),
-            isTrue);
+        expect(
+          result.stdout.toString().startsWith('Mercurial Distributed SCM'),
+          isTrue,
+        );
         // print for travis debugging
         print('\$ ${hgVersionCmd()}');
         print(result.stdout);
@@ -103,8 +117,10 @@ void defineTests() {
     test('HgProject', () async {
       if (testIsHgSupported!) {
         final outPath = clearOutTestPath(testDescriptions);
-        var prj = HgProject('https://bitbucket.org/alextk/hg_data_test',
-            rootFolder: outPath);
+        var prj = HgProject(
+          'https://bitbucket.org/alextk/hg_data_test',
+          rootFolder: outPath,
+        );
         expect(await (isHgTopLevelPath(outPath)), isFalse);
         await runCmd(prj.cloneCmd(), verbose: true);
         expect(await (isHgTopLevelPath(outPath)), isTrue);
@@ -133,7 +149,8 @@ void defineTests() {
 }
 
 bool? _isRunningOnTravis;
-bool isRunningOnTravis() => _isRunningOnTravis ??= () {
+bool isRunningOnTravis() =>
+    _isRunningOnTravis ??= () {
       var onTravis = parseBool(Platform.environment['TRAVIS']) ?? false;
       print('Running on travis: $onTravis');
       return onTravis;

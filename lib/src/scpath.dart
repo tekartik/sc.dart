@@ -62,8 +62,11 @@ set recursiveHandleScPathPoolSize(int value) {
 /// Needed for MacOS...
 var _pool = Pool(recursiveHandleScPathPoolSize);
 
-Future handleScPath(String dir, dynamic Function(String dir) handleScDir,
-    {bool? recursive}) async {
+Future handleScPath(
+  String dir,
+  dynamic Function(String dir) handleScDir, {
+  bool? recursive,
+}) async {
   recursive ??= false;
   dir = normalize(absolute(dir));
   var topDir = await findScTopLevelPath(dir);
