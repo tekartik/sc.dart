@@ -149,9 +149,8 @@ void defineTests() {
 }
 
 bool? _isRunningOnTravis;
-bool isRunningOnTravis() =>
-    _isRunningOnTravis ??= () {
-      var onTravis = parseBool(Platform.environment['TRAVIS']) ?? false;
-      print('Running on travis: $onTravis');
-      return onTravis;
-    }();
+bool isRunningOnTravis() => _isRunningOnTravis ??= () {
+  var onTravis = parseBool(Platform.environment['TRAVIS']) ?? false;
+  print('Running on travis: $onTravis');
+  return onTravis;
+}();

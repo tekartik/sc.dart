@@ -117,8 +117,9 @@ void main(List<String> arguments) {
   }
 
   for (final dirOrFile in dirOrFiles) {
-    var handle =
-        recursive ? handleDirRecursively(dirOrFile) : handleDir(dirOrFile);
+    var handle = recursive
+        ? handleDirRecursively(dirOrFile)
+        : handleDir(dirOrFile);
 
     futures.add(handle);
   }
