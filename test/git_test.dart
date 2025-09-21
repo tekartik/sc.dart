@@ -245,4 +245,12 @@ Future main() async {
       });
     }
   }, timeout: const Timeout(Duration(minutes: 2)));
+  test('gitUrlGetHostname', () {
+    expect(gitUrlGetHostname('git@github.com:xxxxx/xx.dart.git'), 'github.com');
+    expect(gitUrlGetHostname('git@gitlab.com:xxxxx/xx.dart.git'), 'gitlab.com');
+    expect(
+      gitUrlGetHostname('https://gitlab.com/xxxxx/exp.dart'),
+      'gitlab.com',
+    );
+  });
 }

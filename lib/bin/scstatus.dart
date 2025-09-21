@@ -19,11 +19,15 @@ const String modifiedFilesFlag = 'modified';
 
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
+Future<void> main(List<String> arguments) async {
+  await scStatusMain(arguments);
+}
+
 ///
 /// Recursively update (pull) git folders
 ///
 ///
-Future main(List<String> arguments) async {
+Future<void> scStatusMain(List<String> arguments) async {
   //setupQuickLogging();
 
   final parser = ArgParser(allowTrailingOptions: true);

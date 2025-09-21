@@ -32,6 +32,28 @@ extension GitPathExt on GitPath {
       verbose: verbose,
     )).outLines.first;
   }
+
+  Future<String> getRemoteOriginUrl({bool? verbose}) async {
+    return (await runGit(
+      'config --get remote.origin.url',
+      verbose: verbose,
+    )).outLines.first.trim();
+  }
+}
+
+/// Get the host name from a git url
+/// git@github.com:xxxxx/xx.dart.git => github.com
+/// git@gitlab.com:xxxxx/xx.dart.git => gitlab.com
+/// https://gitlab.com/xxxxx/exp.dart => gitlab.com
+/// Do not use Uri as it does not support git@ style urls
+String gitUrlGetHostname(String url) {
+  var prefix = 'git@';
+  if (url.startsWith(prefix)) {
+    return url.substring(prefix.length).split(':').first.split('@').first;
+  }
+
+  var uri = Uri.parse(url);
+  return uri.host;
 }
 
 /// Each path is tested
