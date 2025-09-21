@@ -11,7 +11,6 @@ dependencies:
   tekartik_sc:
     git:
       url: https://github.com/tekartik/sc.dart
-      ref: dart3a
     version: '>=0.7.0'
 ```
 
@@ -26,7 +25,6 @@ dependencies:
   tekartik_sc:
     git:
       url: https://github.com/tekartik/sc.dart
-      ref: dart3a
     version: '>=0.7.0'
 ```
 
