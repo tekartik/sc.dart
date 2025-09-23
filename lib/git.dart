@@ -18,7 +18,8 @@ export 'src/git.dart'
         GitStatusResult,
         findGitTopLevelPath,
         recursiveGitRunPoolSize,
-        gitUrlGetHostname;
+        gitUrlGetHostname,
+        gitUrlToHttpsUri;
 
 class _GitCommand {
   _GitCommand({this.runInShell});

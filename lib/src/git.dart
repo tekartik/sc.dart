@@ -47,6 +47,9 @@ extension GitPathExt on GitPath {
 /// https://gitlab.com/xxxxx/exp.dart => gitlab.com
 /// Do not use Uri as it does not support git@ style urls
 String gitUrlGetHostname(String url) {
+  var uri = gitUrlToHttpsUri(url);
+  return uri.host;
+  /*
   var prefix = 'git@';
   if (url.startsWith(prefix)) {
     return url.substring(prefix.length).split(':').first.split('@').first;
@@ -54,6 +57,26 @@ String gitUrlGetHostname(String url) {
 
   var uri = Uri.parse(url);
   return uri.host;
+   */
+}
+
+Uri gitUrlToHttpsUri(String url) {
+  var prefix = 'git@';
+  if (url.startsWith(prefix)) {
+    var colonIndex = url.indexOf(':');
+    var slashIndex = url.indexOf('/');
+    if (colonIndex != -1 && (slashIndex == -1 || colonIndex < slashIndex)) {
+      url = url.replaceFirst(':', '/');
+    }
+    url = 'https://${url.substring(prefix.length)}';
+  }
+
+  var uri = Uri.parse(url);
+  if (uri.scheme.isEmpty) {
+    // Assume https
+    return uri.replace(scheme: 'https');
+  }
+  return uri;
 }
 
 /// Each path is tested

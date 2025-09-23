@@ -253,4 +253,24 @@ Future main() async {
       'gitlab.com',
     );
   });
+  test('gitUrlToHttpsUri', () {
+    expect(
+      gitUrlToHttpsUri('git@github.com:tekartik/sc.dart.git'),
+      Uri.parse('https://github.com/tekartik/sc.dart.git'),
+    );
+    expect(
+      gitUrlToHttpsUri('https://github.com/tekartik/sc.dart'),
+      Uri.parse('https://github.com/tekartik/sc.dart'),
+    );
+
+    expect(
+      gitUrlToHttpsUri('git@github.com:xxxxx/xx.dart.git'),
+      Uri.parse('https://github.com/xxxxx/xx.dart.git'),
+    );
+
+    expect(
+      gitUrlToHttpsUri('https://gitlab.com/xxxxx/exp.dart'),
+      Uri.parse('https://gitlab.com/xxxxx/exp.dart'),
+    );
+  });
 }
