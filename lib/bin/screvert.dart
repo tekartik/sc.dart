@@ -11,6 +11,7 @@ import 'package:tekartik_sc/src/bin_version.dart';
 
 const String _helpFlag = 'help';
 
+/// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
 ///

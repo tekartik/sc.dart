@@ -10,32 +10,54 @@ import 'src/scpath.dart';
 
 //bool _DEBUG = false;
 
+/// Hg status result.
 class HgStatusResult {
+  /// Command.
   final ProcessCmd cmd;
+
+  /// Run result.
   final ProcessResult runResult;
+
+  /// Hg status result.
   HgStatusResult(this.cmd, this.runResult);
+
+  /// Nothing to commit.
   bool nothingToCommit = false;
   //bool branchIsAhead = false;
 }
 
+/// Hg outgoing result.
 class HgOutgoingResult {
+  /// Command.
   final ProcessCmd cmd;
+
+  /// Run result.
   final ProcessResult runResult;
+
+  /// Hg outgoing result.
   HgOutgoingResult(this.cmd, this.runResult);
+
+  /// Branch is ahead.
   bool branchIsAhead = false;
 }
 
+/// Hg path.
 class HgPath {
   @override
   String toString() => path;
   final String _path;
+
+  /// Path.
   String get path => _path;
+
+  /// Hg path.
   HgPath(this._path);
 
   ProcessCmd _hgCmd(List<String> args) {
     return hgCmd(args)..workingDirectory = path;
   }
 
+  /// Status.
   Future<HgStatusResult> status({bool? verbose}) async {
     final cmd = _hgCmd(['status']);
     final result = await runCmd(cmd, verbose: verbose);
@@ -52,6 +74,7 @@ class HgPath {
     return statusResult;
   }
 
+  /// Outgoing.
   Future<HgOutgoingResult> outgoing() async {
     final cmd = _hgCmd(['outgoing']);
     final result = await runCmd(cmd);
@@ -74,6 +97,7 @@ class HgPath {
     return outgoingResult;
   }
 
+  /// Revert command.
   ProcessCmd revertCmd({String? path, bool? noBackup}) {
     final args = <String>['revert'];
     if (path != null) {
@@ -85,11 +109,13 @@ class HgPath {
     return _hgCmd(args);
   }
 
+  /// Push command.
   ProcessCmd pushCmd() {
     final args = <String>['push'];
     return _hgCmd(args);
   }
 
+  /// Pull command.
   ProcessCmd pullCmd({bool update = true}) {
     final args = <String>['pull'];
     if (update) {
@@ -98,11 +124,13 @@ class HgPath {
     return _hgCmd(args);
   }
 
+  /// Add command.
   ProcessCmd addCmd({required String pathspec}) {
     final args = <String>['add', pathspec];
     return _hgCmd(args);
   }
 
+  /// Commit command.
   ProcessCmd commitCmd(String message, {bool? all}) {
     final args = <String>['commit'];
     if (all == true) {
@@ -119,13 +147,18 @@ class HgPath {
   }
 }
 
+/// Hg project.
 class HgProject extends HgPath {
+  /// Source.
   String src;
+
+  /// Hg project.
   HgProject(this.src, {String? path, String? rootFolder})
     : super(path ?? joinAll(scUriToPathParts(src)));
 
   // Don't specify a working dir here
   // [insecure] added for travis test
+  /// Clone command.
   ProcessCmd cloneCmd({bool? insecure}) {
     final args = <String>[
       'clone',
@@ -136,6 +169,7 @@ class HgProject extends HgPath {
     return hgCmd(args);
   }
 
+  /// Pull or clone.
   Future pullOrClone() {
     // TODO: check the origin branch
     if (File(join(path, '.hg', 'hgrc')).existsSync()) {
@@ -148,11 +182,15 @@ class HgProject extends HgPath {
 
 bool? _isHgSupported;
 
+/// Check if hg is supported (sync).
 bool get isHgSupportedSync => _isHgSupported ??= checkHgSupportedSync();
 
 // can be disable by env variable
+/// Check if hg support is disabled.
 bool get checkHgSupportDisabled =>
     parseBool(Platform.environment['TEKARTIK_HG_SUPPORT']) == false;
+
+/// Check if hg is supported (sync).
 bool checkHgSupportedSync({bool? verbose}) {
   if (checkHgSupportDisabled) {
     if (verbose == true) {
@@ -168,11 +206,13 @@ bool checkHgSupportedSync({bool? verbose}) {
   }
 }
 
+/// Check if hg is supported.
 Future<bool> get isHgSupported async {
   _isHgSupported ??= await checkHgSupported();
   return _isHgSupported!;
 }
 
+/// Check if hg is supported.
 Future<bool> checkHgSupported({bool? verbose}) async {
   if (checkHgSupportDisabled) {
     if (verbose == true) {
@@ -194,14 +234,17 @@ Future<ProcessResult> hgRun(List<String> args,
         {String workingDirectory, bool connectIo: false}) =>
     runHg(args, workingDirectory: workingDirectory, connectIo: connectIo);
 */
+/// Hg command.
 ProcessCmd hgCmd(List<String> args) {
   // Force hg language to english
   final environment = <String, String>{'LANGUAGE': 'en_US.UTF8'};
   return ProcessCmd('hg', args)..environment = environment;
 }
 
+/// Hg version command.
 ProcessCmd hgVersionCmd() => hgCmd(['--version']);
 
+/// Check if it can be an hg repository.
 bool canBeHgRepository(String uri) {
   // this is only for git
   if (uri.startsWith('git@')) {
@@ -210,6 +253,7 @@ bool canBeHgRepository(String uri) {
   return true;
 }
 
+/// Check if it is an hg repository.
 Future<bool> isHgRepository(String uri, {bool? verbose, bool? insecure}) async {
   if (!canBeHgRepository(uri)) {
     return false;
@@ -224,12 +268,14 @@ Future<bool> isHgRepository(String uri, {bool? verbose, bool? insecure}) async {
   return (runResult.exitCode == 0);
 }
 
+/// Check if path is hg top level path (sync).
 bool isHgTopLevelPathSync(String path) {
   final dotHg = '.hg';
   final hgFile = join(path, dotHg);
   return FileSystemEntity.isDirectorySync(hgFile);
 }
 
+/// Check if path is hg top level path.
 Future<bool> isHgTopLevelPath(String path) async {
   return isHgTopLevelPathSync(path);
 }

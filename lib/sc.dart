@@ -9,7 +9,10 @@ import 'hg.dart';
 
 export 'src/scpath.dart' show handleScPath, recursiveHandleScPathPoolSize;
 
+/// The string used to represent the git version control system.
 String git = 'git';
+
+/// The string used to represent the mercurial version control system.
 String hg = 'hg';
 
 ///

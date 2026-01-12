@@ -10,18 +10,25 @@ import 'package:tekartik_sc/src/scpath.dart';
 const String _helpFlag = 'help';
 //const String _LOG = 'log';
 const String _dryRunFlag = 'dry-run';
+
+/// Verbose flag.
 const String verboseFlag = 'verbose';
 
+/// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
+/// App helper.
 class App {
+  /// Project count.
   int projectCount = 0;
 
+  /// Output summary.
   void outSummary() {
     stdout.writeln('[$projectCount] project(s) updated');
   }
 }
 
+/// Global app.
 late App app;
 
 ///

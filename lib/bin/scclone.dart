@@ -11,10 +11,17 @@ import 'package:tekartik_sc/src/scpath.dart';
 
 const String _helpFlag = 'help';
 const String _dryRunFlag = 'dry-run';
+
+/// Verbose flag.
 const String verboseFlag = 'verbose';
+
+/// Branch option.
 const String branchOption = 'branch';
+
+/// Depth parameter.
 const String depthParam = 'depth';
 
+/// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
 ///

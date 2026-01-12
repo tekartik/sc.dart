@@ -18,7 +18,9 @@ set recursiveGitRunPoolSize(int value) {
   recursiveHandleScPathPoolSize = value;
 }
 
+/// Git command with proper environment.
 extension GitPathExt on GitPath {
+  /// Gets the list of branches.
   Future<List<String>> getBranches({bool? verbose, bool? remote}) async {
     return (await runGit(
       "branch${(remote ?? false) ? ' -r' : ''} --format='%(refname:short)'",
@@ -26,6 +28,7 @@ extension GitPathExt on GitPath {
     )).outLines.toList();
   }
 
+  /// Gets the current branch name.
   Future<String> getCurrentBranch({bool? verbose}) async {
     return (await runGit(
       'branch --show-current',
@@ -33,6 +36,7 @@ extension GitPathExt on GitPath {
     )).outLines.first;
   }
 
+  /// Gets the remote origin URL.
   Future<String> getRemoteOriginUrl({bool? verbose}) async {
     return (await runGit(
       'config --get remote.origin.url',
@@ -60,6 +64,7 @@ String gitUrlGetHostname(String url) {
    */
 }
 
+/// Converts a git URL to an HTTPS URI.
 Uri gitUrlToHttpsUri(String url) {
   var prefix = 'git@';
   if (url.startsWith(prefix)) {
@@ -95,24 +100,35 @@ Future<void> recursiveGitRun(
   }
 }
 
+/// Result of a git status command.
 class GitStatusResult {
+  /// The command that was run.
   final ProcessCmd cmd;
+
+  /// The result of the command.
   final ProcessResult runResult;
 
+  /// Creates a new GitStatusResult.
   GitStatusResult(this.cmd, this.runResult);
 
+  /// Indicates if there is nothing to commit.
   bool nothingToCommit = false;
+
+  /// Indicates if the branch is ahead of the remote.
   bool branchIsAhead = false;
 }
 
+/// Represents a git repository path.
 class GitPath {
   @override
   String toString() => path;
 
   final String _path;
 
+  /// The path to the git repository.
   String get path => _path;
 
+  /// Creates a new GitPath instance.
   GitPath(String path) : _path = path;
 
   ProcessCmd _gitCmd(List<String> args) {
@@ -120,19 +136,23 @@ class GitPath {
     return cmd;
   }
 
+  /// Creates a generic git command for this path.
   ProcessCmd cmd(List<String> args) {
     return _gitCmd(args);
   }
 
+  /// Creates a git push command.
   ProcessCmd pushCmd() {
     final args = <String>['push'];
     return _gitCmd(args);
   }
 
+  /// Creates a git pull command.
   ProcessCmd pullCmd() {
     return _gitCmd(['pull']);
   }
 
+  /// Creates a git status command.
   ProcessCmd statusCmd({bool? short}) {
     final args = <String>['status'];
     if (short == true) {
@@ -192,11 +212,13 @@ class GitPath {
   }
      */
 
+  /// Creates a git add command.
   ProcessCmd addCmd({required String pathspec}) {
     final args = <String>['add', pathspec];
     return _gitCmd(args);
   }
 
+  /// Creates a git commit command.
   ProcessCmd commitCmd(String message, {bool? all}) {
     final args = <String>['commit'];
     if (all == true) {
@@ -206,7 +228,7 @@ class GitPath {
     return _gitCmd(args);
   }
 
-  ///
+  /// Creates a git checkout command.
   /// branch can be a commit/revision number
   ProcessCmd checkoutCmd({String? path, String? commit}) {
     if (path != null) {
@@ -217,9 +239,12 @@ class GitPath {
   }
 }
 
+/// Represents a git project for cloning.
 class GitProject extends GitPath {
+  /// The source URL of the git project.
   String src;
 
+  /// Creates a new GitProject instance.
   GitProject(
     this.src, {
     String? path,
@@ -228,6 +253,7 @@ class GitProject extends GitPath {
 
   // no using _gitCmd as not using workingDirectory
   // only get latest revision if [depth] = 1
+  /// Creates a git clone command.
   ProcessCmd cloneCmd({bool? progress, int? depth, String? branch}) {
     final args = <String>[
       'clone',
@@ -239,6 +265,7 @@ class GitProject extends GitPath {
     return gitCmd(args);
   }
 
+  /// Pulls if the repository exists, otherwise clones.
   Future pullOrClone() {
     // TODO: check the origin branch
     if (File(join(path, '.git', 'config')).existsSync()) {

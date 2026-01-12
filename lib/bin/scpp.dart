@@ -14,9 +14,14 @@ import 'package:tekartik_sc/src/std_buf.dart';
 const String _helpFlag = 'help';
 const String _logOption = 'log';
 const String _dryRunFlag = 'dry-run';
+
+/// Verbose flag.
 const String verboseFlag = 'verbose';
+
+/// Timeout option.
 const String timeoutOption = 'timeout';
 
+/// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
 ///

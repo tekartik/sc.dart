@@ -9,7 +9,6 @@ import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/sc.dart';
 
-///
 /// Convert a uri to a convenient path part
 /// removing user information and scheme
 List<String> scUriToPathParts(String uri) {
@@ -62,6 +61,7 @@ set recursiveHandleScPathPoolSize(int value) {
 /// Needed for MacOS...
 var _pool = Pool(recursiveHandleScPathPoolSize);
 
+/// Handles source control paths recursively or at the top level.
 Future handleScPath(
   String dir,
   dynamic Function(String dir) handleScDir, {
@@ -97,10 +97,12 @@ Future handleScPath(
   }
 }
 
+/// Checks if the path is a git repository and git is supported.
 Future<bool> isGitPathAndSupported(String path) async {
   return await isGitSupported && await isGitTopLevelPath(path);
 }
 
+/// Checks if the path is a git repository, supported, and not skipped.
 Future<bool> isGitPathAndScSupported(String path) async {
   if (await isGitPathAndSupported(path)) {
     var skipRunCiFilePath = join(path, '.local', '.skip_sc');
@@ -113,6 +115,7 @@ Future<bool> isGitPathAndScSupported(String path) async {
   return false;
 }
 
+/// Checks if the path is an hg repository and hg is supported.
 Future<bool> isHgPathAndSupported(String path) async {
   return await isHgSupported && await isHgTopLevelPath(path);
 }

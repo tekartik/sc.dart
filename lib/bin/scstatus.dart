@@ -14,9 +14,14 @@ import 'package:tekartik_sc/src/std_buf.dart';
 
 const String _helpFlag = 'help';
 const String _logOption = 'log';
+
+/// Verbose flag.
 const String verboseFlag = 'verbose';
+
+/// Modified files flag.
 const String modifiedFilesFlag = 'modified';
 
+/// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
 Future<void> main(List<String> arguments) async {

@@ -1,10 +1,15 @@
 import 'dart:io';
 import 'package:process_run/cmd_run.dart';
 
+/// Utility class for buffering stdout and stderr.
 class StdBuf {
+  /// Buffer for stdout.
   StringBuffer out = StringBuffer();
+
+  /// Buffer for stderr.
   StringBuffer err = StringBuffer();
 
+  /// Appends an object to the stdout buffer.
   void outAppend(Object object) {
     if (out.length > 0) {
       out.writeln();
@@ -12,6 +17,7 @@ class StdBuf {
     out.write(object);
   }
 
+  /// Appends an object to the stderr buffer.
   void errAppend(Object object) {
     if (err.length > 0) {
       err.writeln();
@@ -19,6 +25,7 @@ class StdBuf {
     err.write(object);
   }
 
+  /// Appends a process result to the buffers.
   void appendResult(ProcessResult result) {
     if (result.stdout.toString().isNotEmpty) {
       outAppend('${result.stdout}');
@@ -28,7 +35,7 @@ class StdBuf {
     }
   }
 
-  // debug
+  /// Appends a command and its result to the buffers for debugging.
   void appendCmdResult(ProcessCmd cmd, ProcessResult result) {
     outAppend('> $cmd');
     outAppend('=> ${result.exitCode}');
@@ -40,6 +47,7 @@ class StdBuf {
     }
   }
 
+  /// Prints the buffered output to stdout and stderr.
   void print([String? header]) {
     if (header != null &&
         (out.toString().isNotEmpty || err.toString().isNotEmpty)) {

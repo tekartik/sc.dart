@@ -21,12 +21,17 @@ export 'src/git.dart'
         gitUrlGetHostname,
         gitUrlToHttpsUri;
 
+/// A class that represents a Git command.
 class _GitCommand {
   _GitCommand({this.runInShell});
 
+  /// Whether to run the command in a shell.
   bool? runInShell;
+
+  /// The binary path of the Git executable.
   String? binaryPath;
 
+  /// Creates a [ProcessCmd] object for the given arguments.
   ProcessCmd processCmd(List<String> args) {
     return ProcessCmd(
       binaryPath ?? 'git',
@@ -54,8 +59,10 @@ bool? _isGitSupported;
 Future<bool> get isGitSupported async =>
     _isGitSupported ??= await checkGitSupported();
 
+/// Check if git is supported (sync).
 bool get isGitSupportedSync => _isGitSupported ??= checkGitSupportedSync();
 
+/// Check if git is supported (sync).
 bool checkGitSupportedSync({bool? verbose}) {
   try {
     var result = Process.runSync('git', ['--version']);
@@ -66,6 +73,7 @@ bool checkGitSupportedSync({bool? verbose}) {
 }
 
 // [once] if true check only once and check the result for later calls with once: true
+/// Check if git is supported.
 Future<bool> checkGitSupported({bool? verbose}) async {
   Future<bool> tryGitCommand(_GitCommand gitCommand, bool? verbose) async {
     try {
@@ -93,10 +101,12 @@ Future<bool> checkGitSupported({bool? verbose}) async {
   return true;
 }
 
+/// Git command.
 ProcessCmd gitCmd(List<String> args) =>
     (_gitCommand ?? _defaultGitCommand).processCmd(args);
 
 // always true
+/// Check if it can be a git repository.
 bool canBeGitRepository(String uri) {
   return true;
 }
@@ -115,10 +125,12 @@ Future<bool> isGitRepository(String uri, {bool? verbose}) async {
   return (runResult.exitCode == 0) || (runResult.exitCode == 2);
 }
 
+/// Check if a path is a git top level path.
 Future<bool> isGitTopLevelPath(String path) async {
   return isGitTopLevelPathSync(path);
 }
 
+/// Check if a path is a git top level path (sync).
 bool isGitTopLevelPathSync(String path) {
   final dotGit = '.git';
   final gitFile = join(path, dotGit);
