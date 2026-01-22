@@ -190,7 +190,15 @@ class GitPath {
   }
 
   /// Run a git command
-  Future<ProcessResult> runGit(String command, {bool? verbose}) async {
+  Future<ProcessResult> runGit(
+    String command, {
+    bool? verbose,
+    bool? dryRun,
+  }) async {
+    if (dryRun == true) {
+      print('[dry-run] git $command (in $path)');
+      return ProcessResult(0, 0, '', '');
+    }
     final cmd = gitCmd(stringToArguments(command))..workingDirectory = path;
     return runCmd(cmd, verbose: verbose);
   }
@@ -236,6 +244,16 @@ class GitPath {
     } else {
       return _gitCmd(['checkout', commit!]);
     }
+  }
+
+  Future<void> resetToOrigin({
+    bool? verbose,
+    String? branch,
+    bool? dryRun,
+  }) async {
+    branch ??= await getCurrentBranch(verbose: false);
+    var script = 'switch --force-create $branch origin/$branch';
+    await runGit(script, verbose: verbose, dryRun: dryRun);
   }
 }
 
