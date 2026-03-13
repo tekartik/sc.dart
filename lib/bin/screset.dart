@@ -93,7 +93,7 @@ void main(List<String> arguments) {
             await prj.resetToOrigin(verbose: true, dryRun: dryRun);
           }
         } else if (await isHgTopLevelPath(scTopPath)) {
-          print('hg (mercurial) not supported yet');
+          stdout.writeln('hg (mercurial) not supported yet');
         }
       }
     }

@@ -175,7 +175,7 @@ Future<void> scStatusMain(List<String> arguments) async {
   }
 
   for (final dir in dirs) {
-    print(dir);
+    stdout.writeln(dir);
     var handle = handleScPath(dir, handleDir, recursive: true);
 
     futures.add(handle);

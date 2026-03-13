@@ -116,6 +116,10 @@ class GitStatusResult {
 
   /// Indicates if the branch is ahead of the remote.
   bool branchIsAhead = false;
+
+  @override
+  String toString() =>
+      'Status(nothingToCommit: $nothingToCommit, branchIsAhead: $branchIsAhead)';
 }
 
 /// Represents a git repository path.
@@ -161,11 +165,25 @@ class GitPath {
     return _gitCmd(args);
   }
 
+  /// Creates a git branches command.
+  ProcessCmd branchesCmd() {
+    final args = <String>['branch', '-vv'];
+    return _gitCmd(args);
+  }
+
+  /// Get the branches
+  Future<GitBranchesResult> branches({bool? verbose}) async {
+    final cmd = branchesCmd();
+    final result = await runCmd(cmd, verbose: verbose);
+    final branchesResult = GitBranchesResult.fromStdout(result.outText);
+    return branchesResult;
+  }
+
   /// printResultIfChanges: show result if different than 'nothing to commit'
   Future<GitStatusResult> status({bool? verbose}) async {
     final cmd = statusCmd();
     if (verbose == true) {
-      print('working dir: ${cmd.workingDirectory}');
+      stdout.writeln('working dir: ${cmd.workingDirectory}');
     }
     final result = await runCmd(cmd, verbose: verbose);
     final statusResult = GitStatusResult(cmd, result);
@@ -196,7 +214,7 @@ class GitPath {
     bool? dryRun,
   }) async {
     if (dryRun == true) {
-      print('[dry-run] git $command (in $path)');
+      stdout.writeln('[dry-run] git $command (in $path)');
       return ProcessResult(0, 0, '', '');
     }
     final cmd = gitCmd(stringToArguments(command))..workingDirectory = path;
@@ -246,6 +264,10 @@ class GitPath {
     }
   }
 
+  /// Resets the current local branch to its `origin/<branch>` counterpart.
+  ///
+  /// If [branch] is omitted, the current branch is detected first.
+  /// Set [dryRun] to true to print the command without executing it.
   Future<void> resetToOrigin({
     bool? verbose,
     String? branch,

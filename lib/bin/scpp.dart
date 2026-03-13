@@ -194,7 +194,7 @@ Future main(List<String> arguments) async {
   }
 
   for (final dir in dirs) {
-    print(dir);
+    stdout.writeln(dir);
     var handle = handleScPath(dir, handleDirWithTimeout, recursive: true);
     futures.add(handle);
   }

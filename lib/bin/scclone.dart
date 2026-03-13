@@ -108,7 +108,7 @@ Future main(List<String> arguments) async {
     var done = false;
     Future tryGit(String uri, List<String> parts) async {
       if (verbose) {
-        print('trying $uri with git');
+        stdout.writeln('trying $uri with git');
       }
       // try git first
       if ((!done) &&
@@ -126,7 +126,7 @@ Future main(List<String> arguments) async {
         } else {
           final prj = GitProject(uri, path: path);
           if (dryRun) {
-            print('git clone ${prj.src} ${prj.path}');
+            stdout.writeln('git clone ${prj.src} ${prj.path}');
           } else {
             final cmd = prj.cloneCmd(depth: depth, branch: branch);
             stdout.writeln('> $cmd');
@@ -163,7 +163,7 @@ Future main(List<String> arguments) async {
       } else {
         final prj = HgProject(uri, path: path);
         if (dryRun) {
-          print('hg clone ${prj.src} ${prj.path}');
+          stdout.writeln('hg clone ${prj.src} ${prj.path}');
         } else {
           final cmd = prj.cloneCmd();
           await runCmd(cmd, verbose: true);

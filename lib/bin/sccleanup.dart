@@ -1,59 +1,53 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
-import 'package:tekartik_io_utils/io_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
-import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
+import 'package:tekartik_sc/src/std_buf.dart';
 
 const String _helpFlag = 'help';
-//const String _LOG = 'log';
 const String _dryRunFlag = 'dry-run';
 
 /// Verbose flag.
 const String verboseFlag = 'verbose';
 
+/// Timeout option.
+const String timeoutOption = 'timeout';
+
 /// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
-
-/// App helper.
-class App {
-  /// Project count.
-  int projectCount = 0;
-
-  /// Output summary.
-  void outSummary() {
-    stdout.writeln('[$projectCount] project(s) updated');
-  }
-}
-
-/// Global app.
-late App app;
 
 ///
 /// Recursively update (pull) git folders
 ///
 ///
 Future main(List<String> arguments) async {
-  app = App();
   //Logger log;
   //setupQuickLogging();
 
   final parser = ArgParser(allowTrailingOptions: true);
   parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag(
+    'version',
+    help: 'Display the script version',
+    negatable: false,
+  );
+  parser.addFlag(
     verboseFlag,
     abbr: 'v',
     help: 'Verbose output',
     negatable: false,
   );
-  parser.addFlag(
-    'version',
-    help: 'Display the script version',
-    negatable: false,
+
+  parser.addOption(
+    timeoutOption,
+    abbr: 't',
+    help: 'Timeout for each operation in milliseconds',
   );
-  //parser.addOption(_LOG, abbr: 'l', help: 'Log level (fine, debug, info...)');
   parser.addFlag(
     _dryRunFlag,
     abbr: 'n',
@@ -66,7 +60,7 @@ Future main(List<String> arguments) async {
   final help = argResults[_helpFlag] as bool;
   if (help) {
     stdout.writeln(
-      'Pull(update) from source control recursively (default from current directory)',
+      'Clean local (remote deleted) recursively (default from current directory)',
     );
     stdout.writeln();
     stdout.writeln(
@@ -78,21 +72,14 @@ Future main(List<String> arguments) async {
     return;
   }
   final dryRun = argResults[_dryRunFlag] as bool;
-  final verbose = argResults[verboseFlag] as bool;
+  var timeout = int.tryParse((argResults[timeoutOption] as String?) ?? '');
 
   if (argResults['version'] as bool) {
     stdout.write('$currentScriptName $version');
     return;
   }
 
-  /*
-  String logLevel = argResults[_LOG];
-  if (logLevel != null) {
-    setupQuickLogging(parseLogLevel(logLevel));
-  }
-  log = new Logger('rscpull');
-  log.fine('Log level ${Logger.root.level}');
-  */
+  final verbose = argResults[verboseFlag] as bool;
 
   // get dirs in parameters, default to current
   var dirs = argResults.rest;
@@ -103,50 +90,63 @@ Future main(List<String> arguments) async {
   final futures = <Future>[];
 
   Future handleDir(String dir) async {
-    Future<ProcessResult?> execute(ProcessCmd cmd) async {
+    Future<ProcessResult?> execute(
+      StdBuf buf,
+      ProcessCmd cmd, {
+      bool forceVerbose = false,
+    }) async {
       if (dryRun) {
         stdout.writeln(cmd);
         return null;
       } else {
-        //int waitCount = 0;
-        if (verbose) {
-          stdout.writeln('[${cmd.workingDirectory}]');
+        final result = await runCmd(cmd);
+        if (verbose || forceVerbose) {
+          buf.appendCmdResult(cmd, result);
         }
-        ProcessResult? result;
-        Future waiter() async {
-          await sleep(15000);
-          if (result == null) {
-            stderr.writeln('[${cmd.workingDirectory}]...');
-            await waiter();
-          }
-        }
-
-        unawaited(waiter());
-        result = await runCmd(cmd, verbose: verbose);
         return result;
       }
     }
 
-    // Ignore folder starting with .
-    // don't event go below
     if (await isGitPathAndScSupported(dir)) {
+      final buf = StdBuf();
       final prj = GitPath(dir);
-      //ProcessResult result =
-      await execute(prj.pullCmd());
-    } else if (await isHgPathAndSupported(dir)) {
-      final prj = HgPath(dir);
-      //ProcessResult result =
-      await execute(prj.pullCmd());
+
+      await execute(buf, prj.cmd(['fetch', '--prune']), forceVerbose: true);
+      var branchesResult = await prj.branches(verbose: verbose);
+      for (var branch in branchesResult.branches) {
+        if (verbose) {
+          buf.outAppend('branch $branch');
+        }
+        if (branch.gone) {
+          await execute(
+            buf,
+            prj.cmd(['branch', '-D', branch.name]),
+            forceVerbose: true,
+          );
+        }
+      }
+
+      buf.print('--- git $prj');
+    }
+  }
+
+  Future handleDirWithTimeout(String dir) async {
+    if (timeout != null) {
+      await handleDir(dir).timeout(Duration(milliseconds: timeout)).catchError((
+        Object e,
+      ) {
+        stderr.writeln('$e for $dir');
+      });
+    } else {
+      await handleDir(dir);
     }
   }
 
   for (final dir in dirs) {
     stdout.writeln(dir);
-    var handle = handleScPath(dir, handleDir, recursive: true);
+    var handle = handleScPath(dir, handleDirWithTimeout, recursive: true);
     futures.add(handle);
   }
 
   await Future.wait(futures);
-
-  app.outSummary();
 }

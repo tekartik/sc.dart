@@ -1,7 +1,8 @@
 import 'dart:async';
 
+import 'package:process_run/stdio.dart';
 import 'package:tekartik_sc/hg.dart';
 
 Future main() async {
-  print('Hg supported: ${await checkHgSupported(verbose: true)}');
+  stdout.writeln('Hg supported: ${await checkHgSupported(verbose: true)}');
 }

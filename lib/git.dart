@@ -20,6 +20,7 @@ export 'src/git.dart'
         recursiveGitRunPoolSize,
         gitUrlGetHostname,
         gitUrlToHttpsUri;
+export 'src/git_branches.dart' show GitBranchResult, GitBranchesResult;
 
 /// A class that represents a Git command.
 class _GitCommand {
