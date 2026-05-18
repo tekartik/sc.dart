@@ -121,8 +121,8 @@ Future<bool> isGitRepository(String uri, {bool? verbose}) async {
     gitCmd(['ls-remote', '--exit-code', '-h', uri]),
     verbose: verbose,
   );
-  // 2 is returned if not found
-  // 128 if an error occured
+  // 2 is returned if if no matching refs are found
+  // 128 if an error occurred
   return (runResult.exitCode == 0) || (runResult.exitCode == 2);
 }
 

@@ -2,9 +2,9 @@ library;
 
 import 'dart:io';
 
+import 'package:dev_build/shell.dart';
 import 'package:dev_test/test.dart';
 import 'package:path/path.dart';
-import 'package:tekartik_common_utils/bool_utils.dart';
 
 export 'package:dev_test/test.dart';
 
@@ -27,6 +27,4 @@ String clearOutTestPath([List<String>? parts]) {
   return outPath;
 }
 
-bool get runningInTravis {
-  return parseBool(Platform.environment['TRAVIS']) == true;
-}
+bool get runningOnGithub => shellEnvironment['GITHUB_ACTIONS'] == 'true';

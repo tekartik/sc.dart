@@ -59,7 +59,7 @@ void main() {
           }
         },
         timeout: const Timeout(Duration(minutes: 2)),
-        skip: runningInTravis,
+        skip: runningOnGithub,
       );
     }
   });
