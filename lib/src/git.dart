@@ -43,6 +43,27 @@ extension GitPathExt on GitPath {
       verbose: verbose,
     )).outLines.first.trim();
   }
+
+  /// Returns true if the GitHub repository is private using the `gh` CLI.
+  /// Check if github cli is installed first
+  Future<bool> githubIsPrivate({bool? verbose}) async {
+    var shell = Shell(workingDirectory: path, verbose: verbose ?? false);
+    var result = await shell.run(
+      'gh repo view --json isPrivate --jq \'.isPrivate\'',
+    );
+    return bool.tryParse(result.outText.trim()) ?? false;
+  }
+
+  /// Returns true if the GitHub repository is private using the `git` CLI.
+  Future<bool> isGithubRepo({bool? verbose}) async {
+    var remoteOriginUrl = await getRemoteOriginUrl(verbose: verbose);
+    return gitUrlGetHostname(remoteOriginUrl).toLowerCase() == 'github.com';
+  }
+}
+
+/// Check if github cli is installed
+Future<bool> isGithubCliInstalled() async {
+  return (await which('gh')) != null;
 }
 
 /// Get the host name from a git url

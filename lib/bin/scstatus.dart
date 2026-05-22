@@ -111,6 +111,18 @@ Future<void> scStatusMain(List<String> arguments) async {
       final statusResult = await (prj.status());
 
       final buf = StdBuf();
+      var origin = await prj.getRemoteOriginUrl();
+      var sb = StringBuffer();
+      sb.write('Origin: $origin');
+      if (await prj.isGithubRepo()) {
+        if (await isGithubCliInstalled()) {
+          final private = await prj.githubIsPrivate();
+          sb.write(' (github: ${private ? 'private' : 'public'})');
+        } else {
+          sb.write(' (github)');
+        }
+      }
+      buf.outAppend(sb);
       if (level <= Level.FINER) {
         buf.outAppend('--- git $prj');
       }

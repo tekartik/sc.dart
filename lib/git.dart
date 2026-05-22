@@ -19,7 +19,8 @@ export 'src/git.dart'
         findGitTopLevelPath,
         recursiveGitRunPoolSize,
         gitUrlGetHostname,
-        gitUrlToHttpsUri;
+        gitUrlToHttpsUri,
+        isGithubCliInstalled;
 export 'src/git_branches.dart' show GitBranchResult, GitBranchesResult;
 
 /// A class that represents a Git command.
