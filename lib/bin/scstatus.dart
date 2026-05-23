@@ -112,19 +112,30 @@ Future<void> scStatusMain(List<String> arguments) async {
 
       final buf = StdBuf();
       var origin = await prj.getRemoteOriginUrl();
-      var sb = StringBuffer();
-      sb.write('Origin: $origin');
-      if (await prj.isGithubRepo()) {
-        if (await isGithubCliInstalled()) {
-          final private = await prj.githubIsPrivate();
-          sb.write(' (github: ${private ? 'private' : 'public'})');
-        } else {
-          sb.write(' (github)');
+
+      var originPrinted = false;
+      Future<void> printOrigin() async {
+        if (originPrinted) {
+          return;
         }
+        originPrinted = true;
+
+        var sb = StringBuffer();
+        sb.write('Origin: $origin');
+        if (await prj.isGithubRepo()) {
+          if (await isGithubCliInstalled()) {
+            final private = await prj.githubIsPrivate();
+            sb.write(' (github: ${private ? 'private' : 'public'})');
+          } else {
+            sb.write(' (github)');
+          }
+        }
+        buf.outAppend(sb);
       }
-      buf.outAppend(sb);
+
       if (level <= Level.FINER) {
         buf.outAppend('--- git $prj');
+        await printOrigin();
       }
       if (level <= Level.FINEST) {
         buf.outAppend('> ${statusResult.cmd}');
@@ -134,6 +145,7 @@ Future<void> scStatusMain(List<String> arguments) async {
         // already done
         if (level > Level.FINER) {
           buf.outAppend('--- git $prj');
+          await printOrigin();
         }
         if (statusResult.branchIsAhead) {
           buf.outAppend('Branch is ahead');
