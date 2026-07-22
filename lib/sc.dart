@@ -15,16 +15,12 @@ String git = 'git';
 /// The string used to represent the mercurial version control system.
 String hg = 'hg';
 
-///
 /// Check whether the path is a mercurial or git path
-///
 Future<bool> isScTopLevelPath(String path) async {
   return ((await getScName(path)) != null);
 }
 
-///
 /// Only valid at the current path
-///
 Future<String?> getScName(String path) async {
   if (await isGitTopLevelPath(path)) {
     return git;
@@ -35,9 +31,7 @@ Future<String?> getScName(String path) async {
   return null;
 }
 
-///
 /// checking recursively the parent for any hg or git directory
-///
 Future<String?> findScTopLevelPath(String path) async {
   return await pathFindTopLevelDirPath(path, pathIsTopLevel: isScTopLevelPath);
 }

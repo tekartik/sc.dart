@@ -24,9 +24,7 @@ const String depthParam = 'depth';
 /// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
-///
 /// clone hg or git repository
-///
 Future main(List<String> arguments) async {
   //setupQuickLogging();
 

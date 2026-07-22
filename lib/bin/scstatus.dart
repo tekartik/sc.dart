@@ -28,10 +28,7 @@ Future<void> main(List<String> arguments) async {
   await scStatusMain(arguments);
 }
 
-///
 /// Recursively update (pull) git folders
-///
-///
 Future<void> scStatusMain(List<String> arguments) async {
   //setupQuickLogging();
 

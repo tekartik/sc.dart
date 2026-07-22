@@ -21,10 +21,7 @@ const String timeoutOption = 'timeout';
 /// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
-///
 /// Recursively update (pull) git folders
-///
-///
 Future main(List<String> arguments) async {
   //Logger log;
   //setupQuickLogging();

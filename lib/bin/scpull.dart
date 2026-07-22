@@ -31,10 +31,7 @@ class App {
 /// Global app.
 late App app;
 
-///
 /// Recursively update (pull) git folders
-///
-///
 Future main(List<String> arguments) async {
   app = App();
   //Logger log;

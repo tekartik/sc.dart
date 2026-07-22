@@ -140,7 +140,6 @@ class HgPath {
     return _hgCmd(args);
   }
 
-  ///
   /// branch can be a commit/revision number
   ProcessCmd checkoutCmd({required String commit}) {
     return _hgCmd(['checkout', commit]);

@@ -13,10 +13,7 @@ const String _helpFlag = 'help';
 /// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
-///
 /// Recursively update (pull) git folders
-///
-///
 void main(List<String> arguments) {
   //setupQuickLogging();
 
