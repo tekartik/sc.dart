@@ -20,3 +20,4 @@ pubspec.lock
 # test
 test/out
 tmp/
+/pubspec_overrides.yaml
