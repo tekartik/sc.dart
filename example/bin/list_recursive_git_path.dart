@@ -20,7 +20,8 @@ Future<void> main(List<String> arguments) async {
     ['.'],
     action: (path) async {
       var currentBranch = await GitPath(path).getCurrentBranch();
-      if (ignoreMain && (currentBranch == 'main' || currentBranch == 'master')) {
+      if (ignoreMain &&
+          (currentBranch == 'main' || currentBranch == 'master')) {
         return;
       }
       stdout.writeln('path: $path');
