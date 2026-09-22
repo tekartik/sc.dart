@@ -21,6 +21,9 @@ const String verboseFlag = 'verbose';
 /// Modified files flag.
 const String modifiedFilesFlag = 'modified';
 
+/// Ignore main/master flag.
+const String ignoreMainFlag = 'ignore-main';
+
 /// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
@@ -44,6 +47,12 @@ Future<void> scStatusMain(List<String> arguments) async {
     modifiedFilesFlag,
     abbr: 'm',
     help: 'Modified files only',
+    negatable: false,
+  );
+  parser.addFlag(
+    ignoreMainFlag,
+    abbr: 'i',
+    help: 'Skip a repository whose current branch is main or master',
     negatable: false,
   );
   parser.addOption(
@@ -73,6 +82,7 @@ Future<void> scStatusMain(List<String> arguments) async {
   }
 
   var modifiedFilesOnly = argResults[modifiedFilesFlag] as bool;
+  var ignoreMain = argResults[ignoreMainFlag] as bool;
   var level = parseLogLevel((argResults[_logOption] as String?) ?? '');
   if (argResults[verboseFlag] as bool) {
     level = Level.FINEST;
@@ -104,6 +114,13 @@ Future<void> scStatusMain(List<String> arguments) async {
   Future handleDir(String dir) async {
     if (await isGitPathAndScSupported(dir)) {
       final prj = GitPath(dir);
+
+      if (ignoreMain) {
+        final currentBranch = await prj.getCurrentBranch(verbose: false);
+        if (currentBranch == 'main' || currentBranch == 'master') {
+          return;
+        }
+      }
 
       final statusResult = await (prj.status());
 
