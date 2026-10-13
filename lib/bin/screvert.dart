@@ -15,7 +15,7 @@ const String _helpFlag = 'help';
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
 /// Recursively update (pull) git folders
-void main(List<String> arguments) {
+Future<void> main(List<String> arguments) async {
   //setupQuickLogging();
 
   final parser = ArgParser(allowTrailingOptions: true);
@@ -92,14 +92,14 @@ void main(List<String> arguments) {
               await runCmd(cmd, verbose: true);
             }
           }
-        } else if (await isHgTopLevelPath(scTopPath)) {
-          final prj = HgPath(scTopPath);
-          final cmd = prj.revertCmd(path: rel, noBackup: true);
+        }
+      } else if (await isHgSupported && await isHgTopLevelPath(scTopPath)) {
+        final prj = HgPath(scTopPath);
+        final cmd = prj.revertCmd(path: rel, noBackup: true);
 
-          stdout.writeln(cmd);
-          if (!dryRun) {
-            await runCmd(cmd, verbose: true);
-          }
+        stdout.writeln(cmd);
+        if (!dryRun) {
+          await runCmd(cmd, verbose: true);
         }
       }
     }
@@ -121,4 +121,5 @@ void main(List<String> arguments) {
 
     futures.add(handle);
   }
+  await Future.wait(futures);
 }

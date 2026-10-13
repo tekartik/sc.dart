@@ -29,19 +29,25 @@ extension GitPathExt on GitPath {
   }
 
   /// Gets the current branch name.
+  ///
+  /// Throws a [StateError] on a detached HEAD (no current branch).
   Future<String> getCurrentBranch({bool? verbose}) async {
-    return (await runGit(
-      'branch --show-current',
-      verbose: verbose,
-    )).outLines.first;
+    var branch = await gitPathGetCurrentBranchOrNull(this, verbose: verbose);
+    if (branch == null) {
+      throw StateError('No current branch in $path (detached HEAD)');
+    }
+    return branch;
   }
 
   /// Gets the remote origin URL.
+  ///
+  /// Throws a [StateError] if there is no origin.
   Future<String> getRemoteOriginUrl({bool? verbose}) async {
-    return (await runGit(
-      'config --get remote.origin.url',
-      verbose: verbose,
-    )).outLines.first.trim();
+    var url = await gitPathGetRemoteOriginUrlOrNull(this, verbose: verbose);
+    if (url == null) {
+      throw StateError('No remote origin in $path');
+    }
+    return url;
   }
 
   /// Returns true if the GitHub repository is private using the `gh` CLI.
@@ -59,6 +65,30 @@ extension GitPathExt on GitPath {
     var remoteOriginUrl = await getRemoteOriginUrl(verbose: verbose);
     return gitUrlGetHostname(remoteOriginUrl).toLowerCase() == 'github.com';
   }
+}
+
+/// The current branch of [gitPath], null on a detached HEAD.
+Future<String?> gitPathGetCurrentBranchOrNull(
+  GitPath gitPath, {
+  bool? verbose,
+}) async {
+  var branch = (await gitPath.runGit(
+    'branch --show-current',
+    verbose: verbose,
+  )).outLines.firstOrNull?.trim();
+  return (branch?.isEmpty ?? true) ? null : branch;
+}
+
+/// The remote origin url of [gitPath], null if none.
+Future<String?> gitPathGetRemoteOriginUrlOrNull(
+  GitPath gitPath, {
+  bool? verbose,
+}) async {
+  var url = (await gitPath.runGit(
+    'config --get remote.origin.url',
+    verbose: verbose,
+  )).outLines.firstOrNull?.trim();
+  return (url?.isEmpty ?? true) ? null : url;
 }
 
 /// Check if github cli is installed
@@ -294,7 +324,11 @@ class GitPath {
     String? branch,
     bool? dryRun,
   }) async {
-    branch ??= await getCurrentBranch(verbose: false);
+    branch ??= await gitPathGetCurrentBranchOrNull(this, verbose: false);
+    if (branch == null) {
+      stderr.writeln('$path: detached HEAD, no branch to reset');
+      return;
+    }
     var script = 'switch --force-create $branch origin/$branch';
     await runGit(script, verbose: verbose, dryRun: dryRun);
   }

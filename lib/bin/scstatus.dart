@@ -9,6 +9,8 @@ import 'package:tekartik_common_utils/log_utils.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/hg.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
+import 'package:tekartik_sc/src/git.dart'
+    show gitPathGetCurrentBranchOrNull, gitPathGetRemoteOriginUrlOrNull;
 import 'package:tekartik_sc/src/scpath.dart';
 import 'package:tekartik_sc/src/std_buf.dart';
 
@@ -116,7 +118,11 @@ Future<void> scStatusMain(List<String> arguments) async {
       final prj = GitPath(dir);
 
       if (ignoreMain) {
-        final currentBranch = await prj.getCurrentBranch(verbose: false);
+        // null on a detached HEAD
+        final currentBranch = await gitPathGetCurrentBranchOrNull(
+          prj,
+          verbose: false,
+        );
         if (currentBranch == 'main' || currentBranch == 'master') {
           return;
         }
@@ -125,7 +131,7 @@ Future<void> scStatusMain(List<String> arguments) async {
       final statusResult = await (prj.status());
 
       final buf = StdBuf();
-      var origin = await prj.getRemoteOriginUrl();
+      var origin = await gitPathGetRemoteOriginUrlOrNull(prj);
 
       var originPrinted = false;
       Future<void> printOrigin() async {
@@ -135,8 +141,8 @@ Future<void> scStatusMain(List<String> arguments) async {
         originPrinted = true;
 
         var sb = StringBuffer();
-        sb.write('Origin: $origin');
-        if (await prj.isGithubRepo()) {
+        sb.write('Origin: ${origin ?? 'none'}');
+        if (origin != null && await prj.isGithubRepo()) {
           if (await isGithubCliInstalled()) {
             final private = await prj.githubIsPrivate();
             sb.write(' (github: ${private ? 'private' : 'public'})');

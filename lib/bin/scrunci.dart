@@ -9,97 +9,52 @@ import 'package:tekartik_common_utils/common_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/scpath.dart';
-
-const String _helpFlag = 'help';
-const String _versionFlag = 'version';
-const String _verboseFlag = 'verbose';
-const String _keepFlag = 'keep';
-const String _branchOption = 'branch';
-const String _depthOption = 'depth';
+import 'package:tekartik_sc/src/scrunci_args.dart';
 
 /// Current script name.
 String get currentScriptName => basenameWithoutExtension(Platform.script.path);
 
-/// Options handled by scrunci itself, everything else is forwarded to run_ci.
-final _scrunciFlags = <String>{
-  '-h',
-  '--$_helpFlag',
-  '--$_versionFlag',
-  '--$_keepFlag',
-};
-final _scrunciOptions = <String>{'-b', '--$_branchOption', '--$_depthOption'};
-
-/// Split the arguments between scrunci arguments and run_ci arguments.
-///
-/// run_ci arguments are the unknown options and the rest arguments
-/// but the first one (the url).
-({List<String> scrunciArgs, List<String> runCiArgs}) _splitArguments(
-  List<String> arguments,
-) {
-  final scrunciArgs = <String>[];
-  final runCiArgs = <String>[];
-  var i = 0;
-  while (i < arguments.length) {
-    final arg = arguments[i++];
-    if (_scrunciFlags.contains(arg)) {
-      scrunciArgs.add(arg);
-    } else if (_scrunciOptions.contains(arg)) {
-      scrunciArgs.add(arg);
-      if (i < arguments.length) {
-        scrunciArgs.add(arguments[i++]);
-      }
-    } else if (_scrunciOptions.any((option) => arg.startsWith('$option='))) {
-      scrunciArgs.add(arg);
-    } else if (arg == '-v' || arg == '--$_verboseFlag') {
-      // Verbose applies to both
-      scrunciArgs.add(arg);
-      runCiArgs.add(arg);
-    } else if (arg.startsWith('-')) {
-      runCiArgs.add(arg);
-    } else {
-      // Positional argument (url first, then sub paths)
-      scrunciArgs.add(arg);
-    }
-  }
-  return (scrunciArgs: scrunciArgs, runCiArgs: runCiArgs);
-}
-
 /// Clone a git repository in a temp folder and run dev_build run_ci on it.
 Future main(List<String> arguments) async {
   final parser = ArgParser(allowTrailingOptions: true);
-  parser.addFlag(_helpFlag, abbr: 'h', help: 'Usage help', negatable: false);
   parser.addFlag(
-    _versionFlag,
+    scrunciHelpFlag,
+    abbr: 'h',
+    help: 'Usage help',
+    negatable: false,
+  );
+  parser.addFlag(
+    scrunciVersionFlag,
     help: 'Display the script version',
     negatable: false,
   );
   parser.addFlag(
-    _verboseFlag,
+    scrunciVerboseFlag,
     abbr: 'v',
     help: 'Verbose output (also forwarded to run_ci)',
     negatable: false,
   );
   parser.addFlag(
-    _keepFlag,
+    scrunciKeepFlag,
     help: 'Keep the temp folder (always kept on failure)',
     negatable: false,
   );
-  parser.addOption(_depthOption, help: 'depth (git --depth 1)');
+  parser.addOption(scrunciDepthOption, help: 'depth (git --depth 1)');
   parser.addOption(
-    _branchOption,
+    scrunciBranchOption,
     abbr: 'b',
     help: 'branch (git clone -b <branch>)',
   );
 
-  final split = _splitArguments(arguments);
+  final split = scrunciSplitArguments(arguments);
   final argResults = parser.parse(split.scrunciArgs);
   final runCiArgs = split.runCiArgs;
 
-  final help = argResults[_helpFlag] as bool;
-  final verbose = argResults[_verboseFlag] as bool;
-  final keep = argResults[_keepFlag] as bool;
-  final branch = argResults[_branchOption] as String?;
-  final depth = parseInt(argResults[_depthOption]);
+  final help = argResults[scrunciHelpFlag] as bool;
+  final verbose = argResults[scrunciVerboseFlag] as bool;
+  final keep = argResults[scrunciKeepFlag] as bool;
+  final branch = argResults[scrunciBranchOption] as String?;
+  final depth = parseInt(argResults[scrunciDepthOption]);
 
   void printUsage() {
     stdout.writeln(
@@ -130,7 +85,7 @@ Future main(List<String> arguments) async {
     return;
   }
 
-  if (argResults[_versionFlag] as bool) {
+  if (argResults[scrunciVersionFlag] as bool) {
     stdout.writeln('$currentScriptName $version');
     return;
   }

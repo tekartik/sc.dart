@@ -109,18 +109,19 @@ Future main(List<String> arguments) async {
         if (verbose) {
           stdout.writeln('[${cmd.workingDirectory}]');
         }
-        ProcessResult? result;
-        Future waiter() async {
-          await sleep(15000);
-          if (result == null) {
-            stderr.writeln('[${cmd.workingDirectory}]...');
-            await waiter();
+        // Show the long running ones, cancelled when done
+        var timer = Timer.periodic(const Duration(seconds: 15), (_) {
+          stderr.writeln('[${cmd.workingDirectory}]...');
+        });
+        try {
+          var result = await runCmd(cmd, verbose: verbose);
+          if (result.exitCode == 0) {
+            app.projectCount++;
           }
+          return result;
+        } finally {
+          timer.cancel();
         }
-
-        unawaited(waiter());
-        result = await runCmd(cmd, verbose: verbose);
-        return result;
       }
     }
 

@@ -3,7 +3,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart';
@@ -62,29 +61,11 @@ void defineTests() {
     }, skip: 'Bitbucket hg no longer supported');
 
     test('handleScPath', () async {
-      // find top path
+      // See sc_offline_git_test.dart for the recursive cases
       final dirs = <String>[];
-      Future handle(String dir) async {
-        dirs.add(dir);
-      }
-
-      try {
-        var dir = dirname(Directory.current.path);
-        dirs.clear();
-        await handleScPath(dir, handle);
-        expect(dirs.length, 0);
-
-        await handleScPath(dir, handle, recursive: true);
-        expect(dirs.length, greaterThan(1));
-        expect(dirs, contains(Directory.current.path));
-
-        dirs.clear();
-        await handleScPath('..', handle, recursive: true);
-        expect(dirs.length, greaterThan(1));
-        expect(dirs, contains(Directory.current.path));
-      } catch (e) {
-        print('This could fail on travis if we cannot reach the parent folder');
-        print(e);
+      if (await isGitTopLevelPath(Directory.current.path)) {
+        await handleScPath(join('.', 'test'), (dir) => dirs.add(dir));
+        expect(dirs, [Directory.current.path]);
       }
     });
   });

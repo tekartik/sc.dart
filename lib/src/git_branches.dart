@@ -17,7 +17,10 @@ class GitBranchesResult {
     for (var line in LineSplitter.split(out)) {
       line = line.trim();
       if (line.trim().isEmpty) continue;
-      branches.add(GitBranchResult.fromLine(line));
+      var branch = GitBranchResult.fromLine(line);
+      // Skip `* (HEAD detached at 8f84608)`, not a branch
+      if (branch.name.startsWith('(')) continue;
+      branches.add(branch);
     }
     return GitBranchesResult(branches: branches);
   }
@@ -40,6 +43,12 @@ class GitBranchResult {
   /// Parses a single branch line from `git branch -vv` output.
   factory GitBranchResult.fromLine(String line) {
     // Parse something like   dashboard_app_session         8f846082 [origin/dashboard_app_session: gone] revert pubspec.lock change
+    // the current branch is prefixed by `* `, a branch checked out in another
+    // worktree by `+ `.
+    line = line.trim();
+    if (line.startsWith('* ') || line.startsWith('+ ')) {
+      line = line.substring(2);
+    }
     var parts = line.trim().split(RegExp(r'\s+'));
     var name = parts[0];
     var gone = line.contains(': gone]');

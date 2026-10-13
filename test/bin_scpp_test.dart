@@ -48,7 +48,9 @@ void main() {
             path: outPath,
           );
           if (await clone(prj)) {
-            final result = await runCmd(DartCmd(['run', scppDartScript, '-v']));
+            final result = await runCmd(
+              DartCmd(['run', scppDartScript, '-v', outPath]),
+            );
             final output = result.stdout.toString();
             expect(output, contains('no push'));
             expect(output, contains('not ahead'));

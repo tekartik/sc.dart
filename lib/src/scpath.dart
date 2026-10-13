@@ -62,38 +62,63 @@ set recursiveHandleScPathPoolSize(int value) {
 var _pool = Pool(recursiveHandleScPathPoolSize);
 
 /// Handles source control paths recursively or at the top level.
+///
+/// When going recursive, an error thrown by [handleScDir] for a sub path is
+/// reported on stderr and the other paths are still handled.
 Future handleScPath(
   String dir,
   dynamic Function(String dir) handleScDir, {
   bool? recursive,
+}) => _handleScPath(dir, handleScDir, recursive: recursive ?? false);
+
+Future<void> _handleScPath(
+  String dir,
+  dynamic Function(String dir) handleScDir, {
+  required bool recursive,
 }) async {
-  recursive ??= false;
   dir = normalize(absolute(dir));
   var topDir = await findScTopLevelPath(dir);
 
   // We are in a git, don't recurse)
   if (topDir != null) {
-    await _pool.withResource(() => handleScDir(topDir));
+    await _pool.withResource(() async => await handleScDir(topDir));
   } else {
     if (recursive) {
+      List<FileSystemEntity> entities;
       try {
-        final sub = <Future>[];
-        await Directory(dir).list().listen((FileSystemEntity fse) {
-          sub.add(() async {
-            var path = fse.path;
+        entities = await Directory(dir).list().toList();
+      } on FileSystemException catch (_) {
+        // Not readable, ignore
+        return;
+      }
+      await Future.wait(
+        entities
+            .map((entity) => entity.path)
             // Ignore folder starting with .
             // don't event go below
-            if (!basename(path).startsWith('.') &&
-                (FileSystemEntity.isDirectorySync(dir))) {
-              await handleScPath(fse.path, handleScDir, recursive: recursive);
-            }
-          }());
-        }).asFuture<void>();
-        await Future.wait(sub);
-      } catch (_) {}
+            .where(
+              (path) =>
+                  !basename(path).startsWith('.') &&
+                  FileSystemEntity.isDirectorySync(path),
+            )
+            .map((path) => _handleSubScPath(path, handleScDir)),
+      );
     } else {
       stderr.writeln('$dir does not belong to source control');
     }
+  }
+}
+
+/// A sub path error is reported, the other paths are still handled.
+Future<void> _handleSubScPath(
+  String path,
+  dynamic Function(String dir) handleScDir,
+) async {
+  try {
+    await _handleScPath(path, handleScDir, recursive: true);
+  } catch (e, st) {
+    stderr.writeln('error: $path: $e');
+    stderr.writeln(st);
   }
 }
 

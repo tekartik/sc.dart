@@ -160,17 +160,20 @@ Future main(List<String> arguments) async {
       final prj = HgPath(dir);
       //ProcessResult result =
       var cmd = prj.pushCmd();
-      var result = await (execute(buf, cmd) as FutureOr<ProcessResult>);
+      var result = await execute(buf, cmd);
       // exitCode seems to be always 1 on linux...
       // result.exitCode != 0 ||
-      if (!result.stdout.toString().contains('no changes found')) {
+      // dry-run returns null
+      if (result != null &&
+          !result.stdout.toString().contains('no changes found')) {
         buf.outAppend('> $cmd');
         buf.appendResult(result);
       }
       cmd = prj.pullCmd();
-      result = await (execute(buf, cmd) as FutureOr<ProcessResult>);
-      if (result.exitCode != 0 ||
-          !result.stdout.toString().contains('no changes found')) {
+      result = await execute(buf, cmd);
+      if (result != null &&
+          (result.exitCode != 0 ||
+              !result.stdout.toString().contains('no changes found'))) {
         buf.outAppend('> $cmd');
         buf.appendResult(result);
       }
