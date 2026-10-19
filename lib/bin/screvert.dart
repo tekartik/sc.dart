@@ -48,7 +48,7 @@ Future<void> main(List<String> arguments) async {
   }
 
   if (argResults.flag('version')) {
-    stdout.write('$currentScriptName $version');
+    stdout.writeln('$currentScriptName $version');
     return;
   }
 

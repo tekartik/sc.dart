@@ -92,7 +92,7 @@ Future<void> scStatusMain(List<String> arguments) async {
   final commandVerbose = level <= Level.FINEST;
 
   if (argResults['version'] as bool) {
-    stdout.write('$currentScriptName $version');
+    stdout.writeln('$currentScriptName $version');
     return;
   }
   /*

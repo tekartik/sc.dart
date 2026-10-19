@@ -78,7 +78,7 @@ Future main(List<String> arguments) async {
   var timeout = int.tryParse((argResults[timeoutOption] as String?) ?? '');
 
   if (argResults['version'] as bool) {
-    stdout.write('$currentScriptName $version');
+    stdout.writeln('$currentScriptName $version');
     return;
   }
 

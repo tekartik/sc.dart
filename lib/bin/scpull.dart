@@ -77,7 +77,7 @@ Future main(List<String> arguments) async {
   final verbose = argResults[verboseFlag] as bool;
 
   if (argResults['version'] as bool) {
-    stdout.write('$currentScriptName $version');
+    stdout.writeln('$currentScriptName $version');
     return;
   }
 

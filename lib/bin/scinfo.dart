@@ -69,7 +69,7 @@ Future<void> scInfoMain(List<String> arguments) async {
   }
 
   if (argResults['version'] as bool) {
-    stdout.write('$currentScriptName $version');
+    stdout.writeln('$currentScriptName $version');
     return;
   }
 
