@@ -9,6 +9,7 @@ import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/git.dart'
     show gitPathGetCurrentBranchOrNull, gitPathGetRemoteOriginUrlOrNull;
+import 'package:tekartik_sc/src/git_info.dart';
 import 'package:tekartik_sc/src/scrunci_args.dart';
 import 'package:test/test.dart';
 
@@ -156,6 +157,64 @@ void main() {
       out = result.stdout.toString();
       expect(out, isNot(contains('--- git $a')));
       expect(out, contains('--- git $b'));
+    });
+
+    test('gitPathGetInfo', () async {
+      var info = await gitPathGetInfo(GitPath(b), github: false);
+      expect(info.originUrl, bare);
+      // Local origin, no web url
+      expect(info.webUrl, isNull);
+      expect(info.branch, 'feat');
+      expect(info.upstream, 'origin/feat');
+      expect(info.changedFileCount, 1);
+      expect(info.untrackedFileCount, 0);
+      expect(info.commitCount, 1);
+      expect(info.lastCommit, endsWith(' init'));
+      expect(info.firstCommitDate, isNotNull);
+      expect(info.localBranchCount, 1);
+      expect(info.remoteBranchCount, 1);
+      expect(info.fileCount, 1);
+      expect(info.fileSize, 1);
+      expect(info.gitObjectsSize, isNotNull);
+
+      info = await gitPathGetInfo(GitPath(c), github: false);
+      expect(info.originUrl, isNull);
+      expect(info.branch, isNull);
+      expect(info.toLines(), contains('Origin:      none'));
+
+      // No commit yet
+      var empty = join(temp.path, 'empty');
+      await Directory(empty).create();
+      await _git(empty, ['init']);
+      info = await gitPathGetInfo(GitPath(empty), github: false);
+      expect(info.commitCount, isNull);
+      expect(info.fileCount, isNull);
+      expect(info.toLines(), contains('Last commit: none'));
+    });
+
+    test('scinfo', () async {
+      var result = await runCmd(
+        DartCmd([join(exampleBinPath, 'scinfo.dart'), top]),
+      );
+      expect(result.exitCode, 0, reason: result.stderr.toString());
+      var out = result.stdout.toString();
+      for (var dir in [a, b, c, e]) {
+        expect(
+          out,
+          contains(RegExp('^Path: +${RegExp.escape(dir)}\$', multiLine: true)),
+        );
+      }
+      // Separator between repositories only
+      expect('\n$out'.split('\n###\n\nPath:'), hasLength(4));
+      expect(out, startsWith('Path:'));
+      expect(out, isNot(endsWith('###\n\n')));
+
+      // Single repository, no separator
+      result = await runCmd(DartCmd([join(exampleBinPath, 'scinfo.dart'), a]));
+      expect(result.exitCode, 0, reason: result.stderr.toString());
+      out = result.stdout.toString();
+      expect(out, isNot(contains('###')));
+      expect(out, contains(RegExp(r'^Status: +1 changed$', multiLine: true)));
     });
 
     test('scpull', () async {

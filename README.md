@@ -36,6 +36,11 @@ Recursively get status
 
     scstatus
 
+Recursively display repository information (url, GitHub visibility and archived state, branch, commits, files, size...),
+repositories separated by `###` and a blank line. `-o` skips the GitHub query (requires the `gh` CLI)
+
+    scinfo
+
 Push & pull
 
     scpp

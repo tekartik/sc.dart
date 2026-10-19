@@ -7,8 +7,8 @@ description: >-
   findScTopLevelPath from package:tekartik_sc/sc.dart, the mercurial API
   (HgPath, HgProject, HgStatusResult, HgOutgoingResult, isHgSupported,
   hgCmd), and the package:tekartik_sc/bin/ entry points scpull, scpp,
-  scstatus, scclone, screvert, screset, sccleanup, scrunci, sccheckgit and
-  sccheckhg.
+  scstatus, scinfo, scclone, screvert, screset, sccleanup, scrunci,
+  sccheckgit and sccheckhg.
 ---
 
 # Source-control tree tools (tekartik_sc)
@@ -65,6 +65,11 @@ and a set of `sc*` command line tools built on both. Everything is
 * Command entry points, each a `main(List<String> arguments)` in
   `package:tekartik_sc/bin/`: `scpull` (recursive pull), `scpp` (push and
   pull), `scstatus` (recursive status, also exposed as `scStatusMain`),
+  `scinfo` (recursive repository information: url, origin, GitHub
+  visibility/archived/fork/description/size through the `gh` CLI, branch and
+  upstream, status, last commit, commit/ref/file counts, tracked files and
+  git objects size; repositories are separated by a `###` line and a blank
+  line; also exposed as `scInfoMain`),
   `scclone` (clone an url into a `<host>/<owner>/<repo>` tree), `screvert`
   (revert local changes), `screset` (reset branches to `origin/<branch>`),
   `sccleanup` (`git fetch --prune` then delete the local branches whose
@@ -75,7 +80,8 @@ and a set of `sc*` command line tools built on both. Everything is
   `-n/--dry-run` (print the commands instead of running them; `scclone` uses
   `-d` for it). `scpp` and `sccleanup` add `-t/--timeout <ms>` per
   repository, `screvert` and `screset` a `-r/--recursive` flag, `scstatus` a
-  `-m/--modified` flag and `-l/--log <level>`. Positional arguments are the
+  `-m/--modified` flag and `-l/--log <level>`, `scinfo` a `-o/--offline`
+  flag (no GitHub query). Positional arguments are the
   folders to walk, defaulting to `.`.
 * A repository containing a `.local/.skip_sc` file is skipped by the tools
   that walk a tree; use it to park a checkout you do not want touched.
