@@ -12,7 +12,7 @@ import 'package:tekartik_sc/src/scpath.dart';
 import 'package:tekartik_sc/src/scrunci_args.dart';
 
 /// Current script name.
-String get currentScriptName => basenameWithoutExtension(Platform.script.path);
+String get currentScriptName => scriptPathGetName(Platform.script.path);
 
 /// Clone a git repository in a temp folder and run dev_build run_ci on it.
 Future main(List<String> arguments) async {

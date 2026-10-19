@@ -22,7 +22,7 @@ const String branchOption = 'branch';
 const String depthParam = 'depth';
 
 /// Current script name.
-String get currentScriptName => basenameWithoutExtension(Platform.script.path);
+String get currentScriptName => scriptPathGetName(Platform.script.path);
 
 /// clone hg or git repository
 Future main(List<String> arguments) async {

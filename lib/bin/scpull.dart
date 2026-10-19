@@ -1,5 +1,4 @@
 import 'package:args/args.dart';
-import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_io_utils/io_utils_import.dart';
 import 'package:tekartik_sc/git.dart';
@@ -15,7 +14,7 @@ const String _dryRunFlag = 'dry-run';
 const String verboseFlag = 'verbose';
 
 /// Current script name.
-String get currentScriptName => basenameWithoutExtension(Platform.script.path);
+String get currentScriptName => scriptPathGetName(Platform.script.path);
 
 /// App helper.
 class App {

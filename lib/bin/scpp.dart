@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:tekartik_common_utils/log_utils.dart';
 import 'package:tekartik_sc/git.dart';
@@ -22,7 +21,7 @@ const String verboseFlag = 'verbose';
 const String timeoutOption = 'timeout';
 
 /// Current script name.
-String get currentScriptName => basenameWithoutExtension(Platform.script.path);
+String get currentScriptName => scriptPathGetName(Platform.script.path);
 
 /// Recursively update (pull) git folders
 Future main(List<String> arguments) async {

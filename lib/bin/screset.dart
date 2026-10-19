@@ -11,7 +11,7 @@ import 'package:tekartik_sc/src/bin_version.dart';
 const String _helpFlag = 'help';
 
 /// Current script name.
-String get currentScriptName => basenameWithoutExtension(Platform.script.path);
+String get currentScriptName => scriptPathGetName(Platform.script.path);
 
 /// Recursively update (pull) git folders
 Future<void> main(List<String> arguments) async {

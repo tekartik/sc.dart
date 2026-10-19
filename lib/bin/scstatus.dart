@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
 import 'package:process_run/shell.dart';
 import 'package:tekartik_common_utils/log_utils.dart';
@@ -27,7 +26,7 @@ const String modifiedFilesFlag = 'modified';
 const String ignoreMainFlag = 'ignore-main';
 
 /// Current script name.
-String get currentScriptName => basenameWithoutExtension(Platform.script.path);
+String get currentScriptName => scriptPathGetName(Platform.script.path);
 
 Future<void> main(List<String> arguments) async {
   await scStatusMain(arguments);

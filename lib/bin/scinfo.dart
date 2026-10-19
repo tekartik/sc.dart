@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:path/path.dart';
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/src/bin_version.dart';
 import 'package:tekartik_sc/src/git_info.dart';
@@ -20,7 +19,7 @@ const String offlineFlag = 'offline';
 const String scInfoSeparator = '###';
 
 /// Current script name.
-String get currentScriptName => basenameWithoutExtension(Platform.script.path);
+String get currentScriptName => scriptPathGetName(Platform.script.path);
 
 Future<void> main(List<String> arguments) async {
   await scInfoMain(arguments);
