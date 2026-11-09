@@ -133,8 +133,12 @@ Future<bool> isGitTopLevelPath(String path) async {
 }
 
 /// Check if a path is a git top level path (sync).
+///
+/// `.git` is a directory in a regular checkout, a file (`gitdir: ...`) in a
+/// linked worktree or a submodule.
 bool isGitTopLevelPathSync(String path) {
   final dotGit = '.git';
   final gitFile = join(path, dotGit);
-  return FileSystemEntity.isDirectorySync(gitFile);
+  return FileSystemEntity.isDirectorySync(gitFile) ||
+      FileSystemEntity.isFileSync(gitFile);
 }

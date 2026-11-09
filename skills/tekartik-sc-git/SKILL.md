@@ -27,7 +27,6 @@ build, release and repo-maintenance scripts.
     tekartik_sc:
       git:
         url: https://github.com/tekartik/sc.dart
-      version: '>=0.7.0'
   ```
   Add `process_run` too: every command object is a `ProcessCmd` you run with
   `runCmd` from `package:process_run/cmd_run.dart`.
@@ -60,25 +59,32 @@ build, release and repo-maintenance scripts.
   `LC_ALL=C` through `gitEnvironment`), plus the raw `cmd` and `runResult`.
 * `await gitPath.branches()` parses `git branch -vv` into a
   `GitBranchesResult` whose `branches` are `GitBranchResult(name:, gone:)` -
-  `gone` marks a local branch whose upstream disappeared, the usual input of
-  a cleanup script.
+  `gone` marks a local branch whose upstream disappeared (read from the
+  `[origin/x: gone]` bracket that follows the hash, never from the commit
+  subject), the usual input of a cleanup script.
+  `GitBranchesResult.fromStdout(out)` / `GitBranchResult.fromLine(line)`
+  parse output you already have; the detached HEAD line is skipped.
 * `await gitPath.resetToOrigin(branch: 'main', dryRun: true)` force-switches
   the local branch to `origin/<branch>`; it detects the current branch when
   `branch` is omitted. It discards local commits, so gate it behind an
   explicit flag.
 * `GitProject(src, path: dir)` extends `GitPath` with the remote url in
   `src`: `cloneCmd(depth: 1, branch: 'main', progress: true)` builds the
-  clone command, `pullOrClone()` clones when `<path>/.git/config` is missing
-  and pulls otherwise. Without `path:`, the local path is derived from the
+  clone command, `pullOrClone()` pulls when `path` is already a git top level
+  and clones otherwise. Without `path:`, the local path is derived from the
   url (`github.com/tekartik/sc.dart`), which is what the `scclone` command
   does.
 * Discovery: `isGitTopLevelPath(dir)` / `isGitTopLevelPathSync(dir)` test for
-  a `.git` directory, `findGitTopLevelPath(dir)` walks up the parents,
+  a `.git` directory, or a `.git` file (a linked worktree or a submodule is a
+  top level of its own), `findGitTopLevelPath(dir)` walks up the parents,
   `isGitRepository(url)` probes a remote with `git ls-remote`.
 * `recursiveGitRun(['.'], action: (path) async {...})` walks the directories,
   stops descending at each repository root and calls `action` on it, with at
   most `recursiveGitRunPoolSize` (default 10) running concurrently. Set the
-  pool size before the first call.
+  pool size before the first call. It skips the folders starting with `.`
+  and the links to a folder being walked (link loops); an error thrown by
+  `action` below the starting folder is written on stderr and the walk goes
+  on.
 * Url helpers: `gitUrlGetHostname('git@github.com:me/repo.git')` returns
   `github.com`, `gitUrlToHttpsUri` turns an ssh url into an https `Uri`.
   Do not use `Uri.parse` on `git@...` urls, it does not parse them.

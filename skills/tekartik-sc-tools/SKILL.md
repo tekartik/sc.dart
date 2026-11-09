@@ -27,7 +27,6 @@ and a set of `sc*` command line tools built on both. Everything is
     tekartik_sc:
       git:
         url: https://github.com/tekartik/sc.dart
-      version: '>=0.7.0'
   ```
 * `import 'package:tekartik_sc/sc.dart';` for the agnostic layer,
   `package:tekartik_sc/hg.dart` for mercurial,
@@ -42,9 +41,13 @@ and a set of `sc*` command line tools built on both. Everything is
   walker every `sc*` tool uses: when `dir` is inside a repository, the
   callback runs once on its top level path and the walk stops there;
   otherwise, with `recursive: true`, it descends into sub directories,
-  skipping anything starting with `.`. Without `recursive` it writes
-  `<dir> does not belong to source control` on stderr. Errors during the
-  recursion are swallowed.
+  skipping anything starting with `.`. Links to directories are followed,
+  except a link to a directory being walked (a link loop). A linked
+  worktree or a submodule (`.git` file) is a repository of its own. Without
+  `recursive` it writes `<dir> does not belong to source control` on stderr.
+  An error thrown by the callback for a sub folder is written on stderr
+  (`error: <path>: <error>` and the stack trace) and the other folders are
+  still handled.
 * Concurrency: callbacks run through a pool of
   `recursiveHandleScPathPoolSize` (default 10). Assign it before the first
   walk; it re-creates the pool (the same value backs `recursiveGitRunPoolSize`
@@ -63,28 +66,35 @@ and a set of `sc*` command line tools built on both. Everything is
   `hg (mercurial) not supported yet`, and new code should stay on the git
   API.
 * Command entry points, each a `main(List<String> arguments)` in
-  `package:tekartik_sc/bin/`: `scpull` (recursive pull), `scpp` (push and
-  pull), `scstatus` (recursive status, also exposed as `scStatusMain`),
+  `package:tekartik_sc/bin/`: `scpull` (recursive pull; a failed pull is
+  written on stderr with git's output, listed at the end, and the exit code
+  is 1), `scpp` (push when ahead, then pull), `scstatus` (recursive status,
+  also exposed as `scStatusMain`),
   `scinfo` (recursive repository information: url, origin, GitHub
   visibility/archived/fork/description/size through the `gh` CLI, branch and
   upstream, status, last commit, commit/ref/file counts, tracked files and
   git objects size; repositories are separated by a `###` line and a blank
   line; also exposed as `scInfoMain`),
-  `scclone` (clone an url into a `<host>/<owner>/<repo>` tree), `screvert`
-  (revert local changes), `screset` (reset branches to `origin/<branch>`),
-  `sccleanup` (`git fetch --prune` then delete the local branches whose
-  upstream is gone), `scrunci` (clone a repository in a temp folder and run
+  `scclone` (clone an url into `git/<host>/<owner>/<repo>`, without the
+  `git/` prefix when run from a folder named `git`), `screvert`
+  (revert local changes), `screset` (force the current branch to
+  `origin/<branch>`, unpushed commits dropped; refuses when there are local
+  changes), `sccleanup` (`git fetch --prune` then `git branch -D` the local
+  branches whose upstream is gone, read from the upstream bracket of
+  `git branch -vv`), `scrunci` (clone a repository in a temp folder and run
   `dev_build`'s `run_ci` on it), `sccheckgit` and `sccheckhg` (diagnose the
   git/hg installation).
 * Shared command options: `-h/--help`, `--version`, `-v/--verbose` and
   `-n/--dry-run` (print the commands instead of running them; `scclone` uses
   `-d` for it). `scpp` and `sccleanup` add `-t/--timeout <ms>` per
   repository, `screvert` and `screset` a `-r/--recursive` flag, `scstatus` a
-  `-m/--modified` flag and `-l/--log <level>`, `scinfo` a `-o/--offline`
+  `-m/--modified` flag, `-i/--ignore-main` (skip the repositories on main or
+  master) and `-l/--log <level>`, `scinfo` a `-o/--offline`
   flag (no GitHub query). Positional arguments are the
   folders to walk, defaulting to `.`.
-* A repository containing a `.local/.skip_sc` file is skipped by the tools
-  that walk a tree; use it to park a checkout you do not want touched.
+* A repository containing a `.local/.skip_sc` file is skipped by `scstatus`,
+  `scpull`, `scpp`, `sccleanup` and `scinfo`; use it to park a checkout you do
+  not want touched.
 * To get the commands as executables, add a one-line wrapper per command in
   your own package's `bin/` (`export 'package:tekartik_sc/bin/scpull.dart';`,
   as `example/bin/` does in this repo), list them under `executables:` in
@@ -183,8 +193,9 @@ Future<void> main() async {
   complains on stderr.
 * Setting `recursiveHandleScPathPoolSize` after the walk has started - the
   pool is created on assignment.
-* Expecting `handleScPath` to surface errors: its recursion catches and
-  ignores them, so report failures from inside your own callback.
+* Expecting `handleScPath` to throw: an error below the starting folder is
+  only written on stderr and the walk goes on, so count or report failures
+  from inside your own callback.
 * Writing new code against `HgPath`/`HgProject`: mercurial support is legacy
   and partly unimplemented in the tools.
 * Trying to `dart pub global activate` `tekartik_sc` itself: it declares no

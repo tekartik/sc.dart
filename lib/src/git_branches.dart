@@ -51,7 +51,35 @@ class GitBranchResult {
     }
     var parts = line.trim().split(RegExp(r'\s+'));
     var name = parts[0];
-    var gone = line.contains(': gone]');
+    var gone = _branchLineUpstreamIsGone(line);
     return GitBranchResult(name: name, gone: gone);
   }
+}
+
+/// True if the upstream of a `git branch -vv` line (without its `* `/`+ `
+/// prefix) is gone.
+///
+/// The line is the name, the hash, the worktree path in parentheses for a
+/// branch checked out elsewhere, the upstream in brackets
+/// (`[origin/x: gone]`) if any, then the subject: only the bracket that
+/// follows the hash (or the worktree path) is the upstream, the subject can
+/// hold anything.
+bool _branchLineUpstreamIsGone(String line) {
+  var nameAndHash = RegExp(r'^\S+\s+\S+\s+').firstMatch(line);
+  if (nameAndHash == null) {
+    return false;
+  }
+  var rest = line.substring(nameAndHash.end);
+  if (rest.startsWith('(')) {
+    var end = rest.indexOf(') ');
+    if (end == -1) {
+      return false;
+    }
+    rest = rest.substring(end + 2).trimLeft();
+  }
+  if (!rest.startsWith('[')) {
+    return false;
+  }
+  var end = rest.indexOf(']');
+  return end != -1 && rest.substring(1, end).endsWith(': gone');
 }

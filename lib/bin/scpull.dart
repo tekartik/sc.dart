@@ -21,9 +21,18 @@ class App {
   /// Project count.
   int projectCount = 0;
 
+  /// Projects whose pull failed.
+  final failedProjects = <String>[];
+
   /// Output summary.
   void outSummary() {
     stdout.writeln('[$projectCount] project(s) updated');
+    if (failedProjects.isNotEmpty) {
+      stderr.writeln('[${failedProjects.length}] project(s) failed:');
+      for (var project in failedProjects) {
+        stderr.writeln('  $project');
+      }
+    }
   }
 }
 
@@ -116,6 +125,17 @@ Future main(List<String> arguments) async {
           var result = await runCmd(cmd, verbose: verbose);
           if (result.exitCode == 0) {
             app.projectCount++;
+          } else {
+            // Not silent: the output is only shown in verbose mode
+            app.failedProjects.add(dir);
+            stderr.writeln(
+              '[${cmd.workingDirectory}] $cmd failed '
+              '(exit code ${result.exitCode})',
+            );
+            if (!verbose) {
+              stderr.write(result.stdout);
+              stderr.write(result.stderr);
+            }
           }
           return result;
         } finally {
@@ -146,4 +166,7 @@ Future main(List<String> arguments) async {
   await Future.wait(futures);
 
   app.outSummary();
+  if (app.failedProjects.isNotEmpty) {
+    exitCode = 1;
+  }
 }

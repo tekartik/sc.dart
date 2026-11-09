@@ -135,9 +135,12 @@ Uri gitUrlToHttpsUri(String url) {
   return uri;
 }
 
-/// Each path is tested
+/// Calls [action] on each git top level found in [paths] (or holding them).
 ///
-/// [poolSize] default to 4
+/// It does not go below a git top level, skips the folders starting with `.`
+/// and the link loops; at most [recursiveGitRunPoolSize] actions (default 10)
+/// run at the same time. An error of [action] below a starting path is
+/// written on stderr and the other folders are still handled.
 Future<void> recursiveGitRun(
   List<String> paths, {
   required FutureOr<dynamic> Function(String package) action,
@@ -173,7 +176,9 @@ class GitStatusResult {
       'Status(nothingToCommit: $nothingToCommit, branchIsAhead: $branchIsAhead)';
 }
 
-/// Represents a git repository path.
+/// A local git checkout: its command builders return a `ProcessCmd` (run with
+/// process_run `runCmd`, which does not throw when git fails) with
+/// [path] as the working directory.
 class GitPath {
   @override
   String toString() => path;
@@ -230,7 +235,8 @@ class GitPath {
     return branchesResult;
   }
 
-  /// printResultIfChanges: show result if different than 'nothing to commit'
+  /// Runs `git status` and parses [GitStatusResult.nothingToCommit] and
+  /// [GitStatusResult.branchIsAhead] (English output, see [gitEnvironment]).
   Future<GitStatusResult> status({bool? verbose}) async {
     final cmd = statusCmd();
     if (verbose == true) {
@@ -363,7 +369,7 @@ class GitProject extends GitPath {
   /// Pulls if the repository exists, otherwise clones.
   Future pullOrClone() {
     // TODO: check the origin branch
-    if (File(join(path, '.git', 'config')).existsSync()) {
+    if (isGitTopLevelPathSync(path)) {
       return runCmd(pullCmd());
     } else {
       return runCmd(cloneCmd());
