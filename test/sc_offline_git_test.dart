@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:process_run/shell.dart' show Shell;
 import 'package:tekartik_sc/git.dart';
 import 'package:tekartik_sc/sc.dart';
 import 'package:tekartik_sc/src/git.dart'
@@ -17,15 +18,21 @@ import 'bin_test.dart';
 
 /// Run git in [dir], with a test identity, failing on error.
 Future<void> _git(String dir, List<String> args) async {
-  var result = await Process.run('git', [
-    '-c',
-    'user.name=test',
-    '-c',
-    'user.email=test@example.com',
-    '-c',
-    'init.defaultBranch=main',
-    ...args,
-  ], workingDirectory: dir);
+  var result =
+      await Shell(
+        workingDirectory: dir,
+        stdin: const Stream<List<int>>.empty(),
+        verbose: false,
+        throwOnError: false,
+      ).runExecutableArguments('git', [
+        '-c',
+        'user.name=test',
+        '-c',
+        'user.email=test@example.com',
+        '-c',
+        'init.defaultBranch=main',
+        ...args,
+      ]);
   if (result.exitCode != 0) {
     throw StateError('git $args in $dir failed: ${result.stderr}');
   }

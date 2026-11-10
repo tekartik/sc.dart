@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:process_run/shell.dart'
+    show runExecutableArgumentsSync, whichSync;
 import 'package:tekartik_common_utils/common_utils_import.dart';
 
 import 'src/scpath.dart';
@@ -198,7 +200,11 @@ bool checkHgSupportedSync({bool? verbose}) {
     return false;
   }
   try {
-    var result = Process.runSync('hg', ['--version']);
+    // Not found: unsupported (nothing written by the shell).
+    if (whichSync('hg') == null) {
+      return false;
+    }
+    var result = runExecutableArgumentsSync('hg', ['--version']);
     return result.exitCode == 0;
   } catch (_) {
     return false;

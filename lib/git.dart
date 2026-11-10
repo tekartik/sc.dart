@@ -5,6 +5,8 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:process_run/cmd_run.dart';
+import 'package:process_run/shell.dart'
+    show runExecutableArgumentsSync, whichSync;
 
 import 'src/git.dart';
 
@@ -67,7 +69,11 @@ bool get isGitSupportedSync => _isGitSupported ??= checkGitSupportedSync();
 /// Check if git is supported (sync).
 bool checkGitSupportedSync({bool? verbose}) {
   try {
-    var result = Process.runSync('git', ['--version']);
+    // Not found: unsupported (nothing written by the shell).
+    if (whichSync('git') == null) {
+      return false;
+    }
+    var result = runExecutableArgumentsSync('git', ['--version']);
     return result.exitCode == 0;
   } catch (_) {
     return false;
